@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pymagic.df_tools.find_na_holder &mdash; PyMagic 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pymagic.df_tools.period_comp" href="pymagic.df_tools.period_comp.html" />
+    <link rel="prev" title="pymagic.df_tools.append_window_agg" href="pymagic.df_tools.append_window_agg.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> PyMagic
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../links.html">Links</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pymagic.html">pymagic</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pymagic.cloud_tools.html">pymagic.cloud_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.comm_tools.html">pymagic.comm_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.commerce_tools.html">pymagic.commerce_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.dashboard_tools.html">pymagic.dashboard_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.date_tools.html">pymagic.date_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.db_conn_tools.html">pymagic.db_conn_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.db_etl_tools.html">pymagic.db_etl_tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pymagic.df_tools.html">pymagic.df_tools</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pymagic.df_tools.append_window_agg.html">pymagic.df_tools.append_window_agg</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pymagic.df_tools.find_na_holder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymagic.df_tools.period_comp.html">pymagic.df_tools.period_comp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymagic.df_tools.period_start_dt.html">pymagic.df_tools.period_start_dt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymagic.df_tools.ptd_measure.html">pymagic.df_tools.ptd_measure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pymagic.df_tools.yoy_comp.html">pymagic.df_tools.yoy_comp</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.gsuite_tools.html">pymagic.gsuite_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.logging_tools.html">pymagic.logging_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.marketing_tools.html">pymagic.marketing_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.ml_tools.html">pymagic.ml_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.music_tools.html">pymagic.music_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.office_tools.html">pymagic.office_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.pkg_tools.html">pymagic.pkg_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.pm_tools.html">pymagic.pm_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.screen_tools.html">pymagic.screen_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.text_tools.html">pymagic.text_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.transfer_tools.html">pymagic.transfer_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pymagic.cred_tools.html">pymagic.cred_tools</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyMagic</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="pymagic.html">pymagic</a> &raquo;</li>
+        
+          <li><a href="pymagic.df_tools.html">pymagic.df_tools</a> &raquo;</li>
+        
+      <li>pymagic.df_tools.find_na_holder</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="pymagic-df-tools-find-na-holder">
+<h1>pymagic.df_tools.find_na_holder<a class="headerlink" href="#pymagic-df-tools-find-na-holder" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="pymagic.df_tools.find_na_holder">
+<code class="sig-prename descclassname">pymagic.df_tools.</code><code class="sig-name descname">find_na_holder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">col</span></em>, <em class="sig-param"><span class="n">col_new</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pymagic/df_tools.html#find_na_holder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pymagic.df_tools.find_na_holder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the values of 2 de-duped column combinations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame</p></li>
+<li><p><strong>col</strong> – Original column.</p></li>
+<li><p><strong>col_new</strong> – New column.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Values of 2 de-duped column combinations.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pymagic.df_tools.period_comp.html" class="btn btn-neutral float-right" title="pymagic.df_tools.period_comp" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pymagic.df_tools.append_window_agg.html" class="btn btn-neutral float-left" title="pymagic.df_tools.append_window_agg" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

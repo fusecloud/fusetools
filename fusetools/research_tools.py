@@ -1,0 +1,246 @@
+from urllib.request import urlopen
+
+import requests
+from geopy.distance import vincenty
+from geopy.geocoders import Nominatim
+import json
+import pandas as pd
+import time
+
+from pandas.tseries.offsets import MonthEnd
+
+
+class Economics:
+    """
+
+    """
+
+    @classmethod
+    def bls_cpi(cls, series_id, start_year, end_year, api_key):
+        """
+
+        :param series_id:
+        :param start_year:
+        :param end_year:
+        :param api_key:
+        :return:
+        """
+        headers = {'Content-type': 'application/json'}
+
+        data = json.dumps({
+            "seriesid": [series_id],
+            "startyear": start_year, "endyear": end_year
+            ,
+            "registrationkey": api_key
+        })
+
+        p = requests.post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
+        json_data = json.loads(p.text)
+
+        return json_data
+
+    @classmethod
+    def bls_unemployment(cls, lookup_df, lookup_area_type, start_year, end_year, api_keys):
+        """
+
+        :param lookup_df:
+        :param lookup_area_type:
+        :param start_year:
+        :param end_year:
+        :param api_keys:
+        :return:
+        """
+
+        headers = {'Content-type': 'application/json'}
+        lookup_df['results_log'] = ""
+        lookup_df['results_time'] = ""
+        lookup_df['results_val'] = ""
+        lookup_df['lookup_area_type'] = lookup_area_type
+        key_num = 0
+
+        for idx, chunk in lookup_df.iterrows():
+            use_key = api_keys[key_num]
+            print(f'''progress...{idx / len(lookup_df)}''')
+            data = json.dumps({
+                "seriesid": [chunk['q_code']],
+                "startyear": start_year, "endyear": end_year
+                ,
+                "registrationkey": use_key
+            })
+
+            p = requests.post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
+            json_data = json.loads(p.text)
+            print(json_data.get("message"))
+            time.sleep(1.5)
+
+            # if the response failed, try again
+            if not json_data:
+                print(f"No response on {chunk['q_code']}")
+                time.sleep(3.5)
+                p = requests.post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
+                json_data = json.loads(p.text)
+
+            # if the api exceeded the daily limit (500 calls), switch to a new key
+            elif json_data.get("message") and "daily threshold" in json_data.get("message")[0]:
+                # try switching keys if we pass the daily limit
+                print(f'''Switching API key''')
+                key_num += 1
+                use_key = api_keys[key_num]
+                data = json.dumps({
+                    "seriesid": [chunk['q_code']]
+                    ,
+                    "startyear": start_year, "endyear": end_year
+                    ,
+                    "registrationkey": use_key
+                })
+                p = requests.post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
+                json_data = json.loads(p.text)
+            try:
+                lookup_df.loc[idx, "results_log"] = json_data.get("status")
+                years_ = [x.get("year") for x in json_data.get("Results").get("series")[0].get("data")]
+                periods_ = [x.get("period") for x in json_data.get("Results").get("series")[0].get("data")]
+                period_names_ = [x.get("periodName") for x in json_data.get("Results").get("series")[0].get("data")]
+                values_ = [x.get("value") for x in json_data.get("Results").get("series")[0].get("data")]
+
+                df_ret = pd.DataFrame({
+                    "q_code": chunk['q_code'],
+                    "code": chunk['code'],
+                    "year": years_,
+                    "period": periods_,
+                    "period_name": period_names_,
+                    "value": values_
+                })
+
+                df_ret['status'] = "success"
+
+            except:
+
+                df_ret = pd.DataFrame({
+                    "q_code": chunk['q_code'],
+                    "code": chunk['code'],
+                    "year": [],
+                    "period": [],
+                    "period_name": [],
+                    "value": []
+                })
+
+                df_ret['status'] = "fail"
+
+            if idx == 0:
+                df_ret_all = df_ret.copy()
+            else:
+                df_ret_all = pd.concat([df_ret_all, df_ret])
+
+            print(f'''data size: {df_ret_all.shape[0]}''')
+
+        # calculate start of the month
+        df_ret_all['month_start'] = pd.to_datetime(
+            df_ret_all['year'] + \
+            "-" + \
+            df_ret_all['period'].str[-2:] + "-01"
+        )
+        # calculate end of the month
+        df_ret_all['month_end'] = df_ret_all['month_start'] + MonthEnd(1)
+
+        return df_ret_all
+
+    @classmethod
+    def bea_gdp(cls, api_key, tbl_name="SQGDP1"):
+        """
+
+        :param api_key:
+        :param tbl_name:
+        :return:
+        """
+        r = requests.get(
+            f'''
+        https://apps.bea.gov/api/data/?&
+        UserID={api_key}&
+        method=GetData&
+        datasetname=Regional&TableName={tbl_name}&
+        LineCode=3&
+        GeoFIPS=STATE&
+        ResultFormat=JSON'''.replace("\n", "").strip()
+        )
+        data_values = [x.get("DataValue") for x in json.loads(r.content).get("BEAAPI").get("Results").get("Data")]
+        time_periods = [x.get("TimePeriod") for x in json.loads(r.content).get("BEAAPI").get("Results").get("Data")]
+        geo_names = [x.get("GeoName") for x in json.loads(r.content).get("BEAAPI").get("Results").get("Data")]
+        cl_units = [x.get("CL_UNIT") for x in json.loads(r.content).get("BEAAPI").get("Results").get("Data")]
+        unit_mults = [x.get("UNIT_MULT") for x in json.loads(r.content).get("BEAAPI").get("Results").get("Data")]
+
+        df = \
+            pd.DataFrame(
+                {
+                    "data_values": data_values,
+                    "time_periods": time_periods,
+                    "geo_names": geo_names,
+                    "cl_units": cl_units,
+                    "unit_mults": unit_mults
+                })
+
+        return df
+
+
+class Geography:
+    """
+
+    """
+
+    @classmethod
+    def get_city_lat_lon(cls, city):
+        """
+
+        :param city:
+        :return:
+        """
+        geolocator = Nominatim()
+        loc = geolocator.geocode(city)
+        return loc
+
+    @classmethod
+    def calculate_distance(cls, lat_from, lon_from, lat_to, lon_to):
+        """
+
+        :param lat_from:
+        :param lon_from:
+        :param lat_to:
+        :param lon_to:
+        :return:
+        """
+        coords_from = (lat_from, lon_from)
+        coords_to = (lat_to, lon_to)
+        try:
+            dist = vincenty(coords_from, coords_to).miles
+        except Exception as e:
+            print(str(e))
+
+        return dist
+
+    @classmethod
+    def walk_bike_transit_score(cls, addr, lat, lon, api_key):
+        """
+
+        :param addr:
+        :param lat:
+        :param lon:
+        :param api_key:
+        :return:
+        """
+        addr_base = "http://api.walkscore.com/score?format=json&address="
+        addr_base = addr_base + addr + \
+                    "&lat=" + lat + "&lon=" + lon + \
+                    "&transit=1" + "&bike=1" + "&wsapikey=" + api_key
+        try:
+            jsonurl = urlopen(addr_base)
+            text = json.loads(jsonurl.read())
+            scores_df = pd.DataFrame.from_dict(text)
+            bike_score = scores_df.loc["score", "bike"]
+            transit_score = scores_df.loc["score", "transit"]
+            walk_score = scores_df.loc["score", "walkscore"]
+
+            del scores_df
+        except Exception as e:
+            print(str(e))
+            pass
+
+        return bike_score, transit_score, walk_score

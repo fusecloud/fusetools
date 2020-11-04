@@ -1,0 +1,468 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pymagic.transfer_tools &mdash; PyMagic 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> PyMagic
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changes.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../links.html">Links</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/pymagic.html">pymagic</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PyMagic</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pymagic.transfer_tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pymagic.transfer_tools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Transfer applications.</span>
+
+<span class="sd">|pic1|</span>
+<span class="sd">    .. |pic1| image:: ../images_source/transfer_tools/transfer.png</span>
+<span class="sd">        :width: 30%</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.chrome</span> <span class="k">import</span> <span class="n">webdriver</span>
+
+
+<div class="viewcode-block" id="Access"><a class="viewcode-back" href="../../_autosummary/pymagic.transfer_tools.Access.html#pymagic.transfer_tools.Access">[docs]</a><span class="k">class</span> <span class="nc">Access</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions for accessing file systems and protocols.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Access.proxies"><a class="viewcode-back" href="../../_autosummary/pymagic.transfer_tools.Access.html#pymagic.transfer_tools.Access.proxies">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">proxies</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A function to create an http/https proxy address.</span>
+
+<span class="sd">        :param domain: domain address.</span>
+<span class="sd">        :return: Http/https proxy address.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;http&#39;</span><span class="p">:</span> <span class="s1">&#39;http://&#39;</span> <span class="o">+</span> \
+                    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;usr&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                    <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;pwd&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                    <span class="n">f</span><span class="s1">&#39;@proxyfarm.</span><span class="si">{domain}</span><span class="s1">.com:8080&#39;</span>
+            <span class="p">,</span>
+            <span class="s1">&#39;https&#39;</span><span class="p">:</span> <span class="s1">&#39;https://&#39;</span> <span class="o">+</span> \
+                     <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;usr&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                     <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;pwd&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                     <span class="n">f</span><span class="s1">&#39;@proxyfarm.</span><span class="si">{domain}</span><span class="s1">.com:8080&#39;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">res</span></div></div>
+
+
+<div class="viewcode-block" id="Local"><a class="viewcode-back" href="../../_autosummary/pymagic.transfer_tools.Local.html#pymagic.transfer_tools.Local">[docs]</a><span class="k">class</span> <span class="nc">Local</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions for accessing local files.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Local.fix_user_path"><a class="viewcode-back" href="../../_autosummary/pymagic.transfer_tools.Local.html#pymagic.transfer_tools.Local.fix_user_path">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">fix_user_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fixes a local filepath.</span>
+
+<span class="sd">        :param dir: Directory to patch.</span>
+<span class="sd">        :return: Patches directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dir_components</span> <span class="o">=</span> <span class="nb">dir</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+        <span class="n">search</span> <span class="o">=</span> <span class="s2">&quot;Users&quot;</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dir_components</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">elem</span> <span class="o">==</span> <span class="n">search</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="n">dir_components</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;os_name&#39;</span><span class="p">]</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_components</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">r</span></div>
+
+<div class="viewcode-block" id="Local.get_all_filetimes"><a class="viewcode-back" href="../../_autosummary/pymagic.transfer_tools.Local.html#pymagic.transfer_tools.Local.get_all_filetimes">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_all_filetimes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a Pandas DataFrame of filenames and file times in a given directory.</span>
+
+<span class="sd">        :param dir: Directory of files.</span>
+<span class="sd">        :param exclude: A string to search for files to exclude.</span>
+<span class="sd">        :return: Pandas DataFrame of filenames and file times to a directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">exclude</span><span class="p">:</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">exclude</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
+
+        <span class="n">times</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="nb">dir</span> <span class="o">+</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+        <span class="n">file_times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="n">files</span><span class="p">,</span> <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="n">times</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">file_times</span></div>
+
+<div class="viewcode-block" id="Local.get_latest_file"><a class="viewcode-back" href="../../_autosummary/pymagic.transfer_tools.Local.html#pymagic.transfer_tools.Local.get_latest_file">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_latest_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the latest file in a directory.</span>
+
+<span class="sd">        :param name: String match name of file(s)</span>
+<span class="sd">        :param dir: Directory for the file search</span>
+<span class="sd">        :param exclude: A string to search for files to exclude.</span>
+<span class="sd">        :return: Name of most recent file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># file name str to lowercase</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="c1"># get list of files</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">exclude</span><span class="p">:</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">exclude</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">f</span><span class="p">]</span>
+
+        <span class="n">times</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="nb">dir</span> <span class="o">+</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+        <span class="n">file_times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="n">files</span><span class="p">,</span> <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="n">times</span><span class="p">})</span>
+        <span class="n">file_times</span><span class="p">[</span><span class="s1">&#39;files_lower&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_times</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">file_times</span> <span class="o">=</span> <span class="n">file_times</span><span class="p">[</span><span class="n">file_times</span><span class="p">[</span><span class="s1">&#39;files_lower&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span>
+        <span class="n">read_file</span> <span class="o">=</span> <span class="n">file_times</span><span class="p">[</span><span class="n">file_times</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">file_times</span><span class="p">[</span><span class="s1">&#39;times&#39;</span><span class="p">])][</span><span class="s1">&#39;files&#39;</span><span class="p">]</span>
+        <span class="n">read_file</span> <span class="o">=</span> <span class="n">read_file</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">read_file</span></div>
+
+<div class="viewcode-block" id="Local.read_files_like"><a class="viewcode-back" href="../../_autosummary/pymagic.transfer_tools.Local.html#pymagic.transfer_tools.Local.read_files_like">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">read_files_like</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">ext_typ</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads and concatenates files in a directory that match a string. Returns a Pandas DataFrame.</span>
+
+<span class="sd">        :param name: A string search to match.</span>
+<span class="sd">        :param dir: Directory to search for files in.</span>
+<span class="sd">        :param ext_typ: Extension type to search for (.XLSX OR .CSV)</span>
+<span class="sd">        :param sheet_name: If extension type is not &quot;.CSV&quot;, specifies the sheet number or sheet name to read.</span>
+<span class="sd">        :return: Concatenated Pandas DataFrames that match a string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="n">files</span><span class="p">})</span>
+        <span class="n">files</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">files</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">files</span><span class="p">[(</span>
+                <span class="n">files</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="o">&amp;</span>
+                <span class="n">files</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">ext_typ</span><span class="p">)</span>
+        <span class="p">)]</span>
+        <span class="n">files</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">ext_typ</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span><span class="p">:</span>
+                <span class="n">dat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">dir</span> <span class="o">+</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="nb">dir</span> <span class="o">+</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;files&#39;</span><span class="p">],</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">dat_all</span> <span class="o">=</span> <span class="n">dat</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dat_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">dat_all</span><span class="p">,</span> <span class="n">dat</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">dat_all</span></div></div>
+
+
+<div class="viewcode-block" id="SFTP"><a class="viewcode-back" href="../../_autosummary/pymagic.transfer_tools.SFTP.html#pymagic.transfer_tools.SFTP">[docs]</a><span class="k">class</span> <span class="nc">SFTP</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions for using SFTP/FTP protocols.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SFTP.winscp_sftp_connect"><a class="viewcode-back" href="../../_autosummary/pymagic.transfer_tools.SFTP.html#pymagic.transfer_tools.SFTP.winscp_sftp_connect">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">winscp_sftp_connect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+                            <span class="n">action</span><span class="p">,</span>
+                            <span class="n">exe_path</span><span class="p">,</span>
+                            <span class="n">conn_str</span><span class="p">,</span>
+                            <span class="n">hostkey</span><span class="p">,</span>
+                            <span class="n">src_path</span><span class="p">,</span>
+                            <span class="n">dest_path</span><span class="p">,</span>
+                            <span class="n">file_name</span><span class="p">,</span>
+                            <span class="n">new_file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">match_all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connects to an SFTP server.</span>
+
+<span class="sd">        :param action: Actions allowed are &quot;put&quot; or &quot;get&quot;.</span>
+<span class="sd">        :param exe_path: Path where WinSCP executable is installed on machine.</span>
+<span class="sd">        :param conn_str: Connection string to connect to ftp site.</span>
+<span class="sd">        :param hostkey: HostKey credential required to match.</span>
+<span class="sd">        :param src_path: To get file from scp site use &quot;/&quot;, to get file from machine use &quot;\\&quot;.</span>
+<span class="sd">        :param dest_path: To put file on scp site use &quot;/&quot;, to put file on machine use &quot;\\&quot;.</span>
+<span class="sd">        :param file_name: Use complete file name with file format (&quot;.csv&quot;) to get specific file, exclude format to get multiple matches.</span>
+<span class="sd">        :param new_file_name: Include file format.</span>
+<span class="sd">        :param match_all: Whether or not to match on.</span>
+<span class="sd">        :return: If &#39;get&#39; then a downloaded file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># launch winscp</span>
+        <span class="n">winscp_exe</span> <span class="o">=</span> <span class="n">exe_path</span>
+
+        <span class="c1"># options and credentials</span>
+        <span class="n">cmds</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;option batch abort&#39;</span><span class="p">,</span> <span class="s1">&#39;option confirm off&#39;</span><span class="p">]</span>
+        <span class="n">connection</span> <span class="o">=</span> <span class="s1">&#39;open &#39;</span> <span class="o">+</span> <span class="n">conn_str</span> <span class="o">+</span> <span class="s1">&#39;/ -hostkey=&quot;&#39;</span> <span class="o">+</span> <span class="n">hostkey</span> <span class="o">+</span> <span class="s1">&#39;&quot; -rawsettings ProxyMethod=2 ProxyHost=&quot;proxyfarm.xxxxx.com&quot; ProxyPort=xxxxx&#39;</span>
+        <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;get&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">match_all</span><span class="p">:</span>
+                <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;cd &#39;</span> <span class="o">+</span> <span class="n">src_path</span><span class="p">)</span>
+                <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;get &#39;</span> <span class="o">+</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s1">&#39;*&#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">dest_path</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">getpath</span> <span class="o">=</span> <span class="s1">&#39;get &#39;</span> <span class="o">+</span> <span class="n">src_path</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">dest_path</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">file_name</span>
+                <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">getpath</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">action</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;put&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">new_file_name</span><span class="p">:</span>
+                <span class="c1"># create get path</span>
+                <span class="n">putpath</span> <span class="o">=</span> <span class="s1">&#39;put &#39;</span> <span class="o">+</span> <span class="n">src_path</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">dest_path</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">new_file_name</span>
+                <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">putpath</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">putpath</span> <span class="o">=</span> <span class="s1">&#39;put &#39;</span> <span class="o">+</span> <span class="n">src_path</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">dest_path</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">file_name</span>
+                <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">putpath</span><span class="p">)</span>
+
+        <span class="c1"># create subprocess object</span>
+        <span class="n">winscp</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">winscp_exe</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">winscp</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cmds</span><span class="p">))</span>
+
+        <span class="c1"># check output</span>
+        <span class="k">if</span> <span class="n">winscp</span><span class="o">.</span><span class="n">returncode</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Upload Failed&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">out</span><span class="p">[</span><span class="mi">15</span><span class="p">:]:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Web"><a class="viewcode-back" href="../../_autosummary/pymagic.transfer_tools.Web.html#pymagic.transfer_tools.Web">[docs]</a><span class="k">class</span> <span class="nc">Web</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions for interacting with files on the Web.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Web.dl_googl_sheet"><a class="viewcode-back" href="../../_autosummary/pymagic.transfer_tools.Web.html#pymagic.transfer_tools.Web.dl_googl_sheet">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">dl_googl_sheet</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gid</span><span class="p">,</span> <span class="n">gs</span><span class="p">,</span> <span class="n">chromedriver</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Downloads a Google sheet as a .CSV file.</span>
+
+<span class="sd">        :param gid: Id of Google Sheet to download.</span>
+<span class="sd">        :param gs: Id of Google Sheet Tab to download.</span>
+<span class="sd">        :param chromedriver: Chromedriver path to load Selenium from.</span>
+<span class="sd">        :return: Downloaded Google Sheet tab.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">browser</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Chrome</span><span class="p">(</span><span class="n">chromedriver</span><span class="p">)</span>
+        <span class="n">download_url</span> <span class="o">=</span> <span class="s1">&#39;https://docs.google.com/spreadsheets/d/&#39;</span>
+        <span class="n">download_url</span> <span class="o">=</span> <span class="n">download_url</span> <span class="o">+</span> <span class="n">gid</span>
+        <span class="n">download_url</span> <span class="o">=</span> <span class="n">download_url</span> <span class="o">+</span> <span class="s1">&#39;/gviz/tq?tqx=out:csv&amp;sheet=&#39;</span>
+        <span class="n">download_url</span> <span class="o">=</span> <span class="n">download_url</span> <span class="o">+</span> <span class="n">gs</span>
+
+        <span class="n">browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">download_url</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Web.download_file"><a class="viewcode-back" href="../../_autosummary/pymagic.transfer_tools.Web.html#pymagic.transfer_tools.Web.download_file">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sav_dir</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Downloads a file from a given Url endpoint.</span>
+
+<span class="sd">        :param sav_dir: Filepath to save downloaded file to.</span>
+<span class="sd">        :param url: URL to download file from.</span>
+<span class="sd">        :return: Downloaded file in directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Downloading file at: </span><span class="si">{url}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{sav_dir}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
