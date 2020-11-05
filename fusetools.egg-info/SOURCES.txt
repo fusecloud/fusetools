@@ -26,4 +26,5 @@ fusetools/transfer_tools.py
 fusetools.egg-info/PKG-INFO
 fusetools.egg-info/SOURCES.txt
 fusetools.egg-info/dependency_links.txt
+fusetools.egg-info/requires.txt
 fusetools.egg-info/top_level.txt

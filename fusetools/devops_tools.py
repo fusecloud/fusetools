@@ -308,10 +308,10 @@ class GitHub:
         os.chdir(repo_dir)
         os.getcwd()
 
-        child = pexpect.spawn("git add --all", encoding='utf-8')
+        os.system("git add --all")
+        os.system(f"git commit -m '{commit_msg}'")
+        child = pexpect.spawn(f"git push origin {tgt_branch}", encoding='utf-8')
         child.logfile = sys.stdout
-        child.sendline(f"git commit -m '{commit_msg}'")
-        child.sendline(f"git push origin {tgt_branch}")
         child.expect(".*Username", timeout=None)
         child.sendline(user)
         child.expect(".*Password", timeout=None)
