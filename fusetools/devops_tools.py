@@ -315,6 +315,6 @@ class GitHub:
         os.system(f"git push origin {tgt_branch}")
         child.expect(".*Username", timeout=None)
         child.sendline(user)
-        child.expect(".*Password:", timeout=None)
+        child.expect(".*Password", timeout=None)
         child.sendline(pwd)
 
