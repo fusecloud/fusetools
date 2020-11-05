@@ -11,6 +11,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import os
 import sys
+import nbsphinx
 sys.path.insert(0, os.path.abspath('../..'))  # Source code dir relative to this file
 # Temp. workaround for https://github.com/agronholm/sphinx-autodoc-typehints/issues/133
 import warnings

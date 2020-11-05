@@ -16,6 +16,7 @@ fusetools.devops\_tools.GitHub
    .. autosummary::
       :nosignatures:
    
+      ~GitHub.commit_push
    
    
 
