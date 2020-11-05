@@ -354,7 +354,7 @@ class GDrive:
         return df
 
     @classmethod
-    def create_upload_folder(cls, folder_path, credentials, parent_id=None):
+    def create_upload_folder(cls, folder_name, credentials, overwrite_folder=False, parent_id=None):
         """
         Creates a folder in Google Drive.
 
@@ -364,26 +364,29 @@ class GDrive:
         """
         # Create a folder on Drive, returns the newly created folders ID
         drive_service = build('drive', 'v3', credentials=credentials)
-        folder_name = folder_path.split('/')[-1]
+
         response = (
             drive_service
                 .files()
                 .list(
                 q="mimeType = 'application/vnd.google-apps.folder'",
-                fields='nextPageToken, files(id, name)')
-                .execute())
+                fields='nextPageToken, files(id, name)'
+            )
+                .execute()
+        )
 
-        for file in response.get('files', []):
+        if overwrite_folder:
+            for file in response.get('files', []):
 
-            if folder_name == file.get('name'):
-                print('Overwriting file: %s (%s)' % (file.get('name'), file.get('id')))
-                drive_service.files().delete(fileId=file.get('id')).execute()
-                break
+                if folder_name == file.get('name'):
+                    print('Overwriting file: %s (%s)' % (file.get('name'), file.get('id')))
+                    drive_service.files().delete(fileId=file.get('id')).execute()
+                    break
 
-            page_token = response.get('nextPageToken', None)
+                page_token = response.get('nextPageToken', None)
 
-            if page_token is None:
-                break
+                if page_token is None:
+                    break
 
         body = {
             'name': folder_name,
@@ -396,7 +399,7 @@ class GDrive:
         return folder
 
     @classmethod
-    def upload_files(cls, folder_id, upload_filepaths, credentials):
+    def upload_files(cls, folder_id, upload_filepaths, credentials, upload_filenames=False):
         """
         Uploads files to a folder on Google Drive.
 
@@ -407,9 +410,11 @@ class GDrive:
         drive_service = build('drive', 'v3', credentials=credentials)
 
         files = []
-        for file in upload_filepaths:
+        for idx, file in enumerate(upload_filepaths):
             name = os.fsdecode(file)
             filename, file_extension = splitext(name, )
+            if upload_filenames:
+                filename, file_extension = splitext(upload_filenames[idx], )
 
             # setting mimeType for each file
             # more types available here:
