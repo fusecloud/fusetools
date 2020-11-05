@@ -303,6 +303,7 @@ class GitHub:
     @classmethod
     def commit_push(cls, repo_dir, commit_msg, tgt_branch):
         os.chdir(repo_dir)
+        os.getcwd()
         os.system("git add --all")
         os.system(f"git commit -m '{commit_msg}'")
         os.system(f"git push origin {tgt_branch}")
