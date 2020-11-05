@@ -60,6 +60,7 @@ class GSheets:
         Creates a Google Sheet in one's GSuite account.
 
         :param ss_name: Name of the Google Sheet to be created.
+        :param credentials: GSuite credentials object.
         :return: Id of newly created Google Sheet.
         """
         SHEETS = discovery.build("sheets", "v4", credentials=credentials)
@@ -85,6 +86,7 @@ class GSheets:
 
         :param spreadsheet_id: Id of Google Sheet to add tab to.
         :param tab_name: Name of the tab to be added.
+        :param credentials: GSuite credentials object.
         :return: Result object for API call.
         """
         data = {'requests': [{'addSheet': {'properties': {'title': tab_name}}}]}
@@ -117,6 +119,7 @@ class GSheets:
         :param spreadsheet_id: Id of Google Sheet to retrieve.
         :param range_name: Row/Column of Sheet range to retrieve (ex: A1:A99).
         :param tab_name: Name of tab to pull data from (optional).
+        :param credentials: GSuite credentials object.
         :return: Pandas DataFrame of retrieved data.
         """
 
@@ -149,6 +152,7 @@ class GSheets:
         :param spreadsheet_id: Id of Google Sheet to retrieve.
         :param tab_id: Id of tab to modify.
         :param freeze_row: Spreadsheet row to freeze.
+        :param credentials: GSuite credentials object.
         :return: Result object for API call.
         """
         service = build('sheets', 'v4', credentials=credentials)
@@ -194,6 +198,7 @@ class GSheets:
         :param val: Value to update spreadsheet cell with.
         :param row: Row of cell to update.
         :param col: Column of cell to update.
+        :param credentials: GSuite credentials object.
         :return: API response.
         """
         service = build('sheets', 'v4', credentials=credentials)
@@ -239,13 +244,14 @@ class GSheets:
         return res
 
     @classmethod
-    def update_google_sheet_df(cls, spreadsheet_id, df, range, credentials):
+    def update_google_sheet_df(cls, spreadsheet_id, df, data_range, credentials):
         """
         Uploads a Pandas DataFrame to a Google Sheet.
 
         :param spreadsheet_id: ID of spreadsheet to update.
         :param df: Pandas DataFrame to update spreadsheet with.
-        :param range: Spreadsheet range to insert DataFrame into.
+        :param data_range: Spreadsheet range to insert DataFrame into.
+        :param credentials: GSuite credentials object.
         :return: API response.
         """
         service = build('sheets', 'v4', credentials=credentials)
@@ -263,7 +269,7 @@ class GSheets:
 
         try:
             res = service.spreadsheets().values().append(
-                spreadsheetId=spreadsheet_id, range=range,
+                spreadsheetId=spreadsheet_id, range=data_range,
                 valueInputOption=value_input_option,
                 # insertDataOption=insert_data_option,
                 body=body).execute()
@@ -284,6 +290,7 @@ class GSheets:
         Get the names and IDs of tabs for a given Google Sheet.
 
         :param spreadsheet_id: ID of spreadsheet to update.
+        :param credentials: GSuite credentials object.
         :return: Names and IDs of tabs for a given Google Sheet.
         """
         service = build('sheets', 'v4', credentials=credentials)
@@ -308,10 +315,13 @@ class GDrive:
     @classmethod
     def authorize_credentials(cls, cred_path, token_path):
         """
-        Creates an authorized credentials object for GSuite.
+        Creates an authorized credentials object for Google Drive.
 
+        :param cred_path: Local path to GSuite credentials object
+        :param token_path: Local path to GSuite authorization token
         :return: Authorized credentials object for GSuite
         """
+
         creds = None
         if os.path.exists(token_path):
             with open(token_path, 'rb') as token:
@@ -331,6 +341,13 @@ class GDrive:
 
     @classmethod
     def download_file(cls, file_id, credentials):
+        """
+        Downloads a file from a Google Drive account.
+
+        :param file_id: ID for Google Drive file
+        :param credentials: GSuite credentials object.
+        :return:
+        """
         drive_service = build('drive', 'v3', credentials=credentials)
         request = drive_service.files().get_media(fileId=file_id)
         fh = io.BytesIO()
@@ -345,8 +362,10 @@ class GDrive:
         """
         Get all files in a Google Drive.
 
+        :param credentials: GSuite credentials object.
         :return: Pandas DataFrame of files in a Google Drive.
         """
+
         DRIVE = discovery.build('drive', 'v3', credentials=credentials)
         res = DRIVE.files().list().execute()
         df = pd.DataFrame(res.get("files"))

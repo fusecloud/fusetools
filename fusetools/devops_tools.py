@@ -17,6 +17,10 @@ from distutils import dir_util, file_util
 
 
 class Local:
+    """
+    Functions for dealing with Local DevOps tasks.
+
+    """
 
     @classmethod
     def run_handle_cmds(cls):
@@ -30,6 +34,21 @@ class Local:
                        module_list=False,
                        install_pkg=False,
                        python_alias="python3"):
+        """
+        Creates a package from another package using specified details.
+
+        :param src_pkg_dir: Directory of source package
+        :param src_pkg_name: Name of source package
+        :param tgt_pkg_dir: Directory of target package
+        :param tgt_pkg_name: Name of target package
+        :param folder_list: List of file folders to copy from source package directory
+        :param file_list: List of files to copy from source package directory
+        :param module_list: List of package modules to copy from source package
+        :param install_pkg: Whether or not to install the package after copying
+        :param python_alias: System alias for Python to compile package (ex: python/python3 setup.py sdist)
+        :return: Copied package directory
+
+        """
 
         if not module_list:
             module_list = [x for x in \
@@ -116,6 +135,7 @@ packages=["{tgt_pkg_name}"]
         :param pkg_name: Name for package.
         :param pkg_dir: Directory of setup.py file for package.
         :return: Command line logs for compilation steps.
+
         """
         if pkg_dir:
             os.chdir(pkg_dir)
@@ -131,6 +151,10 @@ packages=["{tgt_pkg_name}"]
 
 
 class Terraform:
+    """
+    Functions for interacting with Terraform
+
+    """
 
     @classmethod
     def create_backend_file(cls, tf_folder, init=False):
@@ -153,25 +177,47 @@ class Terraform:
 
 
 class GitHub:
+    """
+    Functions for interacting with GitHub
+
+    """
     # todo implement
     pass
 
 
 class Docs:
+    """
+    Functions for dealing with software documentation
+
+    """
 
     @classmethod
-    def read_the_docs(cls):
+    def publish_read_the_docs(cls):
+        """
+
+        :return:
+
+        """
         # https://readthedocs.org/projects/docs/downloads/pdf/latest/
         pass
+
+
+class Publish:
+    """
+    Functions for distributing software packages
+
+    """
 
     @classmethod
     def publish_pypi(cls, pkg_dir, api_key, python_name="python3"):
         """
+        Publishes a Python package to the PyPi repository
 
-        :param pkg_dir:
-        :param api_key:
-        :param python_name:
-        :return:
+        :param pkg_dir: Directory containing package to publish
+        :param api_key: PyPi API key
+        :param python_name: Locally installed python name (ex: python -m ...)
+        :return: Published Python package on PyPi
+
         """
         # https://packaging.python.org/tutorials/packaging-projects/
         os.chdir(pkg_dir)

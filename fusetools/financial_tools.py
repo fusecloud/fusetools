@@ -38,19 +38,23 @@ class Misc:
 
 
 class Quotes:
+    """
+    Functions for retrieving stock quotes
+
+    """
 
     @classmethod
     def alpha_vantage(cls, ticker, api_key, freq, size):
-        '''
+        """
+        Pull stock quote data from the Alphavantage API.
 
-        :param ticker:
-        :param api_key:
-        :param freq:
-        :param size:
-        :param yf_fmt:
-        :param adjust:
-        :return: quote data from alpha vantage wrapper
-        '''
+        :param ticker: Stock ticker to query for quotes
+        :param api_key: Alphavantage API key
+        :param freq: Ticker frequency (ex: D for 'Daily' or W for 'Weekly')
+        :param size: Number of data points by frequency to pull
+        :return: Quote data from Alphavantage API
+        """
+
         ts = TimeSeries(key=api_key, output_format='pandas')
         if freq == "D":
             data, meta_data = ts.get_daily_adjusted(symbol=ticker, outputsize=size)
@@ -63,13 +67,16 @@ class Quotes:
 
     @classmethod
     def yahoo_finance_quotes(cls, ticker, from_date, to_date, time_frame='d'):
-        '''
+        """
+        Pull stock quote data from the YahooFinance API.
 
-        :param ticker:
-        :param from_date:
-        :param to_date:
-        :return: quotes from yahoo finance wrapper
-        '''
+        :param ticker: Stock ticker to query for quotes
+        :param from_date: Date to pull quotes from
+        :param to_date: Date to pull quotes until
+        :param time_frame: Ticker frequency (ex: D for 'Daily' or W for 'Weekly')
+        :return: Quote data from YahooFinance API
+        """
+
         data = yf.download(ticker, from_date, to_date)
         data.reset_index(inplace=True)
 
@@ -196,8 +203,8 @@ class InteractiveBrokers:
         """
         Returns a Pandas DataFrame of details for open orders in the account.
 
-        :param ib:
-        :return:
+        :param ib: InteractiveBrokers account instance
+        :return: Pandas DataFrame of open orders
         """
 
         open_trades = [x for x in ib.openTrades()]
@@ -239,6 +246,12 @@ class InteractiveBrokers:
 
     @classmethod
     def ib_get_portfolio(cls, ib):
+        """
+        Returns a Pandas DataFrame of details for portfolio holdings.
+
+        :param ib: InteractiveBrokers account instance
+        :return: Pandas DataFrame of portfolio holding sizes, tickers and cost-bases
+        """
         port_sizes = [x.position for x in ib.portfolio()]
         port_tickers = [x.contract.symbol for x in ib.portfolio()]
         port_costs = [x.averageCost for x in ib.portfolio()]
@@ -255,6 +268,13 @@ class InteractiveBrokers:
 
     @classmethod
     def get_stock_price_ss(cls, ib, ticker):
+        """
+        Returns the latest stock price for a given ticker.
+
+        :param ib: InteractiveBrokers account instance
+        :param ticker: Ticker to search
+        :return: Latest stock price for a given ticker
+        """
         contract = Stock(ticker, 'SMART', 'USD')
         ret = ib.reqMktData(contract, snapshot=True)
         while str(ret.last) == "nan":
