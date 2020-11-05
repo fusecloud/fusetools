@@ -316,3 +316,4 @@ class GitHub:
         child.sendline(user)
         child.expect(".*Password", timeout=None)
         child.sendline(pwd)
+        child.expect(f".*{tgt_branch}")

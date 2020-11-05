@@ -471,7 +471,8 @@
         <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s2">&quot;.*Username&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">child</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
         <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s2">&quot;.*Password&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">child</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">pwd</span><span class="p">)</span></div>
+        <span class="n">child</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">pwd</span><span class="p">)</span>
+        <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;.*</span><span class="si">{</span><span class="n">tgt_branch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
