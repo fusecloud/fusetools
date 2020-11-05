@@ -12,6 +12,7 @@ from fusetools.date_tools import get_rptg_yr, get_rptg_week
 
 class SQL:
     """
+    Functions for running analytical SQL operations
 
     """
 
@@ -22,21 +23,20 @@ class SQL:
                             date_join_time_start_col=False,
                             date_join_time_end_col=False):
         """
-        Will perform a cumulative aggregation over the year + dim cols
-        OR if AGGFUNC=False
-        Will just do a snapshot of current week vs current week (of prior year)
+        Performs a cumulative aggregation over the year as well as provided dimensional columns
+        OR if agg_func param is not provided,
 
-        :param tbl_name:
-        :param time_col:
-        :param year_col:
-        :param fact_cols:
-        :param agg_func:
-        :param dim_cols:
-        :param date_join_tbl:
-        :param date_join_col:
-        :param date_join_time_start_col:
-        :param date_join_time_end_col:
-        :return:
+        :param tbl_name: Table with data to perform calculation on
+        :param time_col: Column with sub-year time granularity to compare across years
+        :param year_col: Column with year time granularity
+        :param fact_cols: List of KPI columns to calculate
+        :param agg_func: Type of aggregation to perform, if not provided will just do a snapshot of current week vs current week
+        :param dim_cols: List of dimensional columns to compare aggregation over (optional)
+        :param date_join_tbl: Table with date columns to join to (optional)
+        :param date_join_col: Column from date table to join on (optional)
+        :param date_join_time_start_col: Column from date table with time granularity start date
+        :param date_join_time_end_col: Column from date table with time granularity end date
+        :return: Analytical SQL query
         """
 
         if date_join_tbl:
@@ -148,16 +148,17 @@ class SQL:
                         date_join_time_end_col=False
                         ):
         """
+        Performs a week over week comparison.
 
-        :param tbl_name:
-        :param time_col:
-        :param fact_cols:
-        :param dim_cols:
-        :param date_join_tbl:
-        :param date_join_col:
-        :param date_join_time_start_col:
-        :param date_join_time_end_col:
-        :return:
+        :param tbl_name: Table with data to perform calculation on
+        :param time_col: Column with sub-year time granularity to compare across years
+        :param fact_cols: List of KPI columns to calculate
+        :param dim_cols: List of dimensional columns to compare aggregation over (optional)
+        :param date_join_tbl: Table with date columns to join to (optional)
+        :param date_join_col: Column from date table to join on (optional)
+        :param date_join_time_start_col: Column from date table with time granularity start date
+        :param date_join_time_end_col: Column from date table with time granularity end date
+        :return: Analytical SQL query
         """
 
         if date_join_tbl:
@@ -231,6 +232,10 @@ class SQL:
 
 
 class Pandas:
+    """
+    Functions for running analytical Pandas operations
+
+    """
 
     @classmethod
     def period_start_dt(cls, df):
@@ -363,13 +368,13 @@ class Pandas:
         """
         Creates a snapshot comparison between two periods.
 
-        :param df:
-        :param period_field:
-        :param val_fields:
-        :param dim:
-        :param val_field_suffix:
-        :param hist:
-        :return:
+        :param df: Pandas DataFrame.
+        :param period_field: Column with period to compare across
+        :param val_fields: List of columns with numeric values to compare
+        :param dim: Column with dimension to group across (optional)
+        :param val_field_suffix: Suffix for value field to add to final dataset (optional)
+        :param hist: Include history flag, returns all periods if True, otherwise just the most recent two periods
+        :return: Comparison Pandas DataFrame
         """
 
         if not val_field_suffix:
@@ -430,7 +435,7 @@ class Pandas:
         :param period: Type of period (year, month)
         :param val_fields: Columns to aggregate.
         :param kpi: Type of aggregation to perform.
-        :param dim: Dimension to group comparison by (Option).
+        :param dim: Dimension to group comparison by (Optional).
         :return: Pandas DataFrame with PTD measure.
         """
         if period == "year":

@@ -20,10 +20,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore, db, storage
 
 
-
-
 class Firebase:
-    # todo: re-run example tests
     """
     Functions for interacting with Firebase infrastructure, including: Firestore, Storage
 
