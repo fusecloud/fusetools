@@ -239,7 +239,7 @@
 <td><p>Downloads a file from a Google Drive account.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#fusetools.gsuite_tools.GDrive.get_all_google_items" title="fusetools.gsuite_tools.GDrive.get_all_google_items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_all_google_items</span></code></a></p></td>
-<td><p>Get all files in a Google Drive.</p></td>
+<td><p>Get all files in a Google Drive (or folder if specified).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.gsuite_tools.GDrive.upload_files" title="fusetools.gsuite_tools.GDrive.upload_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upload_files</span></code></a></p></td>
 <td><p>Uploads files to a folder on Google Drive.</p></td>
@@ -301,11 +301,14 @@
 
 <dl class="py method">
 <dt id="fusetools.gsuite_tools.GDrive.get_all_google_items">
-<em class="property">classmethod </em><code class="sig-name descname">get_all_google_items</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">credentials</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/gsuite_tools.html#GDrive.get_all_google_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.gsuite_tools.GDrive.get_all_google_items" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get all files in a Google Drive.</p>
+<em class="property">classmethod </em><code class="sig-name descname">get_all_google_items</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">credentials</span></em>, <em class="sig-param"><span class="n">folder_id</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/gsuite_tools.html#GDrive.get_all_google_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.gsuite_tools.GDrive.get_all_google_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all files in a Google Drive (or folder if specified).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>credentials</strong> – GSuite credentials object.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>credentials</strong> – GSuite credentials object.</p></li>
+<li><p><strong>folder_id</strong> – GDrive folder to search in (optional)</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Pandas DataFrame of files in a Google Drive.</p>

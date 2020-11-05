@@ -358,17 +358,27 @@ class GDrive:
             print("Download %d%%." % int(status.progress() * 100))
 
     @classmethod
-    def get_all_google_items(cls, credentials):
+    def get_all_google_items(cls, credentials, folder_id=False):
         """
-        Get all files in a Google Drive.
+        Get all files in a Google Drive (or folder if specified).
 
         :param credentials: GSuite credentials object.
+        :param folder_id: GDrive folder to search in (optional)
         :return: Pandas DataFrame of files in a Google Drive.
         """
 
         DRIVE = discovery.build('drive', 'v3', credentials=credentials)
-        res = DRIVE.files().list().execute()
-        df = pd.DataFrame(res.get("files"))
+
+        if folder_id:
+            res = DRIVE.files().list(
+                q="'" + folder_id + "' in parents",
+                pageSize=100,
+                fields="nextPageToken, files(id, name)").execute()
+            df = pd.DataFrame(res.get("files"))
+
+        else:
+            res = DRIVE.files().list().execute()
+            df = pd.DataFrame(res.get("files"))
 
         return df
 

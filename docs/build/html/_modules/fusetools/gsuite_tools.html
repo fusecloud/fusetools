@@ -514,17 +514,27 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Download </span><span class="si">%d%%</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="nb">int</span><span class="p">(</span><span class="n">status</span><span class="o">.</span><span class="n">progress</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="GDrive.get_all_google_items"><a class="viewcode-back" href="../../_autosummary/fusetools.gsuite_tools.GDrive.html#fusetools.gsuite_tools.GDrive.get_all_google_items">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_all_google_items</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">credentials</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_all_google_items</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">credentials</span><span class="p">,</span> <span class="n">folder_id</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get all files in a Google Drive.</span>
+<span class="sd">        Get all files in a Google Drive (or folder if specified).</span>
 
 <span class="sd">        :param credentials: GSuite credentials object.</span>
+<span class="sd">        :param folder_id: GDrive folder to search in (optional)</span>
 <span class="sd">        :return: Pandas DataFrame of files in a Google Drive.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">DRIVE</span> <span class="o">=</span> <span class="n">discovery</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s1">&#39;drive&#39;</span><span class="p">,</span> <span class="s1">&#39;v3&#39;</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">)</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">DRIVE</span><span class="o">.</span><span class="n">files</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;files&quot;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">folder_id</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">DRIVE</span><span class="o">.</span><span class="n">files</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
+                <span class="n">q</span><span class="o">=</span><span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">folder_id</span> <span class="o">+</span> <span class="s2">&quot;&#39; in parents&quot;</span><span class="p">,</span>
+                <span class="n">pageSize</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                <span class="n">fields</span><span class="o">=</span><span class="s2">&quot;nextPageToken, files(id, name)&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;files&quot;</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">DRIVE</span><span class="o">.</span><span class="n">files</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;files&quot;</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">df</span></div>
 

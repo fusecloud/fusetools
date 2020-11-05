@@ -7,7 +7,7 @@ Tools for automating package deployment tasks.
 
 """
 import json
-
+import nbsphinx
 import requests
 import os
 import pexpect
@@ -192,8 +192,8 @@ class ReadTheDocs:
         return response
 
     @classmethod
-    def update_project(cls, token, project_def_path):
-        URL = 'https://readthedocs.org/api/v3/projects/pip/'
+    def update_project(cls, token, project_def_path, project_name):
+        URL = f'https://readthedocs.org/api/v3/projects/{project_name}/'
         TOKEN = token
         HEADERS = {'Authorization': f'token {TOKEN}'}
         data = json.load(open(project_def_path, 'rb'))
@@ -228,6 +228,7 @@ class Sphinx:
             )
 
         os.chdir(pkg_dir + docs_folder_name)
+        print(f"nbsphinx version: {nbsphinx.__version__}")
         os.system("make html")
         if show_html:
             os.system(f"{python_alias} -m http.server")
@@ -298,5 +299,10 @@ class GitHub:
     Functions for interacting with GitHub
 
     """
-    # todo implement
-    pass
+
+    @classmethod
+    def commit_push(cls, repo_dir, commit_msg, tgt_branch):
+        os.chdir(repo_dir)
+        os.system("git add --all")
+        os.system(f"git commit -m '{commit_msg}'")
+        os.system(f"git push origin {tgt_branch}")
