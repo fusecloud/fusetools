@@ -12,14 +12,16 @@ from pandas.tseries.offsets import MonthEnd
 
 class Economics:
     """
+    Functions for dealing with Economic data sources.
 
     """
 
     @classmethod
-    def bls_cpi(cls, series_id, start_year, end_year, api_key):
+    def bls_query(cls, series_id, start_year, end_year, api_key):
         """
+        Retrieves Consumer Price Index figures from the Bureau of Labor Statistics API
 
-        :param series_id:
+        :param series_id: Unique ID for a geography and an economic measure
         :param start_year:
         :param end_year:
         :param api_key:
@@ -40,7 +42,7 @@ class Economics:
         return json_data
 
     @classmethod
-    def bls_unemployment(cls, lookup_df, lookup_area_type, start_year, end_year, api_keys):
+    def bls_query_lookup(cls, lookup_df, lookup_area_type, start_year, end_year, api_keys):
         """
 
         :param lookup_df:
@@ -183,6 +185,7 @@ class Economics:
 
 class Geography:
     """
+    Functions for dealing with Geographical tasks.
 
     """
 

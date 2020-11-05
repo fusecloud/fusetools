@@ -1,12 +1,31 @@
+"""
+Job Tools.
+
+|pic1|
+    .. |pic1| image:: ../images_source/gsuite_tools/gsuitelogo1.png
+        :width: 45%
+"""
+
 from indeed import IndeedClient
 
 
 class Indeed:
+    """
+    Functions for interacting with Indeed.
+
+    """
 
     @classmethod
     def search_jobs(cls, api_key, location, query_term, max_results=25, start_pos=0):
         """
+        Search jobs on Indeed
 
+        :param api_key: Indeed API Key
+        :param location: Location (ex: city)
+        :param query_term: Job term to search for
+        :param max_results: Maximum results to pull (limit is 25)
+        :param start_pos: Paginated record position to start query from
+        :return: Indeed API query results
         """
         client = IndeedClient(api_key)
         params = {

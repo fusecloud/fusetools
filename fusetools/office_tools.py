@@ -292,8 +292,8 @@ class Outlook:
         """
         Download Outlook appointment details into a Pandas DataFrame.
 
-        :param sub_str:
-        :return:
+        :param sub_str: String to filter subject lines by for certain emails (optional)
+        :return: Pandas DataFrame Outlook appointments
         """
         try:
             import win32com.client
@@ -326,13 +326,14 @@ class Outlook:
     @classmethod
     def send_email(cls, send_to, subject, body, html_body=False, attachment=None):
         """
+        Sends an email via Outlook.
 
-        :param send_to:
-        :param subject:
-        :param body:
-        :param html_body:
-        :param attachment:
-        :return:
+        :param send_to: Recipient(s) to send email to
+        :param subject: Email subject line
+        :param body: Email body text
+        :param html_body: Email body in HTML format (optional)
+        :param attachment: Email Attachment (optional)
+        :return: Sent email via Outlook
         """
 
         try:
@@ -372,14 +373,15 @@ class Outlook:
     @classmethod
     def send_meeting(cls, subject, start_date, duration, location, sender, recipients):
         """
+        Sends a meeting invitation via Outlook.
 
-        :param subject:
-        :param start_date:
-        :param duration:
-        :param location:
-        :param sender:
-        :param recipients:
-        :return:
+        :param subject: Meeting subject
+        :param start_date: Start date of meeting
+        :param duration: Duration of meeting
+        :param location: Location of meeting
+        :param sender: Sender email address
+        :param recipients: Recipient(s) to send meeting invitatiin to
+        :return: Sent email invitation via Outlook
         """
 
         try:
@@ -412,9 +414,10 @@ class Outlook:
     @classmethod
     def delete_outlook_meetings(cls, df_del):
         """
+        Deletes meetings from Outlook calendar
 
-        :param df_del:
-        :return:
+        :param df_del: Pandas DataFrame of meetings to delete with subjects
+        :return: Deleted calendar meeting
         """
 
         try:

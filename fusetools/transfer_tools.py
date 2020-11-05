@@ -168,6 +168,10 @@ class Local:
 
 
 class SSH:
+    """
+    Functions for transferring data with SSH.
+
+    """
 
     @classmethod
     def ssh_transfer_files(cls, local_file_path,

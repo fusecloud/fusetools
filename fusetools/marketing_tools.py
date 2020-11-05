@@ -187,11 +187,20 @@ class GoogleAnalytics:
 
 class AppAnnie:
     """
+    Functions for interacting with App Annie
 
     """
 
     @classmethod
     def pull_metrics(self, api_keys, start_date, end_date):
+        """
+        Pull reporting metrics from App Annie
+
+        :param api_keys: App Annie API Keys
+        :param start_date: Date to pull reporting from
+        :param end_date: Date to pull reporting until
+        :return: Pandas DataFrame of App Annie results
+        """
         base_url = "https://api.appannie.com/v1.3/accounts"
 
         # get all combinations for request counter
@@ -334,5 +343,3 @@ class AppAnnie:
         )).reset_index(drop=False))
 
         return df_result
-
-

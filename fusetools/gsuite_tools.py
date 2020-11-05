@@ -377,7 +377,9 @@ class GDrive:
         """
         Creates a folder in Google Drive.
 
-        :param folder_path: Name of folder to create.
+        :param folder_name: Name of folder to create.
+        :param credentials: GSuite credentials object.
+        :param overwrite_folder: Whether or not to delete and re-create the folder.
         :param parent_id: Id of parent folder (optional).
         :return: Created folder information.
         """
@@ -423,7 +425,9 @@ class GDrive:
         Uploads files to a folder on Google Drive.
 
         :param folder_id: ID of folder to upload files into.
+        :param credentials: GSuite credentials object.
         :param upload_filepaths: Filepaths for files to upload.
+        :param upload_filenames: Filenames for files, must match length of filepaths (optional). Otherwise uses filepath names.
         :return: Confirmation of files being uploaded.
         """
         drive_service = build('drive', 'v3', credentials=credentials)
@@ -530,7 +534,7 @@ class GDrive:
 
 class GMail:
     """
-    Functions for interacting with GMAIL.
+    Functions for interacting with GMail.
 
     .. image:: ../images_source/gsuite_tools/gmail1.png
 
@@ -762,7 +766,7 @@ class GMail:
         :param service: Authenticated service object for GMail.
         :param msg_id: ID of message to download attachments for.
         :param sav_dir: Directory to save an attachment into.
-        :param user_id: User ID to pull emails for, default="me"
+        :param user_id: User ID to pull emails for, default="me".
         :return: Downloaded email attachments.
         """
 

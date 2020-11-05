@@ -99,6 +99,7 @@ def log_tbl_dict(proc_owner, proc_cat, proc_name, rundate=False, proc_runtime=Fa
                  notes9_key=False, notes9_note=False, notes9_val=False,
                  notes10_key=False, notes10_note=False, notes10_val=False):
     """
+    Creates a Pandas DataFrame of logging details.
 
     :param proc_owner:
     :param proc_cat:
