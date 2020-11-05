@@ -301,9 +301,20 @@ class GitHub:
     """
 
     @classmethod
-    def commit_push(cls, repo_dir, commit_msg, tgt_branch):
+    def commit_push(cls, repo_dir,
+                    commit_msg,
+                    tgt_branch,
+                    user, pwd):
+
         os.chdir(repo_dir)
         os.getcwd()
-        os.system("git add --all")
+
+        child = pexpect.spawn("git add --all", encoding='utf-8')
+        child.logfile = sys.stdout
         os.system(f"git commit -m '{commit_msg}'")
         os.system(f"git push origin {tgt_branch}")
+        child.expect(".*Username", timeout=None)
+        child.sendline(user)
+        child.expect(".*Password:", timeout=None)
+        child.sendline(pwd)
+
