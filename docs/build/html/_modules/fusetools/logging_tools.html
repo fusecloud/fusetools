@@ -1,0 +1,436 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fusetools.logging_tools &mdash; FuseTools 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> FuseTools
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changes.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../links.html">Links</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/fusetools.html">fusetools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">FuseTools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>fusetools.logging_tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for fusetools.logging_tools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Logging tasks.</span>
+
+<span class="sd">|pic1|</span>
+<span class="sd">    .. |pic1| image:: ../images_source/logging.png</span>
+<span class="sd">        :width: 30%</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+
+<div class="viewcode-block" id="make_script_function"><a class="viewcode-back" href="../../_autosummary/fusetools.logging_tools.make_script_function.html#fusetools.logging_tools.make_script_function">[docs]</a><span class="k">def</span> <span class="nf">make_script_function</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Execute a Python file as a function.</span>
+
+<span class="sd">    :param module: Arbitrary name for file to run.</span>
+<span class="sd">    :param path: Filepath for file to run.</span>
+<span class="sd">    :return: Executed run of a Python file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_file_location</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span>
+
+    <span class="k">def</span> <span class="nf">function</span><span class="p">():</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">function</span></div>
+
+
+<div class="viewcode-block" id="log_setup"><a class="viewcode-back" href="../../_autosummary/fusetools.logging_tools.log_setup.html#fusetools.logging_tools.log_setup">[docs]</a><span class="k">def</span> <span class="nf">log_setup</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">warning_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a logger object with specified parameters.</span>
+
+<span class="sd">    :param name: Name of logger object.</span>
+<span class="sd">    :param filename: Filename of logging contents.</span>
+<span class="sd">    :param warning_type: Level of warnings to provide.</span>
+<span class="sd">    :return: Logger object with specified parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+
+    <span class="n">logger_obj</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">warning_type</span> <span class="o">==</span> <span class="s2">&quot;INFO&quot;</span><span class="p">:</span>
+        <span class="n">logger_obj</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">warning_type</span> <span class="o">==</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">:</span>
+        <span class="n">logger_obj</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">warning_type</span> <span class="o">==</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">:</span>
+        <span class="n">logger_obj</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">warning_type</span> <span class="o">==</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">:</span>
+        <span class="n">logger_obj</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">warning_type</span> <span class="o">==</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">:</span>
+        <span class="n">logger_obj</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+    <span class="n">logger_obj</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">logger_obj</span></div>
+
+
+<div class="viewcode-block" id="log_all"><a class="viewcode-back" href="../../_autosummary/fusetools.logging_tools.log_all.html#fusetools.logging_tools.log_all">[docs]</a><span class="k">def</span> <span class="nf">log_all</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Log all stdout to a local logfile.</span>
+
+<span class="sd">    :param filename: Filename to write stdout content to.</span>
+<span class="sd">    :return: Logging contents to a local file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dt_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="n">dt_str</span> <span class="o">=</span> <span class="n">dt_str</span> <span class="o">+</span> <span class="s2">&quot;.log&quot;</span>
+
+    <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">error</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">info</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">dt_str</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="log_tbl_dict"><a class="viewcode-back" href="../../_autosummary/fusetools.logging_tools.log_tbl_dict.html#fusetools.logging_tools.log_tbl_dict">[docs]</a><span class="k">def</span> <span class="nf">log_tbl_dict</span><span class="p">(</span><span class="n">proc_owner</span><span class="p">,</span> <span class="n">proc_cat</span><span class="p">,</span> <span class="n">proc_name</span><span class="p">,</span> <span class="n">rundate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">proc_runtime</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">max_completed_step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outcome</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">notes1_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes1_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes1_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">notes2_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes2_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes2_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">notes3_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes3_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes3_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">notes4_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes4_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes4_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">notes5_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes5_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes5_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">notes6_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes6_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes6_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">notes7_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes7_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes7_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">notes8_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes8_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes8_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">notes9_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes9_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes9_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">notes10_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes10_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes10_val</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a Pandas DataFrame of logging details.</span>
+
+<span class="sd">    :param proc_owner:</span>
+<span class="sd">    :param proc_cat:</span>
+<span class="sd">    :param proc_name:</span>
+<span class="sd">    :param rundate:</span>
+<span class="sd">    :param proc_runtime:</span>
+<span class="sd">    :param max_completed_step:</span>
+<span class="sd">    :param outcome:</span>
+<span class="sd">    :param notes1_key:</span>
+<span class="sd">    :param notes1_note:</span>
+<span class="sd">    :param notes1_val:</span>
+<span class="sd">    :param notes2_key:</span>
+<span class="sd">    :param notes2_note:</span>
+<span class="sd">    :param notes2_val:</span>
+<span class="sd">    :param notes3_key:</span>
+<span class="sd">    :param notes3_note:</span>
+<span class="sd">    :param notes3_val:</span>
+<span class="sd">    :param notes4_key:</span>
+<span class="sd">    :param notes4_note:</span>
+<span class="sd">    :param notes4_val:</span>
+<span class="sd">    :param notes5_key:</span>
+<span class="sd">    :param notes5_note:</span>
+<span class="sd">    :param notes5_val:</span>
+<span class="sd">    :param notes6_key:</span>
+<span class="sd">    :param notes6_note:</span>
+<span class="sd">    :param notes6_val:</span>
+<span class="sd">    :param notes7_key:</span>
+<span class="sd">    :param notes7_note:</span>
+<span class="sd">    :param notes7_val:</span>
+<span class="sd">    :param notes8_key:</span>
+<span class="sd">    :param notes8_note:</span>
+<span class="sd">    :param notes8_val:</span>
+<span class="sd">    :param notes9_key:</span>
+<span class="sd">    :param notes9_note:</span>
+<span class="sd">    :param notes9_val:</span>
+<span class="sd">    :param notes10_key:</span>
+<span class="sd">    :param notes10_note:</span>
+<span class="sd">    :param notes10_val:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ddl = &#39;&#39;&#39;</span>
+    <span class="c1"># create table logging_details (</span>
+    <span class="c1"># proc_owner VARCHAR(100),</span>
+    <span class="c1"># proc_cat VARCHAR (100),</span>
+    <span class="c1"># proc_name VARCHAR (100),</span>
+    <span class="c1"># rundate VARCHAR (100),</span>
+    <span class="c1"># proc_runtime VARCHAR (100),</span>
+    <span class="c1"># max_completed_step VARCHAR (100),</span>
+    <span class="c1"># outcome VARCHAR (100),</span>
+    <span class="c1"># notes1_key VARCHAR (100),</span>
+    <span class="c1"># notes1_note VARCHAR (100),</span>
+    <span class="c1"># notes1_val VARCHAR (100),</span>
+    <span class="c1"># notes2_key VARCHAR (100),</span>
+    <span class="c1"># notes2_note VARCHAR (100),</span>
+    <span class="c1"># notes2_val VARCHAR (100),</span>
+    <span class="c1"># notes3_key VARCHAR (100),</span>
+    <span class="c1"># notes3_note VARCHAR (100),</span>
+    <span class="c1"># notes3_val VARCHAR (100),</span>
+    <span class="c1"># notes4_key VARCHAR (100),</span>
+    <span class="c1"># notes4_note VARCHAR (100),</span>
+    <span class="c1"># notes4_val VARCHAR (100),</span>
+    <span class="c1"># notes5_key VARCHAR (100),</span>
+    <span class="c1"># notes5_note VARCHAR (100),</span>
+    <span class="c1"># notes5_val VARCHAR (100),</span>
+    <span class="c1"># notes6_key VARCHAR (100),</span>
+    <span class="c1"># notes6_note VARCHAR (100),</span>
+    <span class="c1">#  notes6_val VARCHAR (100),</span>
+    <span class="c1">#  notes7_key VARCHAR (100),</span>
+    <span class="c1">#  notes7_note VARCHAR (100),</span>
+    <span class="c1">#  notes7_val VARCHAR (100),</span>
+    <span class="c1">#  notes8_key VARCHAR (100),</span>
+    <span class="c1">#  notes8_note VARCHAR (100),</span>
+    <span class="c1">#  notes8_val VARCHAR (100),</span>
+    <span class="c1">#  notes9_key VARCHAR (100),</span>
+    <span class="c1">#  notes9_note VARCHAR (100),</span>
+    <span class="c1">#  notes9_val VARCHAR (100),</span>
+    <span class="c1">#  notes10_key VARCHAR (100),</span>
+    <span class="c1">#  notes10_note VARCHAR (100),</span>
+    <span class="c1">#  notes10_val VARCHAR (100)</span>
+    <span class="c1"># )</span>
+    <span class="c1"># &#39;&#39;&#39;</span>
+
+    <span class="n">dat</span> <span class="o">=</span> <span class="p">({</span>
+        <span class="s2">&quot;proc_owner&quot;</span><span class="p">:</span> <span class="n">proc_owner</span><span class="p">,</span>
+        <span class="s2">&quot;proc_cat&quot;</span><span class="p">:</span> <span class="n">proc_cat</span><span class="p">,</span>
+        <span class="s2">&quot;proc_name&quot;</span><span class="p">:</span> <span class="n">proc_name</span><span class="p">,</span>
+        <span class="s2">&quot;rundate&quot;</span><span class="p">:</span> <span class="n">rundate</span><span class="p">,</span>
+        <span class="s2">&quot;proc_runtime&quot;</span><span class="p">:</span> <span class="n">proc_runtime</span><span class="p">,</span>
+        <span class="s2">&quot;max_completed_step&quot;</span><span class="p">:</span> <span class="n">max_completed_step</span><span class="p">,</span>
+        <span class="s2">&quot;outcome&quot;</span><span class="p">:</span> <span class="n">outcome</span><span class="p">,</span>
+        <span class="s2">&quot;notes1_key&quot;</span><span class="p">:</span> <span class="n">notes1_key</span><span class="p">,</span>
+        <span class="s2">&quot;notes1_note&quot;</span><span class="p">:</span> <span class="n">notes1_note</span><span class="p">,</span>
+        <span class="s2">&quot;notes1_val&quot;</span><span class="p">:</span> <span class="n">notes1_val</span><span class="p">,</span>
+        <span class="s2">&quot;notes2_key&quot;</span><span class="p">:</span> <span class="n">notes2_key</span><span class="p">,</span>
+        <span class="s2">&quot;notes2_note&quot;</span><span class="p">:</span> <span class="n">notes2_note</span><span class="p">,</span>
+        <span class="s2">&quot;notes2_val&quot;</span><span class="p">:</span> <span class="n">notes2_val</span><span class="p">,</span>
+        <span class="s2">&quot;notes3_key&quot;</span><span class="p">:</span> <span class="n">notes3_key</span><span class="p">,</span>
+        <span class="s2">&quot;notes3_note&quot;</span><span class="p">:</span> <span class="n">notes3_note</span><span class="p">,</span>
+        <span class="s2">&quot;notes3_val&quot;</span><span class="p">:</span> <span class="n">notes3_val</span><span class="p">,</span>
+        <span class="s2">&quot;notes4_key&quot;</span><span class="p">:</span> <span class="n">notes4_key</span><span class="p">,</span>
+        <span class="s2">&quot;notes4_note&quot;</span><span class="p">:</span> <span class="n">notes4_note</span><span class="p">,</span>
+        <span class="s2">&quot;notes4_val&quot;</span><span class="p">:</span> <span class="n">notes4_val</span><span class="p">,</span>
+        <span class="s2">&quot;notes5_key&quot;</span><span class="p">:</span> <span class="n">notes5_key</span><span class="p">,</span>
+        <span class="s2">&quot;notes5_note&quot;</span><span class="p">:</span> <span class="n">notes5_note</span><span class="p">,</span>
+        <span class="s2">&quot;notes5_val&quot;</span><span class="p">:</span> <span class="n">notes5_val</span><span class="p">,</span>
+        <span class="s2">&quot;notes6_key&quot;</span><span class="p">:</span> <span class="n">notes6_key</span><span class="p">,</span>
+        <span class="s2">&quot;notes6_note&quot;</span><span class="p">:</span> <span class="n">notes6_note</span><span class="p">,</span>
+        <span class="s2">&quot;notes6_val&quot;</span><span class="p">:</span> <span class="n">notes6_val</span><span class="p">,</span>
+        <span class="s2">&quot;notes7_key&quot;</span><span class="p">:</span> <span class="n">notes7_key</span><span class="p">,</span>
+        <span class="s2">&quot;notes7_note&quot;</span><span class="p">:</span> <span class="n">notes7_note</span><span class="p">,</span>
+        <span class="s2">&quot;notes7_val&quot;</span><span class="p">:</span> <span class="n">notes7_val</span><span class="p">,</span>
+        <span class="s2">&quot;notes8_key&quot;</span><span class="p">:</span> <span class="n">notes8_key</span><span class="p">,</span>
+        <span class="s2">&quot;notes8_note&quot;</span><span class="p">:</span> <span class="n">notes8_note</span><span class="p">,</span>
+        <span class="s2">&quot;notes8_val&quot;</span><span class="p">:</span> <span class="n">notes8_val</span><span class="p">,</span>
+        <span class="s2">&quot;notes9_key&quot;</span><span class="p">:</span> <span class="n">notes9_key</span><span class="p">,</span>
+        <span class="s2">&quot;notes9_note&quot;</span><span class="p">:</span> <span class="n">notes9_note</span><span class="p">,</span>
+        <span class="s2">&quot;notes9_val&quot;</span><span class="p">:</span> <span class="n">notes9_val</span><span class="p">,</span>
+        <span class="s2">&quot;notes10_key&quot;</span><span class="p">:</span> <span class="n">notes10_key</span><span class="p">,</span>
+        <span class="s2">&quot;notes10_note&quot;</span><span class="p">:</span> <span class="n">notes10_note</span><span class="p">,</span>
+        <span class="s2">&quot;notes10_val&quot;</span><span class="p">:</span> <span class="n">notes10_val</span>
+    <span class="p">})</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dat</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

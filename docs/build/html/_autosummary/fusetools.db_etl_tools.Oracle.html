@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fusetools.db_etl_tools.Oracle &mdash; FuseTools 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="fusetools.db_etl_tools.Postgres" href="fusetools.db_etl_tools.Postgres.html" />
+    <link rel="prev" title="fusetools.db_etl_tools.Generic" href="fusetools.db_etl_tools.Generic.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> FuseTools
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../links.html">Links</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="fusetools.html">fusetools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="fusetools.analytics_tools.html">fusetools.analytics_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.cloud_tools.html">fusetools.cloud_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.comm_tools.html">fusetools.comm_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.commerce_tools.html">fusetools.commerce_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.dashboard_tools.html">fusetools.dashboard_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.date_tools.html">fusetools.date_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.db_conn_tools.html">fusetools.db_conn_tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="fusetools.db_etl_tools.html">fusetools.db_etl_tools</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="fusetools.db_etl_tools.Generic.html">fusetools.db_etl_tools.Generic</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">fusetools.db_etl_tools.Oracle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fusetools.db_etl_tools.Postgres.html">fusetools.db_etl_tools.Postgres</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fusetools.db_etl_tools.Redshift.html">fusetools.db_etl_tools.Redshift</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fusetools.db_etl_tools.Teradata.html">fusetools.db_etl_tools.Teradata</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.devops_tools.html">fusetools.devops_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.financial_tools.html">fusetools.financial_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.gsuite_tools.html">fusetools.gsuite_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.job_tools.html">fusetools.job_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.logging_tools.html">fusetools.logging_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.marketing_tools.html">fusetools.marketing_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.ml_tools.html">fusetools.ml_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.music_tools.html">fusetools.music_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.office_tools.html">fusetools.office_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.pm_tools.html">fusetools.pm_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.research_tools.html">fusetools.research_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.screen_tools.html">fusetools.screen_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.social_tools.html">fusetools.social_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.stat_tools.html">fusetools.stat_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.text_tools.html">fusetools.text_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.transfer_tools.html">fusetools.transfer_tools</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FuseTools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="fusetools.html">fusetools</a> &raquo;</li>
+        
+          <li><a href="fusetools.db_etl_tools.html">fusetools.db_etl_tools</a> &raquo;</li>
+        
+      <li>fusetools.db_etl_tools.Oracle</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="fusetools-db-etl-tools-oracle">
+<h1>fusetools.db_etl_tools.Oracle<a class="headerlink" href="#fusetools-db-etl-tools-oracle" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="fusetools.db_etl_tools.Oracle">
+<em class="property">class </em><code class="sig-prename descclassname">fusetools.db_etl_tools.</code><code class="sig-name descname">Oracle</code><a class="reference internal" href="../_modules/fusetools/db_etl_tools.html#Oracle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.db_etl_tools.Oracle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Generic functions for Oracle SQL queries and ETL.</p>
+<img alt="../_images/oracle11.png" src="../_images/oracle11.png" />
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.db_etl_tools.Oracle.get_oracle_date" title="fusetools.db_etl_tools.Oracle.get_oracle_date"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_oracle_date</span></code></a></p></td>
+<td><p>Converts a date to an Oracle date of format “DD-MMM-YYY”</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.db_etl_tools.Oracle.get_orcl_date" title="fusetools.db_etl_tools.Oracle.get_orcl_date"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_orcl_date</span></code></a></p></td>
+<td><p>Converts a date to an Oracle date of format “DD-MMM-YYY”.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.db_etl_tools.Oracle.insert_exec" title="fusetools.db_etl_tools.Oracle.insert_exec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_exec</span></code></a></p></td>
+<td><p>Executes a provided SQL statement.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.db_etl_tools.Oracle.insert_tbl" title="fusetools.db_etl_tools.Oracle.insert_tbl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_tbl</span></code></a></p></td>
+<td><p>Executes an INSERT INTO statement for a given Pandas DataFrame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.db_etl_tools.Oracle.make_tbl" title="fusetools.db_etl_tools.Oracle.make_tbl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_tbl</span></code></a></p></td>
+<td><p>Provides a CREATE TABLE SQL statement for a given Pandas DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.db_etl_tools.Oracle.make_tbl_complete" title="fusetools.db_etl_tools.Oracle.make_tbl_complete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_tbl_complete</span></code></a></p></td>
+<td><p>Executes a series of SQL statements to CREATE and INSERT into a table from a Pandas DataFrame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.db_etl_tools.Oracle.make_tbl_complete_force" title="fusetools.db_etl_tools.Oracle.make_tbl_complete_force"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_tbl_complete_force</span></code></a></p></td>
+<td><p>Executes a series of SQL statements to CREATE and INSERT into a table from a Pandas DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.db_etl_tools.Oracle.orcl_tbl_varchar_convert" title="fusetools.db_etl_tools.Oracle.orcl_tbl_varchar_convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">orcl_tbl_varchar_convert</span></code></a></p></td>
+<td><p>Converts a set of columns to VARCHAR(300) for a given Oracle table.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="fusetools.db_etl_tools.Oracle.get_oracle_date">
+<em class="property">classmethod </em><code class="sig-name descname">get_oracle_date</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/db_etl_tools.html#Oracle.get_oracle_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.db_etl_tools.Oracle.get_oracle_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a date to an Oracle date of format “DD-MMM-YYY”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>date</strong> – A provided date.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An Oracle database date.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.db_etl_tools.Oracle.get_orcl_date">
+<em class="property">classmethod </em><code class="sig-name descname">get_orcl_date</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dat</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/db_etl_tools.html#Oracle.get_orcl_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.db_etl_tools.Oracle.get_orcl_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a date to an Oracle date of format “DD-MMM-YYY”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dat</strong> – A provided date column of a Pandas Series.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An Oracle database date.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.db_etl_tools.Oracle.insert_exec">
+<em class="property">classmethod </em><code class="sig-name descname">insert_exec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sql</span></em>, <em class="sig-param"><span class="n">conn</span></em>, <em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/db_etl_tools.html#Oracle.insert_exec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.db_etl_tools.Oracle.insert_exec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes a provided SQL statement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sql</strong> – A provided SQL query.</p></li>
+<li><p><strong>conn</strong> – A database connection.</p></li>
+<li><p><strong>df</strong> – A Pandas DataFrame.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.db_etl_tools.Oracle.insert_tbl">
+<em class="property">classmethod </em><code class="sig-name descname">insert_tbl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">tbl_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/db_etl_tools.html#Oracle.insert_tbl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.db_etl_tools.Oracle.insert_tbl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes an INSERT INTO statement for a given Pandas DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – A Pandas DataFrame with values to be inserted.</p></li>
+<li><p><strong>tbl_name</strong> – An Oracle table for Pandas DataFrame to be inserted into.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>SQL for INSERT INTO statement.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.db_etl_tools.Oracle.make_tbl">
+<em class="property">classmethod </em><code class="sig-name descname">make_tbl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">tbl_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/db_etl_tools.html#Oracle.make_tbl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.db_etl_tools.Oracle.make_tbl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a CREATE TABLE SQL statement for a given Pandas DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – A Pandas DataFrame to be added as an Oracle table.</p></li>
+<li><p><strong>tbl_name</strong> – Oracle table name to be created.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>CREATE TABLE SQL statement.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.db_etl_tools.Oracle.make_tbl_complete">
+<em class="property">classmethod </em><code class="sig-name descname">make_tbl_complete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">tbl_name</span></em>, <em class="sig-param"><span class="n">eng</span></em>, <em class="sig-param"><span class="n">conn</span></em>, <em class="sig-param"><span class="n">subcols</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">chunks</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">chunks_delay</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/db_etl_tools.html#Oracle.make_tbl_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.db_etl_tools.Oracle.make_tbl_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes a series of SQL statements to CREATE and INSERT into a table from a Pandas DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame to create a table from.</p></li>
+<li><p><strong>tbl_name</strong> – Name of table to be created.</p></li>
+<li><p><strong>eng</strong> – Oracle database engine object.</p></li>
+<li><p><strong>conn</strong> – Oracle database connection object.</p></li>
+<li><p><strong>subcols</strong> – A list of columns of the Pandas DataFrame to apply operations on.</p></li>
+<li><p><strong>chunks</strong> – Number of chunks to split Pandas DataFrame into.</p></li>
+<li><p><strong>chunks_delay</strong> – Delay between chunk’s INSERT statement.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Print statements outline sequential SQL statements executed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.db_etl_tools.Oracle.make_tbl_complete_force">
+<em class="property">classmethod </em><code class="sig-name descname">make_tbl_complete_force</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">tbl_name</span></em>, <em class="sig-param"><span class="n">eng</span></em>, <em class="sig-param"><span class="n">conn</span></em>, <em class="sig-param"><span class="n">attempt_n</span></em>, <em class="sig-param"><span class="n">subcols</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">chunks</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">chunks_delay</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/db_etl_tools.html#Oracle.make_tbl_complete_force"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.db_etl_tools.Oracle.make_tbl_complete_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes a series of SQL statements to CREATE and INSERT into a table from a Pandas DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame to create a table from.</p></li>
+<li><p><strong>tbl_name</strong> – Name of table to be created.</p></li>
+<li><p><strong>eng</strong> – Oracle database engine object.</p></li>
+<li><p><strong>conn</strong> – Oracle database connection object.</p></li>
+<li><p><strong>attempt_n</strong> – Number of times to attempt to run INSERT statement.</p></li>
+<li><p><strong>subcols</strong> – A list of columns of the Pandas DataFrame to apply operations on.</p></li>
+<li><p><strong>chunks</strong> – Number of chunks to split Pandas DataFrame into.</p></li>
+<li><p><strong>chunks_delay</strong> – Delay between chunk’s INSERT statement.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Print statements outline sequential SQL statements executed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.db_etl_tools.Oracle.orcl_tbl_varchar_convert">
+<em class="property">classmethod </em><code class="sig-name descname">orcl_tbl_varchar_convert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tbl_name</span></em>, <em class="sig-param"><span class="n">convert_cols</span></em>, <em class="sig-param"><span class="n">engine</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/db_etl_tools.html#Oracle.orcl_tbl_varchar_convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.db_etl_tools.Oracle.orcl_tbl_varchar_convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a set of columns to VARCHAR(300) for a given Oracle table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tbl_name</strong> – Oracle table name.</p></li>
+<li><p><strong>convert_cols</strong> – List of columns to convert.</p></li>
+<li><p><strong>engine</strong> – Oracle database engine.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Printed ALTER table statements for each column.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="fusetools.db_etl_tools.Postgres.html" class="btn btn-neutral float-right" title="fusetools.db_etl_tools.Postgres" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="fusetools.db_etl_tools.Generic.html" class="btn btn-neutral float-left" title="fusetools.db_etl_tools.Generic" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

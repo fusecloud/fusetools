@@ -1,0 +1,806 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fusetools.stat_tools &mdash; FuseTools 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> FuseTools
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changes.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../links.html">Links</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/fusetools.html">fusetools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">FuseTools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>fusetools.stat_tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for fusetools.stat_tools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions for interacting with Machine Learning Tools.</span>
+
+<span class="sd">|pic1| |pic2|</span>
+<span class="sd">    .. |pic1| image:: ../images_source/stat_tools/scipy.png</span>
+<span class="sd">        :width: 30%</span>
+<span class="sd">    .. |pic2| image:: ../images_source/stat_tools/statsmodels.png</span>
+<span class="sd">        :width: 30%</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">fusetools.text_tools</span> <span class="kn">import</span> <span class="n">Blob</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="c1"># price elasticity</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="c1"># optimization</span>
+<span class="c1"># survival</span>
+<span class="kn">from</span> <span class="nn">lifelines.statistics</span> <span class="kn">import</span> <span class="n">logrank_test</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">beta</span><span class="p">,</span> <span class="n">chi2_contingency</span>
+<span class="c1">## poisson test</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">binom_test</span>
+<span class="c1">## z-score converter</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span>
+<span class="c1">## t test</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">ttest_ind</span>
+<span class="c1">## sample size</span>
+<span class="c1">## chisquared</span>
+<span class="kn">from</span> <span class="nn">statsmodels.stats.proportion</span> <span class="kn">import</span> <span class="n">proportions_chisquare</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">gridspec</span>
+<span class="kn">import</span> <span class="nn">matplotlib.ticker</span> <span class="k">as</span> <span class="nn">mtick</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<div class="viewcode-block" id="Desc"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Desc.html#fusetools.stat_tools.Desc">[docs]</a><span class="k">class</span> <span class="nc">Desc</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions for helping with Descriptive statistical tasks.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Desc.make_tbl"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Desc.html#fusetools.stat_tools.Desc.make_tbl">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">make_tbl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">font_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a plot of a data table.</span>
+
+<span class="sd">        :param width: Width of table.</span>
+<span class="sd">        :param height: Height of table.</span>
+<span class="sd">        :param df: Pandas DataFrame.</span>
+<span class="sd">        :param title: Title of plot.</span>
+<span class="sd">        :param font_size: Font size.</span>
+<span class="sd">        :return: Plot of a data table.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="kn">import</span> <span class="nn">six</span>
+        <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+        <span class="n">current_palette_7</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;Set1&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="n">current_palette_7</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
+        <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">()</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+        <span class="n">font_size</span> <span class="o">=</span> <span class="n">font_size</span>
+        <span class="n">header_color</span> <span class="o">=</span> <span class="s1">&#39;#40466e&#39;</span>
+        <span class="n">row_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#f1f1f2&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">]</span>
+        <span class="n">edge_color</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">header_columns</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">mpl_table</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">cellText</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                              <span class="n">bbox</span><span class="o">=</span><span class="n">bbox</span><span class="p">,</span> <span class="n">colLabels</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="n">mpl_table</span><span class="o">.</span><span class="n">auto_set_font_size</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">mpl_table</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="n">font_size</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">mpl_table</span><span class="o">.</span><span class="n">_cells</span><span class="p">):</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">set_edgecolor</span><span class="p">(</span><span class="n">edge_color</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">header_columns</span><span class="p">:</span>
+                <span class="n">cell</span><span class="o">.</span><span class="n">set_text_props</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">cell</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">header_color</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cell</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">row_colors</span><span class="p">[</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_colors</span><span class="p">)])</span>
+
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">);</span></div>
+
+<div class="viewcode-block" id="Desc.group_stats"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Desc.html#fusetools.stat_tools.Desc.group_stats">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">group_stats</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">dim_cols</span><span class="p">,</span> <span class="n">agg_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a Pandas DataFrame with the following aggregations over a dimension: Count, Percentage of Occurrence, Median.</span>
+
+<span class="sd">        :param df: Pandas DataFrame of</span>
+<span class="sd">        :param col:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df1</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span>
+               <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">dim_cols</span><span class="p">)</span>
+               <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">agg_dict</span><span class="p">)</span>
+               <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+               <span class="p">)</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="s1">&#39;bins&#39;</span><span class="p">,</span> <span class="s1">&#39;Page_Link&#39;</span><span class="p">:</span> <span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="s1">&#39;End_Price&#39;</span><span class="p">:</span> <span class="s1">&#39;median&#39;</span><span class="p">}</span>
+        <span class="n">df1</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+
+        <span class="n">df1</span><span class="p">[</span><span class="s1">&#39;pct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">df1</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">df1</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])),</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">df1</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df1</span><span class="p">[</span><span class="s1">&#39;bins&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">df1</span><span class="p">[</span><span class="s1">&#39;bins&#39;</span><span class="p">]</span>
+        <span class="n">df1</span> <span class="o">=</span> <span class="n">df1</span><span class="p">[[</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;pct&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">df1</span></div>
+
+<div class="viewcode-block" id="Desc.group_stats_bins"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Desc.html#fusetools.stat_tools.Desc.group_stats_bins">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">group_stats_bins</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">bin_st</span><span class="p">,</span> <span class="n">bin_end</span><span class="p">,</span> <span class="n">bin_n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a Pandas DataFrame with the following aggregations over a dimension binned by specified intervals: Count, Percentage of Occurrence, Median.</span>
+
+<span class="sd">        :param df:</span>
+<span class="sd">        :param col:</span>
+<span class="sd">        :param bin_st:</span>
+<span class="sd">        :param bin_end:</span>
+<span class="sd">        :param bin_n:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">bin_st</span><span class="p">,</span> <span class="n">bin_end</span><span class="p">,</span> <span class="n">bin_n</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;bins&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">bins</span><span class="p">,</span> <span class="n">include_lowest</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;bins&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span>
+            <span class="s2">&quot;End_Price&quot;</span><span class="p">:</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Page_Link&quot;</span><span class="p">:</span> <span class="s2">&quot;size&quot;</span>
+        <span class="p">}))</span>
+        <span class="n">df1</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bins&#39;</span><span class="p">:</span> <span class="s1">&#39;bins&#39;</span><span class="p">,</span> <span class="s1">&#39;Page_Link&#39;</span><span class="p">:</span> <span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="s1">&#39;End_Price&#39;</span><span class="p">:</span> <span class="s1">&#39;median&#39;</span><span class="p">}</span>
+        <span class="n">df1</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+
+        <span class="n">df1</span><span class="p">[</span><span class="s1">&#39;pct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">df1</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">df1</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]),</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">df1</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df1</span><span class="p">[</span><span class="s1">&#39;bins&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">df1</span><span class="p">[</span><span class="s1">&#39;bins&#39;</span><span class="p">]</span>
+        <span class="n">df1</span> <span class="o">=</span> <span class="n">df1</span><span class="p">[[</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;pct&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">df1</span></div></div>
+
+
+<div class="viewcode-block" id="Test"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test">[docs]</a><span class="k">class</span> <span class="nc">Test</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions for implementing Statistical tests.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Test.ttest"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.ttest">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">ttest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs a t-test</span>
+
+<span class="sd">        :param df:</span>
+<span class="sd">        :param col:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">[[</span><span class="s1">&#39;End_Price&#39;</span><span class="p">]]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">[[</span><span class="s1">&#39;End_Price&#39;</span><span class="p">]]</span>
+        <span class="n">t</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">ttest_ind</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">equal_var</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">p</span></div>
+
+<div class="viewcode-block" id="Test.ttest_result"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.ttest_result">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">ttest_result</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="p">,</span>
+            <span class="n">sample1_dat_ttest</span><span class="p">,</span>
+            <span class="n">sample2_dat_ttest</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param sample1_dat_ttest:</span>
+<span class="sd">        :param sample2_dat_ttest:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">Blob</span><span class="o">.</span><span class="n">text_parse</span><span class="p">(</span><span class="n">sample1_dat_ttest</span><span class="p">,</span> <span class="n">sample2_dat_ttest</span><span class="p">)</span>
+        <span class="n">t</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">ttest_ind</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">equal_var</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">p</span></div>
+
+<div class="viewcode-block" id="Test.cramers_corrected_stat"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.cramers_corrected_stat">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">cramers_corrected_stat</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cat_col1</span><span class="p">,</span> <span class="n">cat_col2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates correlation between 2 categorical variables using Cramer&#39;s method</span>
+
+<span class="sd">        :param cat_col1:</span>
+<span class="sd">        :param cat_col2:</span>
+<span class="sd">        :return: Correlation between 2 categorical variables using Cramer&#39;s method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># https://stackoverflow.com/questions/20892799/using-pandas-calculate-cram%C3%A9rs-coefficient-matrix</span>
+        <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">cat_col1</span><span class="p">,</span> <span class="n">cat_col2</span><span class="p">)</span>
+        <span class="n">chi2</span><span class="p">,</span> <span class="n">chi2_pval</span> <span class="o">=</span> \
+            <span class="n">chi2_contingency</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">chi2_contingency</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">phi2</span> <span class="o">=</span> <span class="n">chi2</span> <span class="o">/</span> <span class="n">n</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">phi2corr</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">phi2</span> <span class="o">-</span> <span class="p">((</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">rcorr</span> <span class="o">=</span> <span class="n">r</span> <span class="o">-</span> <span class="p">((</span><span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">kcorr</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="p">((</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi2corr</span> <span class="o">/</span> <span class="nb">min</span><span class="p">((</span><span class="n">kcorr</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">rcorr</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))),</span> <span class="n">chi2_pval</span></div>
+
+<div class="viewcode-block" id="Test.sample_size1"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.sample_size1">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">sample_size1</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+                     <span class="n">baseline_input</span><span class="p">,</span>
+                     <span class="n">effect_size_input</span><span class="p">,</span>
+                     <span class="n">significance_level_input</span><span class="p">,</span>
+                     <span class="n">statistical_power_input</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates</span>
+
+<span class="sd">        :param baseline_input:</span>
+<span class="sd">        :param effect_size_input:</span>
+<span class="sd">        :param significance_level_input:</span>
+<span class="sd">        :param statistical_power_input:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">isf</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">significance_level_input</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])</span>  <span class="c1"># two-sided t test</span>
+        <span class="n">zp</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">norm</span><span class="o">.</span><span class="n">isf</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">statistical_power_input</span><span class="p">)])</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">baseline_input</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">effect_size_input</span><span class="p">))</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">baseline_input</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">effect_size_input</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> \
+            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">baseline_input</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">effect_size_input</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">s</span> <span class="o">*</span> <span class="p">((</span><span class="n">zp</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">d</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">n</span></div>
+
+<div class="viewcode-block" id="Test.chi_squared_result"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.chi_squared_result">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">chi_squared_result</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+                           <span class="n">sample1_successes</span><span class="p">,</span>
+                           <span class="n">sample1_trials</span><span class="p">,</span>
+                           <span class="n">sample2_successes</span><span class="p">,</span>
+                           <span class="n">sample2_trials</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param sample1_successes:</span>
+<span class="sd">        :param sample1_trials:</span>
+<span class="sd">        :param sample2_successes:</span>
+<span class="sd">        :param sample2_trials:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">successes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">sample1_successes</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">sample2_successes</span><span class="p">)])</span>
+        <span class="n">trials</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">sample1_trials</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">sample2_trials</span><span class="p">)])</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">proportions_chisquare</span><span class="p">(</span><span class="n">successes</span><span class="p">,</span> <span class="n">trials</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">p</span></div>
+
+    <span class="c1"># survival</span>
+<div class="viewcode-block" id="Test.survival_result"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.survival_result">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">survival_result</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+                        <span class="n">data_type</span><span class="p">,</span>
+                        <span class="n">sample1_dat_survival</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">sample2_dat_survival</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">survival_confidence_level</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">sample1_dat_survival_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">sample1_dat_survival_size</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">sample2_dat_survival_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">sample2_dat_survival_size</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">survival_confidence_level_means</span><span class="o">=</span><span class="kc">False</span>
+                        <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param data_type:</span>
+<span class="sd">        :param sample1_dat_survival:</span>
+<span class="sd">        :param sample2_dat_survival:</span>
+<span class="sd">        :param survival_confidence_level:</span>
+<span class="sd">        :param sample1_dat_survival_mean:</span>
+<span class="sd">        :param sample1_dat_survival_size:</span>
+<span class="sd">        :param sample2_dat_survival_mean:</span>
+<span class="sd">        :param sample2_dat_survival_size:</span>
+<span class="sd">        :param survival_confidence_level_means:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
+
+            <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">Blob</span><span class="o">.</span><span class="n">text_parse</span><span class="p">(</span><span class="n">sample1_dat_survival</span><span class="p">,</span> <span class="n">sample2_dat_survival</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">logrank_test</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">survival_confidence_level</span><span class="p">))</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">p_value</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample1_dat_survival_mean</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample2_dat_survival_mean</span><span class="p">):</span>
+
+                <span class="n">f1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample1_dat_survival_mean</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample2_dat_survival_mean</span><span class="p">)</span>
+                <span class="n">df1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample1_dat_survival_size</span><span class="p">)</span>
+                <span class="n">df2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample2_dat_survival_size</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">f1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample2_dat_survival_mean</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample1_dat_survival_mean</span><span class="p">)</span>
+                <span class="n">df1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample2_dat_survival_size</span><span class="p">)</span>
+                <span class="n">df2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample1_dat_survival_size</span><span class="p">)</span>
+
+            <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">beta</span><span class="o">.</span><span class="n">cdf</span><span class="p">((</span><span class="n">df1</span> <span class="o">*</span> <span class="n">f1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">df1</span> <span class="o">*</span> <span class="n">f1</span> <span class="o">+</span> <span class="n">df2</span><span class="p">),</span> <span class="n">df1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">df2</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">p</span></div>
+
+    <span class="c1"># poison</span>
+<div class="viewcode-block" id="Test.update_poisson"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.update_poisson">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">update_poisson</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+                       <span class="n">sample1_events</span><span class="p">,</span>
+                       <span class="n">sample1_days</span><span class="p">,</span>
+                       <span class="n">sample2_events</span><span class="p">,</span>
+                       <span class="n">sample2_days</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param sample1_events:</span>
+<span class="sd">        :param sample1_days:</span>
+<span class="sd">        :param sample2_events:</span>
+<span class="sd">        :param sample2_days:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">binom_test</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">sample1_events</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample1_days</span><span class="p">),</span>
+                                 <span class="nb">float</span><span class="p">(</span><span class="n">sample2_events</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample2_days</span><span class="p">)]),</span>
+                       <span class="nb">float</span><span class="p">(</span><span class="n">sample1_events</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample1_events</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">p</span></div>
+
+    <span class="c1"># price elasticity</span>
+<div class="viewcode-block" id="Test.pe"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.pe">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">pe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+           <span class="nb">type</span><span class="p">,</span>
+           <span class="n">original_quantity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+           <span class="n">new_quantity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+           <span class="n">original_price</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+           <span class="n">new_price</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+           <span class="n">pe_prices</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+           <span class="n">pe_quantities</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param type:</span>
+<span class="sd">        :param original_quantity:</span>
+<span class="sd">        :param new_quantity:</span>
+<span class="sd">        :param original_price:</span>
+<span class="sd">        :param new_price:</span>
+<span class="sd">        :param pe_prices:</span>
+<span class="sd">        :param pe_quantities:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
+            <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">Blob</span><span class="o">.</span><span class="n">text_parse</span><span class="p">(</span><span class="n">pe_prices</span><span class="p">,</span> <span class="n">pe_quantities</span><span class="p">)</span>
+
+            <span class="n">est</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p2</span><span class="p">),</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p1</span><span class="p">)))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+            <span class="n">pe</span> <span class="o">=</span> <span class="n">est</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">pe</span> <span class="o">=</span> <span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">new_quantity</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">original_quantity</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">new_quantity</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">original_quantity</span><span class="p">)))</span> <span class="o">/</span> \
+                 <span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">new_price</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">original_price</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">new_price</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">original_price</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">pe</span></div>
+
+    <span class="c1"># correlation</span>
+<div class="viewcode-block" id="Test.correlation"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.correlation">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">correlation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+                    <span class="n">sample1_dat</span><span class="p">,</span>
+                    <span class="n">sample2_dat</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param sample1_dat:</span>
+<span class="sd">        :param sample2_dat:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">Blob</span><span class="o">.</span><span class="n">text_parse</span><span class="p">(</span><span class="n">sample1_dat</span><span class="p">,</span> <span class="n">sample2_dat</span><span class="p">)</span>
+
+        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span><span class="s1">&#39;sample1&#39;</span><span class="p">:</span> <span class="n">p2</span><span class="p">,</span>
+             <span class="s1">&#39;sample2&#39;</span><span class="p">:</span> <span class="n">p1</span><span class="p">})</span>
+
+        <span class="n">corr</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;pearson&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">corr</span></div></div>
+
+
+<div class="viewcode-block" id="Viz"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Viz.html#fusetools.stat_tools.Viz">[docs]</a><span class="k">class</span> <span class="nc">Viz</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions for visualizing distributions.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">make_plot_tbl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">plot_size</span><span class="p">,</span>
+                      <span class="n">tbl_size</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">tgt_col</span><span class="p">,</span>
+                      <span class="n">title</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">agg_df</span><span class="p">,</span> <span class="n">plot_type</span><span class="p">,</span> <span class="n">yaxis_fmt</span><span class="p">,</span> <span class="n">xaxis_fmt</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">font_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param width:</span>
+<span class="sd">        :param height:</span>
+<span class="sd">        :param plot_size:</span>
+<span class="sd">        :param tbl_size:</span>
+<span class="sd">        :param df:</span>
+<span class="sd">        :param col:</span>
+<span class="sd">        :param tgt_col:</span>
+<span class="sd">        :param title:</span>
+<span class="sd">        :param xlabel:</span>
+<span class="sd">        :param ylabel:</span>
+<span class="sd">        :param agg_df:</span>
+<span class="sd">        :param plot_type:</span>
+<span class="sd">        :param yaxis_fmt:</span>
+<span class="sd">        :param xaxis_fmt:</span>
+<span class="sd">        :param stat:</span>
+<span class="sd">        :param font_size:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;$</span><span class="si">{x:,.0f}</span><span class="s1">&#39;</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
+        <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="n">plot_size</span><span class="p">,</span> <span class="n">tbl_size</span><span class="p">])</span>
+        <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">current_palette_7</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;Set1&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="n">current_palette_7</span><span class="p">)</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;ticks&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;box&quot;</span><span class="p">:</span>
+
+            <span class="n">sns</span><span class="o">.</span><span class="n">swarmplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">tgt_col</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+                          <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">diverging_palette</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">7</span><span class="p">):</span>
+
+                <span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">tgt_col</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">showmeans</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">patch</span> <span class="ow">in</span> <span class="n">ax1</span><span class="o">.</span><span class="n">artists</span><span class="p">:</span>
+                <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">patch</span><span class="o">.</span><span class="n">get_facecolor</span><span class="p">()</span>
+                <span class="n">patch</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">.</span><span class="mi">3</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">stat</span> <span class="o">==</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span>
+                <span class="n">p_val</span> <span class="o">=</span> <span class="n">ttest_ind</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+                <span class="n">p_val</span> <span class="o">=</span> <span class="n">p_val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">ax1</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">.</span><span class="mi">0</span><span class="p">,</span> <span class="o">.</span><span class="mi">99</span><span class="p">,</span> <span class="s1">&#39;T-Test p-value=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">p_val</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                         <span class="n">transform</span><span class="o">=</span><span class="n">ax1</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;box_h&quot;</span><span class="p">:</span>
+
+            <span class="n">sns</span><span class="o">.</span><span class="n">swarmplot</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">agg_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">tgt_col</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+                          <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">diverging_palette</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">7</span><span class="p">):</span>
+                <span class="c1"># find colors for boxes</span>
+
+                <span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">agg_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">tgt_col</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                            <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="n">showmeans</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">patch</span> <span class="ow">in</span> <span class="n">ax1</span><span class="o">.</span><span class="n">artists</span><span class="p">:</span>
+                <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">patch</span><span class="o">.</span><span class="n">get_facecolor</span><span class="p">()</span>
+                <span class="n">patch</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="o">.</span><span class="mi">3</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;scatter&quot;</span><span class="p">:</span>
+            <span class="n">df_sub</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">notnull</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">])]</span>
+            <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+            <span class="k">def</span> <span class="nf">r2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+
+            <span class="n">rsq</span> <span class="o">=</span> <span class="n">r2</span><span class="p">(</span><span class="n">df_sub</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">df_sub</span><span class="p">[</span><span class="n">tgt_col</span><span class="p">])</span>
+            <span class="n">sns</span><span class="o">.</span><span class="n">regplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">tgt_col</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df_sub</span><span class="p">,</span> <span class="n">scatter_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">})</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;R^2=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">rsq</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                     <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax1</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;dist&quot;</span><span class="p">:</span>
+            <span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#40466e&#39;</span><span class="p">,</span> <span class="n">kde</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hist_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">})</span>
+
+            <span class="n">median1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+            <span class="n">median1</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">median1</span><span class="p">)</span>
+
+            <span class="n">ax1</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">.</span><span class="mi">9</span><span class="p">,</span> <span class="o">.</span><span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;Median=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">median1</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                     <span class="n">transform</span><span class="o">=</span><span class="n">ax1</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">median1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;agg_dist&quot;</span><span class="p">:</span>
+            <span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df1</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#40466e&#39;</span><span class="p">);</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+
+        <span class="c1"># set formatting aesthetics</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">tick</span> <span class="o">=</span> <span class="n">mtick</span><span class="o">.</span><span class="n">StrMethodFormatter</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">yaxis_fmt</span><span class="p">:</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">tick</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xaxis_fmt</span><span class="p">:</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">tick</span><span class="p">)</span>
+
+        <span class="n">ax2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+        <span class="n">font_size</span> <span class="o">=</span> <span class="n">font_size</span>
+        <span class="n">header_color</span> <span class="o">=</span> <span class="s1">&#39;#40466e&#39;</span>
+        <span class="n">row_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#f1f1f2&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">]</span>
+        <span class="n">edge_color</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">header_columns</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">agg_df</span> <span class="o">=</span> <span class="n">agg_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">yaxis_fmt</span> <span class="o">==</span> <span class="s2">&quot;$&quot;</span> <span class="ow">or</span> <span class="n">xaxis_fmt</span> <span class="o">==</span> <span class="s2">&quot;$&quot;</span><span class="p">:</span>
+            <span class="n">agg_df</span><span class="p">[</span><span class="s1">&#39;median&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">agg_df</span><span class="p">[</span><span class="s1">&#39;median&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="s1">&#39;$</span><span class="si">{:,.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">agg_df</span><span class="p">[</span><span class="s1">&#39;median&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">agg_df</span><span class="p">[</span><span class="s1">&#39;median&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:,.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+
+        <span class="n">agg_df</span><span class="p">[</span><span class="s1">&#39;pct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">agg_df</span><span class="p">[</span><span class="s1">&#39;pct&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:,.1f}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;dist&quot;</span> <span class="ow">or</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;agg_dist&quot;</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">agg_df</span><span class="p">[</span><span class="s1">&#39;median&#39;</span><span class="p">]</span>
+            <span class="n">mpl_table</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">cellText</span><span class="o">=</span><span class="n">agg_df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">rowLabels</span><span class="o">=</span><span class="n">agg_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                                  <span class="n">bbox</span><span class="o">=</span><span class="n">bbox</span><span class="p">,</span> <span class="n">colLabels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;%&quot;</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mpl_table</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">cellText</span><span class="o">=</span><span class="n">agg_df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">rowLabels</span><span class="o">=</span><span class="n">agg_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                                  <span class="n">bbox</span><span class="o">=</span><span class="n">bbox</span><span class="p">,</span> <span class="n">colLabels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="s2">&quot;Median $&quot;</span><span class="p">])</span>
+
+        <span class="n">mpl_table</span><span class="o">.</span><span class="n">auto_set_font_size</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">mpl_table</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="n">font_size</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">mpl_table</span><span class="o">.</span><span class="n">_cells</span><span class="p">):</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">set_edgecolor</span><span class="p">(</span><span class="n">edge_color</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">header_columns</span><span class="p">:</span>
+                <span class="n">cell</span><span class="o">.</span><span class="n">set_text_props</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">cell</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">header_color</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cell</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">row_colors</span><span class="p">[</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_colors</span><span class="p">)])</span>
+        <span class="k">return</span> <span class="n">gs</span><span class="p">;</span>
+
+<div class="viewcode-block" id="Viz.make_plot_tbl"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Viz.html#fusetools.stat_tools.Viz.make_plot_tbl">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">make_plot_tbl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">plot_size</span><span class="p">,</span> <span class="n">tbl_size</span><span class="p">,</span> <span class="n">df_plot</span><span class="p">,</span> <span class="n">plot_col_x</span><span class="p">,</span> <span class="n">plot_col_y</span><span class="p">,</span> <span class="n">plot_col_hue</span><span class="p">,</span>
+                      <span class="n">plot_title</span><span class="p">,</span> <span class="n">df_tbl</span><span class="p">,</span> <span class="n">font_size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param width:</span>
+<span class="sd">        :param height:</span>
+<span class="sd">        :param plot_size:</span>
+<span class="sd">        :param tbl_size:</span>
+<span class="sd">        :param df_plot:</span>
+<span class="sd">        :param plot_col_x:</span>
+<span class="sd">        :param plot_col_y:</span>
+<span class="sd">        :param plot_col_hue:</span>
+<span class="sd">        :param plot_title:</span>
+<span class="sd">        :param df_tbl:</span>
+<span class="sd">        :param font_size:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
+        <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="n">plot_size</span><span class="p">,</span> <span class="n">tbl_size</span><span class="p">])</span>
+        <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">current_palette_7</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;Set1&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="n">current_palette_7</span><span class="p">)</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">plot_col_x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">plot_col_y</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="n">plot_col_hue</span><span class="p">,</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">df_plot</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">,</span>
+                    <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.5</span><span class="p">);</span>
+
+        <span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">plot_title</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">ax2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+        <span class="n">font_size</span> <span class="o">=</span> <span class="n">font_size</span>
+        <span class="n">header_color</span> <span class="o">=</span> <span class="s1">&#39;#40466e&#39;</span>
+        <span class="n">row_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#f1f1f2&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">]</span>
+        <span class="n">edge_color</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span>
+        <span class="n">bbox</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">header_columns</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">mpl_table</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">cellText</span><span class="o">=</span><span class="n">df_tbl</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">rowLabels</span><span class="o">=</span><span class="n">df_tbl</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                              <span class="n">bbox</span><span class="o">=</span><span class="n">bbox</span><span class="p">,</span> <span class="n">colLabels</span><span class="o">=</span><span class="n">df_tbl</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="n">mpl_table</span><span class="o">.</span><span class="n">auto_set_font_size</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">mpl_table</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="n">font_size</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">mpl_table</span><span class="o">.</span><span class="n">_cells</span><span class="p">):</span>
+            <span class="n">cell</span><span class="o">.</span><span class="n">set_edgecolor</span><span class="p">(</span><span class="n">edge_color</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">header_columns</span><span class="p">:</span>
+                <span class="n">cell</span><span class="o">.</span><span class="n">set_text_props</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">cell</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">header_color</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cell</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">row_colors</span><span class="p">[</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_colors</span><span class="p">)])</span>
+        <span class="k">return</span> <span class="n">gs</span><span class="p">;</span></div>
+
+<div class="viewcode-block" id="Viz.dist_plot"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Viz.html#fusetools.stat_tools.Viz.dist_plot">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">dist_plot</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param df:</span>
+<span class="sd">        :param col:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">hist_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">6</span><span class="p">},</span> <span class="n">kde_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+
+        <span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;All&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># sns.distplot(X_train[X_train.index.isin(y_train[y_train==1].index)][col],</span>
+        <span class="c1">#             color=&quot;dodgerblue&quot;, label=&quot;Responder&quot;, **kwargs)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;/pix/&quot;</span> <span class="o">+</span> <span class="n">col</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

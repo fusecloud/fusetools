@@ -1,0 +1,653 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fusetools.cloud_tools.AWS &mdash; FuseTools 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="fusetools.cloud_tools.Firebase" href="fusetools.cloud_tools.Firebase.html" />
+    <link rel="prev" title="fusetools.cloud_tools" href="fusetools.cloud_tools.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> FuseTools
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../links.html">Links</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="fusetools.html">fusetools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="fusetools.analytics_tools.html">fusetools.analytics_tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="fusetools.cloud_tools.html">fusetools.cloud_tools</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">fusetools.cloud_tools.AWS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fusetools.cloud_tools.Firebase.html">fusetools.cloud_tools.Firebase</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.comm_tools.html">fusetools.comm_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.commerce_tools.html">fusetools.commerce_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.dashboard_tools.html">fusetools.dashboard_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.date_tools.html">fusetools.date_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.db_conn_tools.html">fusetools.db_conn_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.db_etl_tools.html">fusetools.db_etl_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.devops_tools.html">fusetools.devops_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.financial_tools.html">fusetools.financial_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.gsuite_tools.html">fusetools.gsuite_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.job_tools.html">fusetools.job_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.logging_tools.html">fusetools.logging_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.marketing_tools.html">fusetools.marketing_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.ml_tools.html">fusetools.ml_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.music_tools.html">fusetools.music_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.office_tools.html">fusetools.office_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.pm_tools.html">fusetools.pm_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.research_tools.html">fusetools.research_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.screen_tools.html">fusetools.screen_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.social_tools.html">fusetools.social_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.stat_tools.html">fusetools.stat_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.text_tools.html">fusetools.text_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.transfer_tools.html">fusetools.transfer_tools</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FuseTools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="fusetools.html">fusetools</a> &raquo;</li>
+        
+          <li><a href="fusetools.cloud_tools.html">fusetools.cloud_tools</a> &raquo;</li>
+        
+      <li>fusetools.cloud_tools.AWS</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="fusetools-cloud-tools-aws">
+<h1>fusetools.cloud_tools.AWS<a class="headerlink" href="#fusetools-cloud-tools-aws" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="fusetools.cloud_tools.AWS">
+<em class="property">class </em><code class="sig-prename descclassname">fusetools.cloud_tools.</code><code class="sig-name descname">AWS</code><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Functions for interacting with AWS infrastructure, including: S3, Redshift, DynamoDB</p>
+<a class="reference internal image-reference" href="../_images/aws1.png"><img alt="../_images/aws1.png" src="../_images/aws1.png" style="width: 45%;" /></a>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_s3_bucket</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.delete_dynamo_tbl" title="fusetools.cloud_tools.AWS.delete_dynamo_tbl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_dynamo_tbl</span></code></a></p></td>
+<td><p>Deletes a DynamoDB table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.delete_s3_object" title="fusetools.cloud_tools.AWS.delete_s3_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_s3_object</span></code></a></p></td>
+<td><p>Deletes a list of S3 bucket objects.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.df_to_s3" title="fusetools.cloud_tools.AWS.df_to_s3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">df_to_s3</span></code></a></p></td>
+<td><p>Sends a Pandas DataFrame to S3.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.dynamo_to_redshift" title="fusetools.cloud_tools.AWS.dynamo_to_redshift"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dynamo_to_redshift</span></code></a></p></td>
+<td><p>Copies contents of a DynamoDB table to a Redshift table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.file_to_s3" title="fusetools.cloud_tools.AWS.file_to_s3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_to_s3</span></code></a></p></td>
+<td><p>Uploads a local file to an S3 bucket.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.get_dynamo_fields" title="fusetools.cloud_tools.AWS.get_dynamo_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dynamo_fields</span></code></a></p></td>
+<td><p>Retrieves a list of fields for a given DynamoDB table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.load_dynamo" title="fusetools.cloud_tools.AWS.load_dynamo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_dynamo</span></code></a></p></td>
+<td><p>Inserts either a Dictionary or Pandas DataFrame into DynamoDB.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.make_dynamo_tbl" title="fusetools.cloud_tools.AWS.make_dynamo_tbl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_dynamo_tbl</span></code></a></p></td>
+<td><p>Creates a Dynamo table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.query_dynamo" title="fusetools.cloud_tools.AWS.query_dynamo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_dynamo</span></code></a></p></td>
+<td><p>Downloads data from a DynamoDB table into a Pandas DataFrame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.rs_to_s3" title="fusetools.cloud_tools.AWS.rs_to_s3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rs_to_s3</span></code></a></p></td>
+<td><p>Transfers a Redshift query result to a data object on S3.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.s3_list_files" title="fusetools.cloud_tools.AWS.s3_list_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s3_list_files</span></code></a></p></td>
+<td><p>Returns a list of objects in an S3 bucket.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.s3_to_df" title="fusetools.cloud_tools.AWS.s3_to_df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s3_to_df</span></code></a></p></td>
+<td><p>Saves data from S3 to a Pandas DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.s3_to_file" title="fusetools.cloud_tools.AWS.s3_to_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s3_to_file</span></code></a></p></td>
+<td><p>Saves an S3 object to a local filepath.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.s3_to_rs" title="fusetools.cloud_tools.AWS.s3_to_rs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s3_to_rs</span></code></a></p></td>
+<td><p>Transfers an S3 data object into a Redshift relational database table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.s3_to_s3" title="fusetools.cloud_tools.AWS.s3_to_s3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s3_to_s3</span></code></a></p></td>
+<td><p>Transfers an S3 data object to another S3 bucket.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.delete_dynamo_tbl">
+<em class="property">classmethod </em><code class="sig-name descname">delete_dynamo_tbl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">region_name</span></em>, <em class="sig-param"><span class="n">tbl_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.delete_dynamo_tbl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.delete_dynamo_tbl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a DynamoDB table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>region_name</strong> – Region name where the Dynamo table is.</p></li>
+<li><p><strong>tbl_name</strong> – Name of Dynamo table.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON response for API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.delete_s3_object">
+<em class="property">classmethod </em><code class="sig-name descname">delete_s3_object</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">obj_list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.delete_s3_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.delete_s3_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a list of S3 bucket objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>bucket</strong> – S3 bucket name.</p></li>
+<li><p><strong>obj_list</strong> – List of bucket objects to be deleted, in the following format: [{“Key”: “your_file_name_key”}].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON response for API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.df_to_s3">
+<em class="property">classmethod </em><code class="sig-name descname">df_to_s3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">object_name</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">sep</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.df_to_s3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.df_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a Pandas DataFrame to S3.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame.</p></li>
+<li><p><strong>object_name</strong> – S3 bucket object name to save DataFrame to.</p></li>
+<li><p><strong>bucket</strong> – S3 bucket name.</p></li>
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>sep</strong> – Delimiter for Pandas DataFrame.</p></li>
+<li><p><strong>header</strong> – Indicates if Pandas DataFrame should be sent with a header.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON response for API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.dynamo_to_redshift">
+<em class="property">classmethod </em><code class="sig-name descname">dynamo_to_redshift</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cursor</span></em>, <em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">tbl_name_rs</span></em>, <em class="sig-param"><span class="n">tbl_name_dynamo</span></em>, <em class="sig-param"><span class="n">readratio</span><span class="o">=</span><span class="default_value">50</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.dynamo_to_redshift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.dynamo_to_redshift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies contents of a DynamoDB table to a Redshift table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cursor</strong> – Redshift database cursor object.</p></li>
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>tbl_name_rs</strong> – Name of Redshift table.</p></li>
+<li><p><strong>tbl_name_dynamo</strong> – Name of Dynamo table.</p></li>
+<li><p><strong>readratio</strong> – The percentage of the DynamoDB table’s provisioned throughput to use for the data load</p></li>
+<li><p><strong>fields</strong> – List of fields to pull from Dynamo table.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Completed Dynamo to Redshift ETL operation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.file_to_s3">
+<em class="property">classmethod </em><code class="sig-name descname">file_to_s3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">folder_file</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">object_name</span></em>, <em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">metadata_d</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">public_file</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.file_to_s3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.file_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads a local file to an S3 bucket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder_file</strong> – Filepath of local file.</p></li>
+<li><p><strong>bucket</strong> – Name of S3 bucket.</p></li>
+<li><p><strong>object_name</strong> – Bucket path of S3 object to upload to.</p></li>
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>metadata_d</strong> – Dictionary of metadata to add to uploaded S3 bucket object.</p></li>
+<li><p><strong>public_file</strong> – Switch to make S3 bucket object open to public access.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Log of data object transfer (from filepath to bucket object).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.get_dynamo_fields">
+<em class="property">classmethod </em><code class="sig-name descname">get_dynamo_fields</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tbl_name</span></em>, <em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">region_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.get_dynamo_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.get_dynamo_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a list of fields for a given DynamoDB table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tbl_name</strong> – Name of Dynamo table.</p></li>
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>region_name</strong> – Region name where the Dynamo table is.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON response for API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.load_dynamo">
+<em class="property">classmethod </em><code class="sig-name descname">load_dynamo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">region_name</span></em>, <em class="sig-param"><span class="n">tbl_name</span></em>, <em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.load_dynamo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.load_dynamo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts either a Dictionary or Pandas DataFrame into DynamoDB.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>region_name</strong> – Region name for DynamoDB table.</p></li>
+<li><p><strong>tbl_name</strong> – Name of DynamoDB table.</p></li>
+<li><p><strong>d</strong> – Dictionary or Pandas DataFrame to be loaded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON response for API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.make_dynamo_tbl">
+<em class="property">classmethod </em><code class="sig-name descname">make_dynamo_tbl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">region_name</span></em>, <em class="sig-param"><span class="n">tbl_name</span></em>, <em class="sig-param"><span class="n">key_schema</span></em>, <em class="sig-param"><span class="n">attribute_definitions</span></em>, <em class="sig-param"><span class="n">provisioned_throughput</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.make_dynamo_tbl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.make_dynamo_tbl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a Dynamo table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>region_name</strong> – Region name where the Dynamo table is.</p></li>
+<li><p><strong>tbl_name</strong> – Name of Dynamo table.</p></li>
+<li><p><strong>key_schema</strong> – List of table key objects containing attribute names and key types.</p></li>
+<li><p><strong>attribute_definitions</strong> – List of attribute definition objects for the keys, including attribute names and data types.</p></li>
+<li><p><strong>provisioned_throughput</strong> – Read &amp; Write capacity for table.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON response for API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.query_dynamo">
+<em class="property">classmethod </em><code class="sig-name descname">query_dynamo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">region_name</span></em>, <em class="sig-param"><span class="n">tbl_name</span></em>, <em class="sig-param"><span class="n">data_format</span><span class="o">=</span><span class="default_value">'list'</span></em>, <em class="sig-param"><span class="n">fields</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.query_dynamo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.query_dynamo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads data from a DynamoDB table into a Pandas DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>region_name</strong> – Region name for DynamoDB table.</p></li>
+<li><p><strong>tbl_name</strong> – Name of DynamoDB table.</p></li>
+<li><p><strong>data_format</strong> – Specifies type of data structure to return, it not ‘list’ returns a Pandas DataFrame.</p></li>
+<li><p><strong>fields</strong> – DynamoDB table fields to pull data from.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pandas DataFrame of DynamoDB data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.rs_to_s3">
+<em class="property">classmethod </em><code class="sig-name descname">rs_to_s3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cursor</span></em>, <em class="sig-param"><span class="n">sql</span></em>, <em class="sig-param"><span class="n">bucket_path</span></em>, <em class="sig-param"><span class="n">delimiter</span></em>, <em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">exec</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.rs_to_s3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.rs_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfers a Redshift query result to a data object on S3.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cursor</strong> – Redshift cursor object.</p></li>
+<li><p><strong>sql</strong> – Redshift query’s SQL statement.</p></li>
+<li><p><strong>bucket_path</strong> – Bucket path of S3 data object to save data to.</p></li>
+<li><p><strong>delimiter</strong> – Delimiter for S3 data object when converted from Redshift query result.</p></li>
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>exec</strong> – Specifies whether to execute the command if True or return the command’s text if false.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Log of data object transfer (from query to bucket object).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.s3_list_files">
+<em class="property">classmethod </em><code class="sig-name descname">s3_list_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">search_str</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.s3_list_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.s3_list_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of objects in an S3 bucket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bucket</strong> – Name of S3 bucket.</p></li>
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>search_str</strong> – Search string to limit results by.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dictionary of bucket object file names, creation times and metadata.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.s3_to_df">
+<em class="property">classmethod </em><code class="sig-name descname">s3_to_df</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">object_name</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">sep</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.s3_to_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.s3_to_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves data from S3 to a Pandas DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>object_name</strong> – S3 data object to save to Pandas.</p></li>
+<li><p><strong>bucket</strong> – S3 Bucket name.</p></li>
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>sep</strong> – Delimiter for S3 data object to convert to a DataFrame.</p></li>
+<li><p><strong>header</strong> – Indicates if the S3 data object contains a header to use for the DataFrame.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pandas DataFrame of S3 data object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.s3_to_file">
+<em class="property">classmethod </em><code class="sig-name descname">s3_to_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">object_name</span></em>, <em class="sig-param"><span class="n">folder_file</span></em>, <em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.s3_to_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.s3_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves an S3 object to a local filepath.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bucket</strong> – Name of S3 bucket.</p></li>
+<li><p><strong>object_name</strong> – Bucket path of S3 object to save.</p></li>
+<li><p><strong>folder_file</strong> – Name of local filepath.</p></li>
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Log of data object transfer (from bucket object to filepath).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.s3_to_rs">
+<em class="property">classmethod </em><code class="sig-name descname">s3_to_rs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cursor</span></em>, <em class="sig-param"><span class="n">tbl_name</span></em>, <em class="sig-param"><span class="n">bucket_path</span></em>, <em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">delimiter</span></em>, <em class="sig-param"><span class="n">updates_off</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">exec</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.s3_to_rs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.s3_to_rs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfers an S3 data object into a Redshift relational database table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cursor</strong> – Redshift cursor object.</p></li>
+<li><p><strong>tbl_name</strong> – Redshift table name.</p></li>
+<li><p><strong>bucket_path</strong> – Bucket path of S3 data object to copy.</p></li>
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>delimiter</strong> – Delimiter for S3 data object to convert to a Redshift table.</p></li>
+<li><p><strong>updates_off</strong> – Redshift Insert/Upsert performance tuning parameter.</p></li>
+<li><p><strong>exec</strong> – Specifies whether to execute the command if True or return the command’s text if false.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Log of data object transfer (from bucket object to table).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.s3_to_s3">
+<em class="property">classmethod </em><code class="sig-name descname">s3_to_s3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">bucket_from</span></em>, <em class="sig-param"><span class="n">bucket_to</span></em>, <em class="sig-param"><span class="n">from_key</span></em>, <em class="sig-param"><span class="n">to_key</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.s3_to_s3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.s3_to_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfers an S3 data object to another S3 bucket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>bucket_from</strong> – S3 bucket to transfer object from.</p></li>
+<li><p><strong>bucket_to</strong> – S3 bucket to transfer object to.</p></li>
+<li><p><strong>from_key</strong> – Path of S3 data object to transfer.</p></li>
+<li><p><strong>to_key</strong> – Destination path of transferred S3 data object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON response for API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="fusetools.cloud_tools.Firebase.html" class="btn btn-neutral float-right" title="fusetools.cloud_tools.Firebase" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="fusetools.cloud_tools.html" class="btn btn-neutral float-left" title="fusetools.cloud_tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

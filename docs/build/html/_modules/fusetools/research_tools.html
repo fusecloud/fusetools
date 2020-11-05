@@ -1,0 +1,454 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fusetools.research_tools &mdash; FuseTools 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> FuseTools
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changes.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../links.html">Links</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/fusetools.html">fusetools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">FuseTools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>fusetools.research_tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for fusetools.research_tools</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">geopy.distance</span> <span class="kn">import</span> <span class="n">vincenty</span>
+<span class="kn">from</span> <span class="nn">geopy.geocoders</span> <span class="kn">import</span> <span class="n">Nominatim</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">pandas.tseries.offsets</span> <span class="kn">import</span> <span class="n">MonthEnd</span>
+
+
+<div class="viewcode-block" id="Economics"><a class="viewcode-back" href="../../_autosummary/fusetools.research_tools.Economics.html#fusetools.research_tools.Economics">[docs]</a><span class="k">class</span> <span class="nc">Economics</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions for dealing with Economic data sources.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Economics.bls_query"><a class="viewcode-back" href="../../_autosummary/fusetools.research_tools.Economics.html#fusetools.research_tools.Economics.bls_query">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">bls_query</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">series_id</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">api_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves Consumer Price Index figures from the Bureau of Labor Statistics API</span>
+
+<span class="sd">        :param series_id: Unique ID for a geography and an economic measure</span>
+<span class="sd">        :param start_year:</span>
+<span class="sd">        :param end_year:</span>
+<span class="sd">        :param api_key:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">}</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+            <span class="s2">&quot;seriesid&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">series_id</span><span class="p">],</span>
+            <span class="s2">&quot;startyear&quot;</span><span class="p">:</span> <span class="n">start_year</span><span class="p">,</span> <span class="s2">&quot;endyear&quot;</span><span class="p">:</span> <span class="n">end_year</span>
+            <span class="p">,</span>
+            <span class="s2">&quot;registrationkey&quot;</span><span class="p">:</span> <span class="n">api_key</span>
+        <span class="p">})</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;https://api.bls.gov/publicAPI/v2/timeseries/data/&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">json_data</span></div>
+
+<div class="viewcode-block" id="Economics.bls_query_lookup"><a class="viewcode-back" href="../../_autosummary/fusetools.research_tools.Economics.html#fusetools.research_tools.Economics.bls_query_lookup">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">bls_query_lookup</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lookup_df</span><span class="p">,</span> <span class="n">lookup_area_type</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">api_keys</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param lookup_df:</span>
+<span class="sd">        :param lookup_area_type:</span>
+<span class="sd">        :param start_year:</span>
+<span class="sd">        :param end_year:</span>
+<span class="sd">        :param api_keys:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">}</span>
+        <span class="n">lookup_df</span><span class="p">[</span><span class="s1">&#39;results_log&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">lookup_df</span><span class="p">[</span><span class="s1">&#39;results_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">lookup_df</span><span class="p">[</span><span class="s1">&#39;results_val&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">lookup_df</span><span class="p">[</span><span class="s1">&#39;lookup_area_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lookup_area_type</span>
+        <span class="n">key_num</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">lookup_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">use_key</span> <span class="o">=</span> <span class="n">api_keys</span><span class="p">[</span><span class="n">key_num</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;progress...</span><span class="si">{</span><span class="n">idx</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">lookup_df</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+                <span class="s2">&quot;seriesid&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">chunk</span><span class="p">[</span><span class="s1">&#39;q_code&#39;</span><span class="p">]],</span>
+                <span class="s2">&quot;startyear&quot;</span><span class="p">:</span> <span class="n">start_year</span><span class="p">,</span> <span class="s2">&quot;endyear&quot;</span><span class="p">:</span> <span class="n">end_year</span>
+                <span class="p">,</span>
+                <span class="s2">&quot;registrationkey&quot;</span><span class="p">:</span> <span class="n">use_key</span>
+            <span class="p">})</span>
+
+            <span class="n">p</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;https://api.bls.gov/publicAPI/v2/timeseries/data/&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">json_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">))</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
+
+            <span class="c1"># if the response failed, try again</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">json_data</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No response on </span><span class="si">{</span><span class="n">chunk</span><span class="p">[</span><span class="s1">&#39;q_code&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;https://api.bls.gov/publicAPI/v2/timeseries/data/&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+                <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+            <span class="c1"># if the api exceeded the daily limit (500 calls), switch to a new key</span>
+            <span class="k">elif</span> <span class="n">json_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;daily threshold&quot;</span> <span class="ow">in</span> <span class="n">json_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="c1"># try switching keys if we pass the daily limit</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;Switching API key&#39;&#39;&#39;</span><span class="p">)</span>
+                <span class="n">key_num</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">use_key</span> <span class="o">=</span> <span class="n">api_keys</span><span class="p">[</span><span class="n">key_num</span><span class="p">]</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+                    <span class="s2">&quot;seriesid&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">chunk</span><span class="p">[</span><span class="s1">&#39;q_code&#39;</span><span class="p">]]</span>
+                    <span class="p">,</span>
+                    <span class="s2">&quot;startyear&quot;</span><span class="p">:</span> <span class="n">start_year</span><span class="p">,</span> <span class="s2">&quot;endyear&quot;</span><span class="p">:</span> <span class="n">end_year</span>
+                    <span class="p">,</span>
+                    <span class="s2">&quot;registrationkey&quot;</span><span class="p">:</span> <span class="n">use_key</span>
+                <span class="p">})</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;https://api.bls.gov/publicAPI/v2/timeseries/data/&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+                <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">lookup_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s2">&quot;results_log&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span>
+                <span class="n">years_</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Results&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;series&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)]</span>
+                <span class="n">periods_</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;period&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Results&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;series&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)]</span>
+                <span class="n">period_names_</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;periodName&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Results&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;series&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)]</span>
+                <span class="n">values_</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Results&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;series&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)]</span>
+
+                <span class="n">df_ret</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+                    <span class="s2">&quot;q_code&quot;</span><span class="p">:</span> <span class="n">chunk</span><span class="p">[</span><span class="s1">&#39;q_code&#39;</span><span class="p">],</span>
+                    <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="n">chunk</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span>
+                    <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="n">years_</span><span class="p">,</span>
+                    <span class="s2">&quot;period&quot;</span><span class="p">:</span> <span class="n">periods_</span><span class="p">,</span>
+                    <span class="s2">&quot;period_name&quot;</span><span class="p">:</span> <span class="n">period_names_</span><span class="p">,</span>
+                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">values_</span>
+                <span class="p">})</span>
+
+                <span class="n">df_ret</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;success&quot;</span>
+
+            <span class="k">except</span><span class="p">:</span>
+
+                <span class="n">df_ret</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+                    <span class="s2">&quot;q_code&quot;</span><span class="p">:</span> <span class="n">chunk</span><span class="p">[</span><span class="s1">&#39;q_code&#39;</span><span class="p">],</span>
+                    <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="n">chunk</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span>
+                    <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s2">&quot;period&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s2">&quot;period_name&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[]</span>
+                <span class="p">})</span>
+
+                <span class="n">df_ret</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;fail&quot;</span>
+
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">df_ret_all</span> <span class="o">=</span> <span class="n">df_ret</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df_ret_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_ret_all</span><span class="p">,</span> <span class="n">df_ret</span><span class="p">])</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;data size: </span><span class="si">{</span><span class="n">df_ret_all</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+
+        <span class="c1"># calculate start of the month</span>
+        <span class="n">df_ret_all</span><span class="p">[</span><span class="s1">&#39;month_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+            <span class="n">df_ret_all</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">+</span> \
+            <span class="s2">&quot;-&quot;</span> <span class="o">+</span> \
+            <span class="n">df_ret_all</span><span class="p">[</span><span class="s1">&#39;period&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">+</span> <span class="s2">&quot;-01&quot;</span>
+        <span class="p">)</span>
+        <span class="c1"># calculate end of the month</span>
+        <span class="n">df_ret_all</span><span class="p">[</span><span class="s1">&#39;month_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_ret_all</span><span class="p">[</span><span class="s1">&#39;month_start&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">MonthEnd</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df_ret_all</span></div>
+
+<div class="viewcode-block" id="Economics.bea_gdp"><a class="viewcode-back" href="../../_autosummary/fusetools.research_tools.Economics.html#fusetools.research_tools.Economics.bea_gdp">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">bea_gdp</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">tbl_name</span><span class="o">=</span><span class="s2">&quot;SQGDP1&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param api_key:</span>
+<span class="sd">        :param tbl_name:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">        https://apps.bea.gov/api/data/?&amp;</span>
+<span class="s1">        UserID=</span><span class="si">{</span><span class="n">api_key</span><span class="si">}</span><span class="s1">&amp;</span>
+<span class="s1">        method=GetData&amp;</span>
+<span class="s1">        datasetname=Regional&amp;TableName=</span><span class="si">{</span><span class="n">tbl_name</span><span class="si">}</span><span class="s1">&amp;</span>
+<span class="s1">        LineCode=3&amp;</span>
+<span class="s1">        GeoFIPS=STATE&amp;</span>
+<span class="s1">        ResultFormat=JSON&#39;&#39;&#39;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">data_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DataValue&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BEAAPI&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Results&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Data&quot;</span><span class="p">)]</span>
+        <span class="n">time_periods</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TimePeriod&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BEAAPI&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Results&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Data&quot;</span><span class="p">)]</span>
+        <span class="n">geo_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;GeoName&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BEAAPI&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Results&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Data&quot;</span><span class="p">)]</span>
+        <span class="n">cl_units</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CL_UNIT&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BEAAPI&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Results&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Data&quot;</span><span class="p">)]</span>
+        <span class="n">unit_mults</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;UNIT_MULT&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;BEAAPI&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Results&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Data&quot;</span><span class="p">)]</span>
+
+        <span class="n">df</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;data_values&quot;</span><span class="p">:</span> <span class="n">data_values</span><span class="p">,</span>
+                    <span class="s2">&quot;time_periods&quot;</span><span class="p">:</span> <span class="n">time_periods</span><span class="p">,</span>
+                    <span class="s2">&quot;geo_names&quot;</span><span class="p">:</span> <span class="n">geo_names</span><span class="p">,</span>
+                    <span class="s2">&quot;cl_units&quot;</span><span class="p">:</span> <span class="n">cl_units</span><span class="p">,</span>
+                    <span class="s2">&quot;unit_mults&quot;</span><span class="p">:</span> <span class="n">unit_mults</span>
+                <span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">df</span></div></div>
+
+
+<div class="viewcode-block" id="Geography"><a class="viewcode-back" href="../../_autosummary/fusetools.research_tools.Geography.html#fusetools.research_tools.Geography">[docs]</a><span class="k">class</span> <span class="nc">Geography</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions for dealing with Geographical tasks.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Geography.get_city_lat_lon"><a class="viewcode-back" href="../../_autosummary/fusetools.research_tools.Geography.html#fusetools.research_tools.Geography.get_city_lat_lon">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_city_lat_lon</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">city</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param city:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">geolocator</span> <span class="o">=</span> <span class="n">Nominatim</span><span class="p">()</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">geolocator</span><span class="o">.</span><span class="n">geocode</span><span class="p">(</span><span class="n">city</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loc</span></div>
+
+<div class="viewcode-block" id="Geography.calculate_distance"><a class="viewcode-back" href="../../_autosummary/fusetools.research_tools.Geography.html#fusetools.research_tools.Geography.calculate_distance">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">calculate_distance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lat_from</span><span class="p">,</span> <span class="n">lon_from</span><span class="p">,</span> <span class="n">lat_to</span><span class="p">,</span> <span class="n">lon_to</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param lat_from:</span>
+<span class="sd">        :param lon_from:</span>
+<span class="sd">        :param lat_to:</span>
+<span class="sd">        :param lon_to:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">coords_from</span> <span class="o">=</span> <span class="p">(</span><span class="n">lat_from</span><span class="p">,</span> <span class="n">lon_from</span><span class="p">)</span>
+        <span class="n">coords_to</span> <span class="o">=</span> <span class="p">(</span><span class="n">lat_to</span><span class="p">,</span> <span class="n">lon_to</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">vincenty</span><span class="p">(</span><span class="n">coords_from</span><span class="p">,</span> <span class="n">coords_to</span><span class="p">)</span><span class="o">.</span><span class="n">miles</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">dist</span></div>
+
+<div class="viewcode-block" id="Geography.walk_bike_transit_score"><a class="viewcode-back" href="../../_autosummary/fusetools.research_tools.Geography.html#fusetools.research_tools.Geography.walk_bike_transit_score">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">walk_bike_transit_score</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">addr</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">api_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param addr:</span>
+<span class="sd">        :param lat:</span>
+<span class="sd">        :param lon:</span>
+<span class="sd">        :param api_key:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">addr_base</span> <span class="o">=</span> <span class="s2">&quot;http://api.walkscore.com/score?format=json&amp;address=&quot;</span>
+        <span class="n">addr_base</span> <span class="o">=</span> <span class="n">addr_base</span> <span class="o">+</span> <span class="n">addr</span> <span class="o">+</span> \
+                    <span class="s2">&quot;&amp;lat=&quot;</span> <span class="o">+</span> <span class="n">lat</span> <span class="o">+</span> <span class="s2">&quot;&amp;lon=&quot;</span> <span class="o">+</span> <span class="n">lon</span> <span class="o">+</span> \
+                    <span class="s2">&quot;&amp;transit=1&quot;</span> <span class="o">+</span> <span class="s2">&quot;&amp;bike=1&quot;</span> <span class="o">+</span> <span class="s2">&quot;&amp;wsapikey=&quot;</span> <span class="o">+</span> <span class="n">api_key</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">jsonurl</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">addr_base</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">jsonurl</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="n">scores_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">bike_score</span> <span class="o">=</span> <span class="n">scores_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="s2">&quot;bike&quot;</span><span class="p">]</span>
+            <span class="n">transit_score</span> <span class="o">=</span> <span class="n">scores_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="s2">&quot;transit&quot;</span><span class="p">]</span>
+            <span class="n">walk_score</span> <span class="o">=</span> <span class="n">scores_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="s2">&quot;walkscore&quot;</span><span class="p">]</span>
+
+            <span class="k">del</span> <span class="n">scores_df</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">bike_score</span><span class="p">,</span> <span class="n">transit_score</span><span class="p">,</span> <span class="n">walk_score</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

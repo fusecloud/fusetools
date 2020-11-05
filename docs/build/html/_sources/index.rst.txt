@@ -1,13 +1,13 @@
 Introduction
 =======================================
 
-PyMagic is a Python package with code to help you accomplish miscellaneous and business tasks.
-With PyMagic you can access a wide variety of applications and APIs for different use cases.
+FuseTools is a Python package with code to help you accomplish miscellaneous and business tasks.
+With FuseTools you can access a wide variety of applications and APIs for different use cases.
 
 Roadmap
 ---------------------
 
-PyMagic currently has functionality for the following.
+FuseTools currently has functionality for the following.
 
 .. image:: CC_ROADMAP.png
 
@@ -15,9 +15,9 @@ Download and install
 --------------------
 
 This package is in the `Python Package Index
-<http://pypi.python.org/pypi/pymagic>`__, so ``pip install pymagic`` should
+<http://pypi.python.org/pypi/fusetools>`__, so ``pip install fusetools`` should
 be enough.  You can also clone it on `Github
-<http://github.com/pymagic/PyGithub>`__.
+<http://github.com/fusetools/PyGithub>`__.
 
 Licensing
 ---------
@@ -45,7 +45,7 @@ You want all the details about PyGithub classes? `Reference of Classes <https://
    :template: custom-module-template.rst
    :recursive:
 
-   pymagic
+   fusetools
 
 
 

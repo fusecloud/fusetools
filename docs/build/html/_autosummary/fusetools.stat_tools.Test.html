@@ -1,0 +1,509 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fusetools.stat_tools.Test &mdash; FuseTools 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="fusetools.stat_tools.Viz" href="fusetools.stat_tools.Viz.html" />
+    <link rel="prev" title="fusetools.stat_tools.Desc" href="fusetools.stat_tools.Desc.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> FuseTools
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../links.html">Links</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="fusetools.html">fusetools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="fusetools.analytics_tools.html">fusetools.analytics_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.cloud_tools.html">fusetools.cloud_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.comm_tools.html">fusetools.comm_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.commerce_tools.html">fusetools.commerce_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.dashboard_tools.html">fusetools.dashboard_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.date_tools.html">fusetools.date_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.db_conn_tools.html">fusetools.db_conn_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.db_etl_tools.html">fusetools.db_etl_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.devops_tools.html">fusetools.devops_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.financial_tools.html">fusetools.financial_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.gsuite_tools.html">fusetools.gsuite_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.job_tools.html">fusetools.job_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.logging_tools.html">fusetools.logging_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.marketing_tools.html">fusetools.marketing_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.ml_tools.html">fusetools.ml_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.music_tools.html">fusetools.music_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.office_tools.html">fusetools.office_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.pm_tools.html">fusetools.pm_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.research_tools.html">fusetools.research_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.screen_tools.html">fusetools.screen_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.social_tools.html">fusetools.social_tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="fusetools.stat_tools.html">fusetools.stat_tools</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="fusetools.stat_tools.Desc.html">fusetools.stat_tools.Desc</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">fusetools.stat_tools.Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fusetools.stat_tools.Viz.html">fusetools.stat_tools.Viz</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.text_tools.html">fusetools.text_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.transfer_tools.html">fusetools.transfer_tools</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FuseTools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="fusetools.html">fusetools</a> &raquo;</li>
+        
+          <li><a href="fusetools.stat_tools.html">fusetools.stat_tools</a> &raquo;</li>
+        
+      <li>fusetools.stat_tools.Test</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="fusetools-stat-tools-test">
+<h1>fusetools.stat_tools.Test<a class="headerlink" href="#fusetools-stat-tools-test" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="fusetools.stat_tools.Test">
+<em class="property">class </em><code class="sig-prename descclassname">fusetools.stat_tools.</code><code class="sig-name descname">Test</code><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Functions for implementing Statistical tests.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.chi_squared_result" title="fusetools.stat_tools.Test.chi_squared_result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chi_squared_result</span></code></a></p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param sample1_successes</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.correlation" title="fusetools.stat_tools.Test.correlation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">correlation</span></code></a></p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param sample1_dat</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.cramers_corrected_stat" title="fusetools.stat_tools.Test.cramers_corrected_stat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cramers_corrected_stat</span></code></a></p></td>
+<td><p>Calculates correlation between 2 categorical variables using Cramer’s method</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.pe" title="fusetools.stat_tools.Test.pe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pe</span></code></a></p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param type</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.sample_size1" title="fusetools.stat_tools.Test.sample_size1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size1</span></code></a></p></td>
+<td><p>Calculates</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.survival_result" title="fusetools.stat_tools.Test.survival_result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">survival_result</span></code></a></p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param data_type</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.ttest" title="fusetools.stat_tools.Test.ttest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ttest</span></code></a></p></td>
+<td><p>Performs a t-test</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.ttest_result" title="fusetools.stat_tools.Test.ttest_result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ttest_result</span></code></a></p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param sample1_dat_ttest</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.update_poisson" title="fusetools.stat_tools.Test.update_poisson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_poisson</span></code></a></p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param sample1_events</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="fusetools.stat_tools.Test.chi_squared_result">
+<em class="property">classmethod </em><code class="sig-name descname">chi_squared_result</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample1_successes</span></em>, <em class="sig-param"><span class="n">sample1_trials</span></em>, <em class="sig-param"><span class="n">sample2_successes</span></em>, <em class="sig-param"><span class="n">sample2_trials</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.chi_squared_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.chi_squared_result" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample1_successes</strong> – </p></li>
+<li><p><strong>sample1_trials</strong> – </p></li>
+<li><p><strong>sample2_successes</strong> – </p></li>
+<li><p><strong>sample2_trials</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.stat_tools.Test.correlation">
+<em class="property">classmethod </em><code class="sig-name descname">correlation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample1_dat</span></em>, <em class="sig-param"><span class="n">sample2_dat</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.correlation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.correlation" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample1_dat</strong> – </p></li>
+<li><p><strong>sample2_dat</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.stat_tools.Test.cramers_corrected_stat">
+<em class="property">classmethod </em><code class="sig-name descname">cramers_corrected_stat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cat_col1</span></em>, <em class="sig-param"><span class="n">cat_col2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.cramers_corrected_stat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.cramers_corrected_stat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates correlation between 2 categorical variables using Cramer’s method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cat_col1</strong> – </p></li>
+<li><p><strong>cat_col2</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Correlation between 2 categorical variables using Cramer’s method</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.stat_tools.Test.pe">
+<em class="property">classmethod </em><code class="sig-name descname">pe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type</span></em>, <em class="sig-param"><span class="n">original_quantity</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">new_quantity</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">original_price</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">new_price</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">pe_prices</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">pe_quantities</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.pe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.pe" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>type</strong> – </p></li>
+<li><p><strong>original_quantity</strong> – </p></li>
+<li><p><strong>new_quantity</strong> – </p></li>
+<li><p><strong>original_price</strong> – </p></li>
+<li><p><strong>new_price</strong> – </p></li>
+<li><p><strong>pe_prices</strong> – </p></li>
+<li><p><strong>pe_quantities</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.stat_tools.Test.sample_size1">
+<em class="property">classmethod </em><code class="sig-name descname">sample_size1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">baseline_input</span></em>, <em class="sig-param"><span class="n">effect_size_input</span></em>, <em class="sig-param"><span class="n">significance_level_input</span></em>, <em class="sig-param"><span class="n">statistical_power_input</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.sample_size1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.sample_size1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>baseline_input</strong> – </p></li>
+<li><p><strong>effect_size_input</strong> – </p></li>
+<li><p><strong>significance_level_input</strong> – </p></li>
+<li><p><strong>statistical_power_input</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.stat_tools.Test.survival_result">
+<em class="property">classmethod </em><code class="sig-name descname">survival_result</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_type</span></em>, <em class="sig-param"><span class="n">sample1_dat_survival</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample2_dat_survival</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">survival_confidence_level</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample1_dat_survival_mean</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample1_dat_survival_size</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample2_dat_survival_mean</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample2_dat_survival_size</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">survival_confidence_level_means</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.survival_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.survival_result" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_type</strong> – </p></li>
+<li><p><strong>sample1_dat_survival</strong> – </p></li>
+<li><p><strong>sample2_dat_survival</strong> – </p></li>
+<li><p><strong>survival_confidence_level</strong> – </p></li>
+<li><p><strong>sample1_dat_survival_mean</strong> – </p></li>
+<li><p><strong>sample1_dat_survival_size</strong> – </p></li>
+<li><p><strong>sample2_dat_survival_mean</strong> – </p></li>
+<li><p><strong>sample2_dat_survival_size</strong> – </p></li>
+<li><p><strong>survival_confidence_level_means</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.stat_tools.Test.ttest">
+<em class="property">classmethod </em><code class="sig-name descname">ttest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">col</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.ttest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.ttest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs a t-test</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – </p></li>
+<li><p><strong>col</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.stat_tools.Test.ttest_result">
+<em class="property">classmethod </em><code class="sig-name descname">ttest_result</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample1_dat_ttest</span></em>, <em class="sig-param"><span class="n">sample2_dat_ttest</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.ttest_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.ttest_result" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample1_dat_ttest</strong> – </p></li>
+<li><p><strong>sample2_dat_ttest</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.stat_tools.Test.update_poisson">
+<em class="property">classmethod </em><code class="sig-name descname">update_poisson</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample1_events</span></em>, <em class="sig-param"><span class="n">sample1_days</span></em>, <em class="sig-param"><span class="n">sample2_events</span></em>, <em class="sig-param"><span class="n">sample2_days</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.update_poisson"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.update_poisson" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample1_events</strong> – </p></li>
+<li><p><strong>sample1_days</strong> – </p></li>
+<li><p><strong>sample2_events</strong> – </p></li>
+<li><p><strong>sample2_days</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="fusetools.stat_tools.Viz.html" class="btn btn-neutral float-right" title="fusetools.stat_tools.Viz" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="fusetools.stat_tools.Desc.html" class="btn btn-neutral float-left" title="fusetools.stat_tools.Desc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

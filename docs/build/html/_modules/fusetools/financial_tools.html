@@ -1,0 +1,488 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fusetools.financial_tools &mdash; FuseTools 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> FuseTools
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changes.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../links.html">Links</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/fusetools.html">fusetools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">FuseTools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>fusetools.financial_tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for fusetools.financial_tools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Financial tasks and calculations.</span>
+
+<span class="sd">|pic1|</span>
+<span class="sd">    .. |pic1| image:: ../images_source/financial_tools/interactivebrokers1.png</span>
+<span class="sd">        :width: 50%</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">fix_yahoo_finance</span> <span class="k">as</span> <span class="nn">yf</span>
+<span class="kn">import</span> <span class="nn">alpha_vantage</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">alpha_vantage.timeseries</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">ib_insync</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="Misc"><a class="viewcode-back" href="../../_autosummary/fusetools.financial_tools.Misc.html#fusetools.financial_tools.Misc">[docs]</a><span class="k">class</span> <span class="nc">Misc</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Miscellaneous functions for financial tasks.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Misc.round_nickel"><a class="viewcode-back" href="../../_autosummary/fusetools.financial_tools.Misc.html#fusetools.financial_tools.Misc.round_nickel">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">round_nickel</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Rounds a decimal to the nearest base provided.</span>
+
+<span class="sd">        :param x: Decimal to round.</span>
+<span class="sd">        :param base: Base to round decimal to.</span>
+<span class="sd">        :return: Decimal rounded to nearest base provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">base</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">base</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Quotes"><a class="viewcode-back" href="../../_autosummary/fusetools.financial_tools.Quotes.html#fusetools.financial_tools.Quotes">[docs]</a><span class="k">class</span> <span class="nc">Quotes</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions for retrieving stock quotes</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Quotes.alpha_vantage"><a class="viewcode-back" href="../../_autosummary/fusetools.financial_tools.Quotes.html#fusetools.financial_tools.Quotes.alpha_vantage">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">alpha_vantage</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ticker</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pull stock quote data from the Alphavantage API.</span>
+
+<span class="sd">        :param ticker: Stock ticker to query for quotes</span>
+<span class="sd">        :param api_key: Alphavantage API key</span>
+<span class="sd">        :param freq: Ticker frequency (ex: D for &#39;Daily&#39; or W for &#39;Weekly&#39;)</span>
+<span class="sd">        :param size: Number of data points by frequency to pull</span>
+<span class="sd">        :return: Quote data from Alphavantage API</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;pandas&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">freq</span> <span class="o">==</span> <span class="s2">&quot;D&quot;</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">meta_data</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">get_daily_adjusted</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="n">ticker</span><span class="p">,</span> <span class="n">outputsize</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">freq</span> <span class="o">==</span> <span class="s2">&quot;W&quot;</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">meta_data</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">get_weekly_adjusted</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="n">ticker</span><span class="p">,</span> <span class="n">outputsize</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">freq</span> <span class="o">==</span> <span class="s2">&quot;M&quot;</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">meta_data</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">get_monthly_adjusted</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="n">ticker</span><span class="p">,</span> <span class="n">outputsize</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">meta_data</span></div>
+
+<div class="viewcode-block" id="Quotes.yahoo_finance_quotes"><a class="viewcode-back" href="../../_autosummary/fusetools.financial_tools.Quotes.html#fusetools.financial_tools.Quotes.yahoo_finance_quotes">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">yahoo_finance_quotes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ticker</span><span class="p">,</span> <span class="n">from_date</span><span class="p">,</span> <span class="n">to_date</span><span class="p">,</span> <span class="n">time_frame</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pull stock quote data from the YahooFinance API.</span>
+
+<span class="sd">        :param ticker: Stock ticker to query for quotes</span>
+<span class="sd">        :param from_date: Date to pull quotes from</span>
+<span class="sd">        :param to_date: Date to pull quotes until</span>
+<span class="sd">        :param time_frame: Ticker frequency (ex: D for &#39;Daily&#39; or W for &#39;Weekly&#39;)</span>
+<span class="sd">        :return: Quote data from YahooFinance API</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">ticker</span><span class="p">,</span> <span class="n">from_date</span><span class="p">,</span> <span class="n">to_date</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Date&quot;</span><span class="p">:</span> <span class="s1">&#39;datetime2&#39;</span><span class="p">,</span> <span class="s1">&#39;Open&#39;</span><span class="p">:</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="s1">&#39;High&#39;</span><span class="p">:</span> <span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="s2">&quot;Low&quot;</span><span class="p">:</span> <span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="s2">&quot;Close&quot;</span><span class="p">:</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s2">&quot;Adj Close&quot;</span><span class="p">:</span> <span class="s2">&quot;ac&quot;</span><span class="p">,</span> <span class="s2">&quot;Volume&quot;</span><span class="p">:</span> <span class="s2">&quot;v&quot;</span><span class="p">}</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+        <span class="c1">#     data[&#39;datetime2&#39;] = data[&#39;datetime2&#39;].astype(datetime)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;datetime2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;datetime2&#39;</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span>
+
+        <span class="k">if</span> <span class="n">time_frame</span> <span class="o">==</span> <span class="s1">&#39;d&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+        <span class="k">elif</span> <span class="n">time_frame</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;week_number&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;datetime2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> \
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;datetime2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">week</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span>
+                <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;week_number&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+                <span class="n">ticker</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;ticker&quot;</span><span class="p">,</span> <span class="s2">&quot;first&quot;</span><span class="p">),</span>
+                <span class="n">date_start</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;datetime2&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">),</span>
+                <span class="n">date_end</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;datetime2&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">),</span>
+                <span class="n">o</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;first&quot;</span><span class="p">),</span>
+                <span class="n">c</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;last&quot;</span><span class="p">),</span>
+                <span class="n">h</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">),</span>
+                <span class="n">l</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">),</span>
+                <span class="n">v</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">data</span></div></div>
+
+
+<div class="viewcode-block" id="InteractiveBrokers"><a class="viewcode-back" href="../../_autosummary/fusetools.financial_tools.InteractiveBrokers.html#fusetools.financial_tools.InteractiveBrokers">[docs]</a><span class="k">class</span> <span class="nc">InteractiveBrokers</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interactive Brokers API.</span>
+
+<span class="sd">    .. image:: ../images_source/financial_tools/interactivebrokers1.png</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="InteractiveBrokers.ib_connect"><a class="viewcode-back" href="../../_autosummary/fusetools.financial_tools.InteractiveBrokers.html#fusetools.financial_tools.InteractiveBrokers.ib_connect">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">ib_connect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Connects IB API to an Interactive Brokers TWS application.</span>
+
+<span class="sd">        :param port: TWS port to allow API connection.</span>
+<span class="sd">        :param client_id: TWS client id.</span>
+<span class="sd">        :param host: TWS host.</span>
+<span class="sd">        :return: IB connection object for account.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ib</span> <span class="o">=</span> <span class="n">IB</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ib</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">clientId</span><span class="o">=</span><span class="n">client_id</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">ib</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+            <span class="n">ib</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">clientId</span><span class="o">=</span><span class="n">client_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ib</span></div>
+
+<div class="viewcode-block" id="InteractiveBrokers.ib_place_order"><a class="viewcode-back" href="../../_autosummary/fusetools.financial_tools.InteractiveBrokers.html#fusetools.financial_tools.InteractiveBrokers.ib_place_order">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">ib_place_order</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+                       <span class="n">ib</span><span class="p">,</span>
+                       <span class="n">ticker</span><span class="p">,</span>
+                       <span class="n">action</span><span class="p">,</span>
+                       <span class="n">trade_type</span><span class="p">,</span>
+                       <span class="n">buy_d</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">sell_d</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">profit_taker_d</span><span class="o">=</span><span class="kc">False</span>
+                       <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Places an order.</span>
+
+<span class="sd">        :param ticker: Ticker to execute trade on.</span>
+<span class="sd">        :param action: &#39;BUY&#39; or &#39;SELL&#39;</span>
+<span class="sd">        :param trade_type: &#39;bracket&#39;, &#39;limit&#39;, &#39;market&#39; order.</span>
+<span class="sd">        :param buy_d: Dictionary in form of {&#39;size&#39;:shares_to_order,&#39;price&#39;:price_to_execute}</span>
+<span class="sd">        :param sell_d: Dictionary in form of {&#39;size&#39;:shares_to_order,&#39;price&#39;:price_to_execute}</span>
+<span class="sd">        :param profit_taker_d: Dictionary of {size:price} for upside limit prices.</span>
+<span class="sd">        :return: JSON response of trades placed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># create contract object on ticker</span>
+        <span class="n">contract</span> <span class="o">=</span> <span class="n">Stock</span><span class="p">(</span><span class="n">ticker</span><span class="p">,</span> <span class="s1">&#39;SMART&#39;</span><span class="p">,</span> <span class="s1">&#39;USD&#39;</span><span class="p">)</span>
+        <span class="n">ib</span><span class="o">.</span><span class="n">qualifyContracts</span><span class="p">(</span><span class="n">contract</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">trade_type</span> <span class="o">==</span> <span class="s2">&quot;bracket&quot;</span><span class="p">:</span>
+            <span class="n">bracketOrder</span> <span class="o">=</span> <span class="n">ib</span><span class="o">.</span><span class="n">bracketOrder</span><span class="p">(</span>
+                <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+                <span class="n">quantity</span><span class="o">=</span><span class="n">buy_d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;BUY&quot;</span> <span class="k">else</span> <span class="n">sell_d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;size&#39;</span><span class="p">),</span>
+                <span class="n">limitPrice</span><span class="o">=</span><span class="n">buy_d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;price&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;BUY&quot;</span> <span class="k">else</span> <span class="n">sell_d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;price&#39;</span><span class="p">),</span>
+                <span class="n">takeProfitPrice</span><span class="o">=</span><span class="n">profit_taker_d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;price&quot;</span><span class="p">),</span>
+                <span class="n">stopLossPrice</span><span class="o">=</span><span class="n">sell_d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;price&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">trades</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">bracketOrder</span><span class="p">:</span>
+                <span class="n">trade</span> <span class="o">=</span> <span class="n">ib</span><span class="o">.</span><span class="n">placeOrder</span><span class="p">(</span><span class="n">contract</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
+                <span class="n">trades</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trade</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">trade_type</span> <span class="o">==</span> <span class="s2">&quot;market&quot;</span><span class="p">:</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="n">MarketOrder</span><span class="p">(</span>
+                <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+                <span class="n">totalQuantity</span><span class="o">=</span><span class="n">buy_d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;BUY&quot;</span> <span class="k">else</span> <span class="n">sell_d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">trades</span> <span class="o">=</span> <span class="n">ib</span><span class="o">.</span><span class="n">placeOrder</span><span class="p">(</span><span class="n">contract</span><span class="o">=</span><span class="n">contract</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">trade_type</span> <span class="o">==</span> <span class="s2">&quot;limit&quot;</span><span class="p">:</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="n">LimitOrder</span><span class="p">(</span>
+                <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
+                <span class="n">totalQuantity</span><span class="o">=</span><span class="n">buy_d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;BUY&quot;</span> <span class="k">else</span> <span class="n">sell_d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">),</span>
+                <span class="n">lmtPrice</span><span class="o">=</span><span class="n">buy_d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;price&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;BUY&quot;</span> <span class="k">else</span> <span class="n">sell_d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;price&quot;</span><span class="p">),</span>
+                <span class="n">tif</span><span class="o">=</span><span class="s1">&#39;GTC&#39;</span>  <span class="c1"># https://github.com/erdewit/ib_insync/issues/64</span>
+            <span class="p">)</span>
+
+            <span class="n">trades</span> <span class="o">=</span> <span class="n">ib</span><span class="o">.</span><span class="n">placeOrder</span><span class="p">(</span><span class="n">contract</span><span class="o">=</span><span class="n">contract</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">trades</span></div>
+
+<div class="viewcode-block" id="InteractiveBrokers.ib_get_open_orders"><a class="viewcode-back" href="../../_autosummary/fusetools.financial_tools.InteractiveBrokers.html#fusetools.financial_tools.InteractiveBrokers.ib_get_open_orders">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">ib_get_open_orders</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ib</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a Pandas DataFrame of details for open orders in the account.</span>
+
+<span class="sd">        :param ib: InteractiveBrokers account instance</span>
+<span class="sd">        :return: Pandas DataFrame of open orders</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">open_trades</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ib</span><span class="o">.</span><span class="n">openTrades</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">open_trades</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No open trades...&quot;</span><span class="p">)</span>
+            <span class="c1"># make dataframe</span>
+            <span class="n">oo_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+                <span class="s2">&quot;oo_ids&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;oo_sizes&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;oo_tickers&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;oo_types&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;oo_prices&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;oo_actions&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;oo_orders&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;oo_contracts&quot;</span><span class="p">:</span> <span class="p">[]</span>
+            <span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">oo_orders</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">order</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">open_trades</span><span class="p">]</span>
+            <span class="n">oo_contracts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">contract</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">open_trades</span><span class="p">]</span>
+            <span class="n">oo_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">orderId</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">open_trades</span><span class="p">]</span>
+            <span class="n">oo_actions</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">action</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">open_trades</span><span class="p">]</span>
+            <span class="n">oo_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">totalQuantity</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">open_trades</span><span class="p">]</span>
+            <span class="n">oo_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">orderType</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">open_trades</span><span class="p">]</span>
+            <span class="n">oo_prices</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">order</span><span class="o">.</span><span class="n">lmtPrice</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">open_trades</span><span class="p">]</span>
+            <span class="n">oo_tickers</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">symbol</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">open_trades</span><span class="p">]</span>
+
+            <span class="c1"># make dataframe</span>
+            <span class="n">oo_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+                <span class="s2">&quot;oo_ids&quot;</span><span class="p">:</span> <span class="n">oo_ids</span><span class="p">,</span>
+                <span class="s2">&quot;oo_sizes&quot;</span><span class="p">:</span> <span class="n">oo_sizes</span><span class="p">,</span>
+                <span class="s2">&quot;oo_tickers&quot;</span><span class="p">:</span> <span class="n">oo_tickers</span><span class="p">,</span>
+                <span class="s2">&quot;oo_types&quot;</span><span class="p">:</span> <span class="n">oo_types</span><span class="p">,</span>
+                <span class="s2">&quot;oo_prices&quot;</span><span class="p">:</span> <span class="n">oo_prices</span><span class="p">,</span>
+                <span class="s2">&quot;oo_actions&quot;</span><span class="p">:</span> <span class="n">oo_actions</span><span class="p">,</span>
+                <span class="s2">&quot;oo_orders&quot;</span><span class="p">:</span> <span class="n">oo_orders</span><span class="p">,</span>
+                <span class="s2">&quot;oo_contracts&quot;</span><span class="p">:</span> <span class="n">oo_contracts</span>
+            <span class="p">})</span>
+        <span class="k">return</span> <span class="n">oo_df</span></div>
+
+<div class="viewcode-block" id="InteractiveBrokers.ib_get_portfolio"><a class="viewcode-back" href="../../_autosummary/fusetools.financial_tools.InteractiveBrokers.html#fusetools.financial_tools.InteractiveBrokers.ib_get_portfolio">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">ib_get_portfolio</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ib</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a Pandas DataFrame of details for portfolio holdings.</span>
+
+<span class="sd">        :param ib: InteractiveBrokers account instance</span>
+<span class="sd">        :return: Pandas DataFrame of portfolio holding sizes, tickers and cost-bases</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">port_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">position</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ib</span><span class="o">.</span><span class="n">portfolio</span><span class="p">()]</span>
+        <span class="n">port_tickers</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">contract</span><span class="o">.</span><span class="n">symbol</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ib</span><span class="o">.</span><span class="n">portfolio</span><span class="p">()]</span>
+        <span class="n">port_costs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">averageCost</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ib</span><span class="o">.</span><span class="n">portfolio</span><span class="p">()]</span>
+        <span class="c1"># port_costs_per_share = [x / y for (x, y) in zip(port_costs, port_sizes)]</span>
+
+        <span class="n">port_df</span> <span class="o">=</span> \
+            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+                <span class="s2">&quot;port_sizes&quot;</span><span class="p">:</span> <span class="n">port_sizes</span><span class="p">,</span>
+                <span class="s2">&quot;port_tickers&quot;</span><span class="p">:</span> <span class="n">port_tickers</span><span class="p">,</span>
+                <span class="s2">&quot;port_costs&quot;</span><span class="p">:</span> <span class="n">port_costs</span><span class="p">,</span>
+            <span class="p">})</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">port_df</span><span class="p">)</span><span class="si">}</span><span class="s1"> open positions...&#39;&#39;&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">port_df</span></div>
+
+<div class="viewcode-block" id="InteractiveBrokers.get_stock_price_ss"><a class="viewcode-back" href="../../_autosummary/fusetools.financial_tools.InteractiveBrokers.html#fusetools.financial_tools.InteractiveBrokers.get_stock_price_ss">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_stock_price_ss</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ib</span><span class="p">,</span> <span class="n">ticker</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the latest stock price for a given ticker.</span>
+
+<span class="sd">        :param ib: InteractiveBrokers account instance</span>
+<span class="sd">        :param ticker: Ticker to search</span>
+<span class="sd">        :return: Latest stock price for a given ticker</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">contract</span> <span class="o">=</span> <span class="n">Stock</span><span class="p">(</span><span class="n">ticker</span><span class="p">,</span> <span class="s1">&#39;SMART&#39;</span><span class="p">,</span> <span class="s1">&#39;USD&#39;</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ib</span><span class="o">.</span><span class="n">reqMktData</span><span class="p">(</span><span class="n">contract</span><span class="p">,</span> <span class="n">snapshot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">while</span> <span class="nb">str</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">last</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;nan&quot;</span><span class="p">:</span>
+            <span class="n">ib</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ret</span><span class="o">.</span><span class="n">last</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

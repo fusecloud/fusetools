@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fusetools.screen_tools.Move &mdash; FuseTools 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="fusetools.screen_tools.Open" href="fusetools.screen_tools.Open.html" />
+    <link rel="prev" title="fusetools.screen_tools" href="fusetools.screen_tools.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> FuseTools
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../links.html">Links</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="fusetools.html">fusetools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="fusetools.analytics_tools.html">fusetools.analytics_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.cloud_tools.html">fusetools.cloud_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.comm_tools.html">fusetools.comm_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.commerce_tools.html">fusetools.commerce_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.dashboard_tools.html">fusetools.dashboard_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.date_tools.html">fusetools.date_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.db_conn_tools.html">fusetools.db_conn_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.db_etl_tools.html">fusetools.db_etl_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.devops_tools.html">fusetools.devops_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.financial_tools.html">fusetools.financial_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.gsuite_tools.html">fusetools.gsuite_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.job_tools.html">fusetools.job_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.logging_tools.html">fusetools.logging_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.marketing_tools.html">fusetools.marketing_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.ml_tools.html">fusetools.ml_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.music_tools.html">fusetools.music_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.office_tools.html">fusetools.office_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.pm_tools.html">fusetools.pm_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.research_tools.html">fusetools.research_tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="fusetools.screen_tools.html">fusetools.screen_tools</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">fusetools.screen_tools.Move</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fusetools.screen_tools.Open.html">fusetools.screen_tools.Open</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.social_tools.html">fusetools.social_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.stat_tools.html">fusetools.stat_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.text_tools.html">fusetools.text_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.transfer_tools.html">fusetools.transfer_tools</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FuseTools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="fusetools.html">fusetools</a> &raquo;</li>
+        
+          <li><a href="fusetools.screen_tools.html">fusetools.screen_tools</a> &raquo;</li>
+        
+      <li>fusetools.screen_tools.Move</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="fusetools-screen-tools-move">
+<h1>fusetools.screen_tools.Move<a class="headerlink" href="#fusetools-screen-tools-move" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="fusetools.screen_tools.Move">
+<em class="property">class </em><code class="sig-prename descclassname">fusetools.screen_tools.</code><code class="sig-name descname">Move</code><a class="reference internal" href="../_modules/fusetools/screen_tools.html#Move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.screen_tools.Move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>FUnctions for moving files.</p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.screen_tools.Move.copy_paste" title="fusetools.screen_tools.Move.copy_paste"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_paste</span></code></a></p></td>
+<td><p>Copys data within an application window and pastes it in another.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="fusetools.screen_tools.Move.copy_paste">
+<em class="property">classmethod </em><code class="sig-name descname">copy_paste</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dir</span></em>, <em class="sig-param"><span class="n">str_search</span></em>, <em class="sig-param"><span class="n">sav_dir</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sav_name</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/screen_tools.html#Move.copy_paste"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.screen_tools.Move.copy_paste" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copys data within an application window and pastes it in another.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dir</strong> – Directory for files to copy.</p></li>
+<li><p><strong>str_search</strong> – String to filter files.</p></li>
+<li><p><strong>sav_dir</strong> – Directory to save file list to.</p></li>
+<li><p><strong>sav_name</strong> – Filename to save file list to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Progress for file copy and paste loop.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="fusetools.screen_tools.Open.html" class="btn btn-neutral float-right" title="fusetools.screen_tools.Open" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="fusetools.screen_tools.html" class="btn btn-neutral float-left" title="fusetools.screen_tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

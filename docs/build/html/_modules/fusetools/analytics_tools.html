@@ -1,0 +1,720 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fusetools.analytics_tools &mdash; FuseTools 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> FuseTools
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changes.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../links.html">Links</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/fusetools.html">fusetools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">FuseTools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>fusetools.analytics_tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for fusetools.analytics_tools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">DataFrame &amp; SQL Tools for Analytics.</span>
+
+<span class="sd">|pic1|</span>
+<span class="sd">    .. |pic1| image:: ../images_source/pandas1.png</span>
+<span class="sd">        :width: 50%</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">fusetools.date_tools</span> <span class="kn">import</span> <span class="n">get_rptg_yr</span><span class="p">,</span> <span class="n">get_rptg_week</span>
+
+
+<div class="viewcode-block" id="SQL"><a class="viewcode-back" href="../../_autosummary/fusetools.analytics_tools.SQL.html#fusetools.analytics_tools.SQL">[docs]</a><span class="k">class</span> <span class="nc">SQL</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions for running analytical SQL operations</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SQL.sql_rs_yoy_cum_comp"><a class="viewcode-back" href="../../_autosummary/fusetools.analytics_tools.SQL.html#fusetools.analytics_tools.SQL.sql_rs_yoy_cum_comp">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">sql_rs_yoy_cum_comp</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tbl_name</span><span class="p">,</span> <span class="n">time_col</span><span class="p">,</span> <span class="n">year_col</span><span class="p">,</span> <span class="n">fact_cols</span><span class="p">,</span>
+                            <span class="n">agg_func</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dim_cols</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">date_join_tbl</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">date_join_col</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">date_join_time_start_col</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">date_join_time_end_col</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs a cumulative aggregation over the year as well as provided dimensional columns</span>
+<span class="sd">        OR if agg_func param is not provided,</span>
+
+<span class="sd">        :param tbl_name: Table with data to perform calculation on</span>
+<span class="sd">        :param time_col: Column with sub-year time granularity to compare across years</span>
+<span class="sd">        :param year_col: Column with year time granularity</span>
+<span class="sd">        :param fact_cols: List of KPI columns to calculate</span>
+<span class="sd">        :param agg_func: Type of aggregation to perform, if not provided will just do a snapshot of current week vs current week</span>
+<span class="sd">        :param dim_cols: List of dimensional columns to compare aggregation over (optional)</span>
+<span class="sd">        :param date_join_tbl: Table with date columns to join to (optional)</span>
+<span class="sd">        :param date_join_col: Column from date table to join on (optional)</span>
+<span class="sd">        :param date_join_time_start_col: Column from date table with time granularity start date</span>
+<span class="sd">        :param date_join_time_end_col: Column from date table with time granularity end date</span>
+<span class="sd">        :return: Analytical SQL query</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">date_join_tbl</span><span class="p">:</span>
+            <span class="n">date_join_placeholder_curr</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">           left join </span><span class="si">{</span><span class="n">date_join_tbl</span><span class="si">}</span><span class="s1"> dt_curr</span>
+<span class="s1">           on dt_curr.</span><span class="si">{</span><span class="n">date_join_col</span><span class="si">}</span><span class="s1"> = cast(rs1.</span><span class="si">{</span><span class="n">year_col</span><span class="si">}</span><span class="s1">||lpad(rs1.</span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1">,2,0) as integer)</span>
+<span class="s1">           &#39;&#39;&#39;</span>
+
+            <span class="n">date_join_placeholder_prior</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">           left join </span><span class="si">{</span><span class="n">date_join_tbl</span><span class="si">}</span><span class="s1"> dt_prior</span>
+<span class="s1">           on dt_prior.</span><span class="si">{</span><span class="n">date_join_col</span><span class="si">}</span><span class="s1"> = cast(rs2.</span><span class="si">{</span><span class="n">year_col</span><span class="si">}</span><span class="s1">||lpad(rs2.</span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1">,2,0) as integer)</span>
+<span class="s1">           &#39;&#39;&#39;</span>
+
+            <span class="n">date_join_cols_curr</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;date(dt_curr.</span><span class="si">{</span><span class="n">date_join_time_start_col</span><span class="si">}</span><span class="s2">) + 1 as start_date_curr&quot;</span><span class="p">,</span>
+                                   <span class="sa">f</span><span class="s2">&quot;date(dt_curr.</span><span class="si">{</span><span class="n">date_join_time_end_col</span><span class="si">}</span><span class="s2">) as end_date_curr&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+
+            <span class="n">date_join_cols_prior</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;date(dt_prior.</span><span class="si">{</span><span class="n">date_join_time_start_col</span><span class="si">}</span><span class="s2">) + 1 as start_date_prior&quot;</span><span class="p">,</span>
+                                    <span class="sa">f</span><span class="s2">&quot;date(dt_prior.</span><span class="si">{</span><span class="n">date_join_time_end_col</span><span class="si">}</span><span class="s2">) as end_date_prior&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">date_join_placeholder_curr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">date_join_cols_curr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">date_join_placeholder_prior</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">date_join_cols_prior</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">dim_cols</span><span class="p">:</span>
+            <span class="n">dim_cols1</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">dim_cols</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">dim_cols_fact</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">dim_cols1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dim_cols1</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">dim_cols_fact</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">agg_func</span><span class="p">:</span>
+            <span class="n">fact_cols1</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">agg_func</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">) over (partition by </span><span class="si">{</span><span class="n">year_col</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">dim_cols_fact</span><span class="si">}</span><span class="s2"> order by </span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s2"> rows unbounded preceding) as </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fact_cols</span><span class="p">]</span>
+            <span class="n">fact_cols2</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">agg_func</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">) as </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fact_cols</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fact_cols1</span> <span class="o">=</span> <span class="n">fact_cols</span>
+
+        <span class="n">sql1</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">       with rs as (</span>
+<span class="s1">           select</span>
+<span class="s1">           &#39;Cumulative&#39; as calc_type,</span>
+<span class="s1">           </span><span class="si">{</span><span class="n">dim_cols1</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">           </span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1">,</span>
+<span class="s1">           </span><span class="si">{</span><span class="n">year_col</span><span class="si">}</span><span class="s1">,</span>
+<span class="s1">           </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fact_cols1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">           from </span><span class="si">{</span><span class="n">tbl_name</span><span class="si">}</span><span class="s1"></span>
+
+<span class="s1">           UNION</span>
+
+<span class="s1">           select</span>
+<span class="s1">           &#39;Snapshot&#39; as calc_type,</span>
+<span class="s1">           </span><span class="si">{</span><span class="n">dim_cols1</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">           </span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1">,</span>
+<span class="s1">           </span><span class="si">{</span><span class="n">year_col</span><span class="si">}</span><span class="s1">,</span>
+<span class="s1">           </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fact_cols2</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">           from </span><span class="si">{</span><span class="n">tbl_name</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">           group by </span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">year_col</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">dim_cols1</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">       )&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">dim_cols</span><span class="p">:</span>
+            <span class="n">dim_col_placement</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;rs1.</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dim_cols</span><span class="p">]</span>
+            <span class="n">dim_col_joins</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot; and rs1.&quot;</span> <span class="o">+</span> <span class="n">d</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="s2">&quot;rs2.&quot;</span> <span class="o">+</span> <span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dim_cols</span><span class="p">]</span>
+            <span class="n">dim_col_joins</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">dim_col_joins</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dim_col_placement</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">dim_col_joins</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">fact_col_placement_curr</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;rs1.</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2"> as </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">_curr&quot;</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fact_cols</span><span class="p">]</span>
+        <span class="n">fact_col_placement_prior</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;rs2.</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2"> as </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">_prior&quot;</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fact_cols</span><span class="p">]</span>
+
+        <span class="n">sql2</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">       select</span>
+<span class="s1">       current_date as run_date,</span>
+<span class="s1">       rs1.calc_type,</span>
+<span class="s1">       </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">dim_col_placement</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span>
+<span class="s1">       rs1.</span><span class="si">{</span><span class="n">year_col</span><span class="si">}</span><span class="s1"> as year_col_curr,</span>
+<span class="s1">       rs1.</span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1"> as time_col_curr,</span>
+<span class="s1">       cast(rs1.</span><span class="si">{</span><span class="n">year_col</span><span class="si">}</span><span class="s1">||lpad(rs1.</span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1">,2,0) as integer) as yeartime_curr,</span>
+<span class="s1">       </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">date_join_cols_curr</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">       </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fact_col_placement_curr</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span>
+<span class="s1">       rs2.</span><span class="si">{</span><span class="n">year_col</span><span class="si">}</span><span class="s1"> as year_col_prior,</span>
+<span class="s1">       rs2.</span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1"> as time_col_prior,</span>
+<span class="s1">       cast(rs2.</span><span class="si">{</span><span class="n">year_col</span><span class="si">}</span><span class="s1">||lpad(rs2.</span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1">,2,0) as integer) as yeartime_prior,</span>
+<span class="s1">       </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">date_join_cols_prior</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">       </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fact_col_placement_prior</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">       from rs rs1</span>
+<span class="s1">       left join rs rs2</span>
+<span class="s1">       on rs1.calc_type = rs2.calc_type</span>
+<span class="s1">       and rs1.week = rs2.week</span>
+<span class="s1">       and rs1.year = rs2.year + 1</span>
+<span class="s1">       </span><span class="si">{</span><span class="n">dim_col_joins</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">       </span><span class="si">{</span><span class="n">date_join_placeholder_curr</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">       </span><span class="si">{</span><span class="n">date_join_placeholder_prior</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">       order by calc_type, yeartime_curr desc</span>
+<span class="s1">       &#39;&#39;&#39;</span>
+
+        <span class="n">sql3</span> <span class="o">=</span> <span class="n">sql1</span> <span class="o">+</span> <span class="n">sql2</span>
+
+        <span class="k">return</span> <span class="n">sql3</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SQL.sql_rs_wow_comp"><a class="viewcode-back" href="../../_autosummary/fusetools.analytics_tools.SQL.html#fusetools.analytics_tools.SQL.sql_rs_wow_comp">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">sql_rs_wow_comp</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tbl_name</span><span class="p">,</span> <span class="n">time_col</span><span class="p">,</span> <span class="n">fact_cols</span><span class="p">,</span>
+                        <span class="n">dim_cols</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">date_join_tbl</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">date_join_col</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">date_join_time_start_col</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">date_join_time_end_col</span><span class="o">=</span><span class="kc">False</span>
+                        <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs a week over week comparison.</span>
+
+<span class="sd">        :param tbl_name: Table with data to perform calculation on</span>
+<span class="sd">        :param time_col: Column with sub-year time granularity to compare across years</span>
+<span class="sd">        :param fact_cols: List of KPI columns to calculate</span>
+<span class="sd">        :param dim_cols: List of dimensional columns to compare aggregation over (optional)</span>
+<span class="sd">        :param date_join_tbl: Table with date columns to join to (optional)</span>
+<span class="sd">        :param date_join_col: Column from date table to join on (optional)</span>
+<span class="sd">        :param date_join_time_start_col: Column from date table with time granularity start date</span>
+<span class="sd">        :param date_join_time_end_col: Column from date table with time granularity end date</span>
+<span class="sd">        :return: Analytical SQL query</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">date_join_tbl</span><span class="p">:</span>
+            <span class="n">date_join_placeholder_curr</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">           left join </span><span class="si">{</span><span class="n">date_join_tbl</span><span class="si">}</span><span class="s1"> dt_curr</span>
+<span class="s1">           on dt_curr.</span><span class="si">{</span><span class="n">date_join_col</span><span class="si">}</span><span class="s1"> = dr1.</span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">           &#39;&#39;&#39;</span>
+
+            <span class="n">date_join_placeholder_prior</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">           left join </span><span class="si">{</span><span class="n">date_join_tbl</span><span class="si">}</span><span class="s1"> dt_prior</span>
+<span class="s1">           on dt_prior.</span><span class="si">{</span><span class="n">date_join_col</span><span class="si">}</span><span class="s1"> = dr2.</span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">           &#39;&#39;&#39;</span>
+
+            <span class="n">date_join_cols_curr</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;date(dt_curr.</span><span class="si">{</span><span class="n">date_join_time_start_col</span><span class="si">}</span><span class="s2">) + 1 as start_date_curr&quot;</span><span class="p">,</span>
+                                   <span class="sa">f</span><span class="s2">&quot;date(dt_curr.</span><span class="si">{</span><span class="n">date_join_time_end_col</span><span class="si">}</span><span class="s2">) as end_date_curr&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+
+            <span class="n">date_join_cols_prior</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;date(dt_prior.</span><span class="si">{</span><span class="n">date_join_time_start_col</span><span class="si">}</span><span class="s2">) + 1 as start_date_prior&quot;</span><span class="p">,</span>
+                                    <span class="sa">f</span><span class="s2">&quot;date(dt_prior.</span><span class="si">{</span><span class="n">date_join_time_end_col</span><span class="si">}</span><span class="s2">) as end_date_prior&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">date_join_placeholder_curr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">date_join_cols_curr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">date_join_placeholder_prior</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">date_join_cols_prior</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">dim_cols</span><span class="p">:</span>
+            <span class="n">sql1</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">           with dat_ranks as (</span>
+<span class="s1">             select x.*,</span>
+<span class="s1">             rank() over ( partition by </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">dim_cols</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1"> order by </span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1"> desc) as time_col_rnk</span>
+<span class="s1">             from </span><span class="si">{</span><span class="n">tbl_name</span><span class="si">}</span><span class="s1"> x</span>
+<span class="s1">           )&#39;&#39;&#39;</span>
+            <span class="n">dim_col_placement</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;dr1.</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dim_cols</span><span class="p">]</span>
+            <span class="n">dim_col_joins</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot; and dr1.&quot;</span> <span class="o">+</span> <span class="n">d</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="s2">&quot;dr2.&quot;</span> <span class="o">+</span> <span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dim_cols</span><span class="p">]</span>
+            <span class="n">dim_col_joins</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">dim_col_joins</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sql1</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">               with dat_ranks as (</span>
+<span class="s1">                 select x.*,</span>
+<span class="s1">                 rank() over (order by </span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1"> desc) as time_col_rnk</span>
+<span class="s1">                 from </span><span class="si">{</span><span class="n">tbl_name</span><span class="si">}</span><span class="s1"> x</span>
+<span class="s1">               )&#39;&#39;&#39;</span>
+            <span class="n">dim_col_placement</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">dim_col_joins</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">fact_col_placement_curr</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;dr1.</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2"> as </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">_curr&quot;</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fact_cols</span><span class="p">]</span>
+        <span class="n">fact_col_placement_prior</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;dr2.</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2"> as </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2">_prior&quot;</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fact_cols</span><span class="p">]</span>
+
+        <span class="n">sql2</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">       select</span>
+<span class="s1">       current_date as run_date,</span>
+<span class="s1">       </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">dim_col_placement</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span>
+<span class="s1">       dr1.</span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1"> as time_col_curr,</span>
+<span class="s1">       dr1.time_col_rnk as time_col_rnk_curr,</span>
+<span class="s1">       </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">date_join_cols_curr</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">       </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fact_col_placement_curr</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">,</span>
+<span class="s1">       dr2.</span><span class="si">{</span><span class="n">time_col</span><span class="si">}</span><span class="s1"> as time_col_prior,</span>
+<span class="s1">       dr2.time_col_rnk as time_col_rnk_prior,</span>
+<span class="s1">       </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">date_join_cols_prior</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">       </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fact_col_placement_prior</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">       from dat_ranks dr1</span>
+<span class="s1">       left join dat_ranks dr2</span>
+<span class="s1">       on dr1.time_col_rnk = dr2.time_col_rnk - 1</span>
+<span class="s1">       </span><span class="si">{</span><span class="n">dim_col_joins</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">       </span><span class="si">{</span><span class="n">date_join_placeholder_curr</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">       </span><span class="si">{</span><span class="n">date_join_placeholder_prior</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">       order by dr1.time_col_rnk</span>
+<span class="s1">       &#39;&#39;&#39;</span>
+
+        <span class="n">sql3</span> <span class="o">=</span> <span class="n">sql1</span> <span class="o">+</span> <span class="n">sql2</span>
+        <span class="k">return</span> <span class="n">sql3</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Pandas"><a class="viewcode-back" href="../../_autosummary/fusetools.analytics_tools.Pandas.html#fusetools.analytics_tools.Pandas">[docs]</a><span class="k">class</span> <span class="nc">Pandas</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions for running analytical Pandas operations</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Pandas.period_start_dt"><a class="viewcode-back" href="../../_autosummary/fusetools.analytics_tools.Pandas.html#fusetools.analytics_tools.Pandas.period_start_dt">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">period_start_dt</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the first day of a year or month for a Pandas Series.</span>
+
+<span class="sd">        :param df: Pandas DataFrame.</span>
+<span class="sd">        :return: First day of year or month for Pandas Series.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;year_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;-01-&quot;</span> <span class="o">+</span> <span class="s2">&quot;01&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="Pandas.yoy_comp"><a class="viewcode-back" href="../../_autosummary/fusetools.analytics_tools.Pandas.html#fusetools.analytics_tools.Pandas.yoy_comp">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">yoy_comp</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">val_dict</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hist</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes a YoY cumulative YTD comparison across for a given week.</span>
+
+<span class="sd">        :param df: Pandas DataFrame.</span>
+<span class="sd">        :param val_dict: Column and aggregation type specification.</span>
+<span class="sd">        :param dim: Dimension to group comparison by (Option).</span>
+<span class="sd">        :param hist: Flag of whether to keep all historical date combinations.</span>
+<span class="sd">        :return: Pandas DataFrame with YoY cumulative YTD comparison.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rptg_yr</span> <span class="o">=</span> <span class="n">get_rptg_yr</span><span class="p">()</span>
+        <span class="n">rptg_wk</span> <span class="o">=</span> <span class="n">get_rptg_week</span><span class="p">()[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+
+        <span class="c1"># current period</span>
+        <span class="n">df_sub_curr</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">rptg_yr</span><span class="p">))</span>
+            <span class="o">&amp;</span>
+            <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;week&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rptg_wk</span><span class="p">))</span>
+            <span class="p">]</span>
+
+        <span class="c1">## make cumulative columns</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">dim</span><span class="p">:</span>
+                        <span class="n">df_sub_curr</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">_cumsum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_sub_curr</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">dim</span><span class="p">)[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">df_sub_curr</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">_cumsum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_sub_curr</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="n">m</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
+                    <span class="n">df_sub_curr</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;_to_&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">_ratio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_sub_curr</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">/</span> \
+                                                                     <span class="n">df_sub_curr</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="c1"># prior period</span>
+        <span class="n">df_sub_prior</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">rptg_yr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="o">&amp;</span>
+            <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;week&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">rptg_wk</span><span class="p">))</span>
+            <span class="p">]</span>
+
+        <span class="c1">## make cumulative columns</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">dim</span><span class="p">:</span>
+                        <span class="n">df_sub_prior</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">_cumsum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_sub_prior</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">dim</span><span class="p">)[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">df_sub_prior</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">_cumsum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_sub_prior</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+
+                <span class="k">elif</span> <span class="n">m</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
+                    <span class="n">df_sub_prior</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;_to_&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">_ratio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_sub_prior</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">/</span> \
+                                                                      <span class="n">df_sub_prior</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="k">if</span> <span class="n">dim</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">dim_</span> <span class="o">=</span> <span class="p">[</span><span class="n">dim</span><span class="p">,</span> <span class="s2">&quot;week&quot;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dim</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;week&quot;</span><span class="p">)</span>
+                <span class="n">dim_</span> <span class="o">=</span> <span class="n">dim</span>
+
+            <span class="k">if</span> <span class="n">hist</span><span class="p">:</span>
+                <span class="n">df_sub_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+                    <span class="c1"># keep all weeks (historical)</span>
+                    <span class="n">df_sub_curr</span><span class="p">,</span>
+                    <span class="n">df_sub_prior</span><span class="p">,</span>
+                    <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                    <span class="n">left_on</span><span class="o">=</span><span class="n">dim_</span><span class="p">,</span>
+                    <span class="n">right_on</span><span class="o">=</span><span class="n">dim_</span><span class="p">,</span>
+                    <span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;_curr&quot;</span><span class="p">,</span> <span class="s2">&quot;_prior&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df_sub_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+                    <span class="c1"># filter for current week only</span>
+                    <span class="n">df_sub_curr</span><span class="p">[</span><span class="n">df_sub_curr</span><span class="p">[</span><span class="s1">&#39;week&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">df_sub_curr</span><span class="p">[</span><span class="s1">&#39;week&#39;</span><span class="p">])],</span>
+                    <span class="n">df_sub_prior</span><span class="p">,</span>
+                    <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                    <span class="n">left_on</span><span class="o">=</span><span class="n">dim_</span><span class="p">,</span>
+                    <span class="n">right_on</span><span class="o">=</span><span class="n">dim_</span><span class="p">,</span>
+                    <span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;_curr&quot;</span><span class="p">,</span> <span class="s2">&quot;_prior&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">hist</span><span class="p">:</span>
+                <span class="n">df_sub_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+                    <span class="c1"># keep all weeks (historical)</span>
+                    <span class="n">df_sub_curr</span><span class="p">,</span>
+                    <span class="n">df_sub_prior</span><span class="p">,</span>
+                    <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                    <span class="n">left_on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;week&quot;</span><span class="p">],</span>
+                    <span class="n">right_on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;week&quot;</span><span class="p">],</span>
+                    <span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;_curr&quot;</span><span class="p">,</span> <span class="s2">&quot;_prior&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df_sub_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+                    <span class="c1"># filter for current week only</span>
+                    <span class="n">df_sub_curr</span><span class="p">[</span><span class="n">df_sub_curr</span><span class="p">[</span><span class="s1">&#39;week&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">df_sub_curr</span><span class="p">[</span><span class="s1">&#39;week&#39;</span><span class="p">])],</span>
+                    <span class="n">df_sub_prior</span><span class="p">,</span>
+                    <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                    <span class="n">left_on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;week&quot;</span><span class="p">],</span>
+                    <span class="n">right_on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;week&quot;</span><span class="p">],</span>
+                    <span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;_curr&quot;</span><span class="p">,</span> <span class="s2">&quot;_prior&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+        <span class="c1"># percentage changes</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">k</span><span class="p">:</span>
+                <span class="n">df_sub_all</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;_to_&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">_ratio_chg&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="p">(</span><span class="n">df_sub_all</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;_to_&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">_ratio_curr&#39;</span><span class="p">]</span> <span class="o">-</span> \
+                     <span class="n">df_sub_all</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;_to_&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">_ratio_prior&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">df_sub_all</span><span class="p">[</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;_to_&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">_ratio_curr&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df_sub_all</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;_cumsum_chg&quot;</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="p">(</span><span class="n">df_sub_all</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;_cumsum_curr&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_sub_all</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;_cumsum_prior&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">df_sub_all</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;_cumsum_prior&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">df_sub_all</span></div>
+
+<div class="viewcode-block" id="Pandas.period_comp"><a class="viewcode-back" href="../../_autosummary/fusetools.analytics_tools.Pandas.html#fusetools.analytics_tools.Pandas.period_comp">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">period_comp</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">period_field</span><span class="p">,</span> <span class="n">val_fields</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">val_field_suffix</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hist</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a snapshot comparison between two periods.</span>
+
+<span class="sd">        :param df: Pandas DataFrame.</span>
+<span class="sd">        :param period_field: Column with period to compare across</span>
+<span class="sd">        :param val_fields: List of columns with numeric values to compare</span>
+<span class="sd">        :param dim: Column with dimension to group across (optional)</span>
+<span class="sd">        :param val_field_suffix: Suffix for value field to add to final dataset (optional)</span>
+<span class="sd">        :param hist: Include history flag, returns all periods if True, otherwise just the most recent two periods</span>
+<span class="sd">        :return: Comparison Pandas DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">val_field_suffix</span><span class="p">:</span>
+            <span class="n">val_field_suffix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="c1"># df[period_field] = pd.to_datetime(df[period_field])</span>
+        <span class="k">if</span> <span class="n">dim</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;per_rank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">dim</span><span class="p">)[</span><span class="n">period_field</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">hist</span><span class="p">:</span>
+                <span class="n">df_comp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+                    <span class="n">df</span><span class="p">,</span>
+                    <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">per_rank</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;per_rank&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="n">left_on</span><span class="o">=</span><span class="p">[</span><span class="n">dim</span><span class="p">,</span> <span class="s2">&quot;per_rank&quot;</span><span class="p">],</span>
+                    <span class="n">right_on</span><span class="o">=</span><span class="p">[</span><span class="n">dim</span><span class="p">,</span> <span class="s2">&quot;per_rank&quot;</span><span class="p">],</span>
+                    <span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;_1&quot;</span><span class="p">,</span> <span class="s2">&quot;_2&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df_comp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+                    <span class="n">df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;per_rank == 1&quot;</span><span class="p">),</span>
+                    <span class="n">df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;per_rank == 2&quot;</span><span class="p">),</span>
+                    <span class="n">left_on</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span>
+                    <span class="n">right_on</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span>
+                    <span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;_1&quot;</span><span class="p">,</span> <span class="s2">&quot;_2&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;per_rank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">period_field</span><span class="p">]</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">hist</span><span class="p">:</span>
+                <span class="n">df_comp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+                    <span class="n">df</span><span class="p">,</span>
+                    <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">per_rank</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;per_rank&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="n">left_on</span><span class="o">=</span><span class="s2">&quot;per_rank&quot;</span><span class="p">,</span>
+                    <span class="n">right_on</span><span class="o">=</span><span class="s2">&quot;per_rank&quot;</span><span class="p">,</span>
+                    <span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;_1&quot;</span><span class="p">,</span> <span class="s2">&quot;_2&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df_comp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+                    <span class="n">df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;per_rank == 1&quot;</span><span class="p">),</span>
+                    <span class="n">df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;per_rank == 2&quot;</span><span class="p">),</span>
+                    <span class="n">left_on</span><span class="o">=</span><span class="s2">&quot;key&quot;</span><span class="p">,</span>
+                    <span class="n">right_on</span><span class="o">=</span><span class="s2">&quot;key&quot;</span><span class="p">,</span>
+                    <span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;_1&quot;</span><span class="p">,</span> <span class="s2">&quot;_2&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+        <span class="k">for</span> <span class="n">idxx</span><span class="p">,</span> <span class="n">val_field</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">val_fields</span><span class="p">):</span>
+            <span class="n">df_comp</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;per_comp_</span><span class="si">{</span><span class="n">val_field</span><span class="si">}{</span><span class="n">val_field_suffix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_comp</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">val_field</span><span class="si">}</span><span class="s1">_1&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_comp</span><span class="p">[</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">val_field</span><span class="si">}</span><span class="s1">_2&#39;</span><span class="p">])</span> <span class="o">/</span> \
+                                                                 <span class="n">df_comp</span><span class="p">[</span>
+                                                                     <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">val_field</span><span class="si">}</span><span class="s1">_2&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">df_comp</span></div>
+
+<div class="viewcode-block" id="Pandas.ptd_measure"><a class="viewcode-back" href="../../_autosummary/fusetools.analytics_tools.Pandas.html#fusetools.analytics_tools.Pandas.ptd_measure">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">ptd_measure</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">val_fields</span><span class="p">,</span> <span class="n">kpi</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a &#39;Period to date&#39; aggregation.</span>
+
+<span class="sd">        :param df: Pandas DataFrame</span>
+<span class="sd">        :param period: Type of period (year, month)</span>
+<span class="sd">        :param val_fields: Columns to aggregate.</span>
+<span class="sd">        :param kpi: Type of aggregation to perform.</span>
+<span class="sd">        :param dim: Dimension to group comparison by (Optional).</span>
+<span class="sd">        :return: Pandas DataFrame with PTD measure.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">period</span> <span class="o">==</span> <span class="s2">&quot;year&quot;</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;max_year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">])</span>
+            <span class="n">df_sub</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;max_year&#39;</span><span class="p">]]</span>
+        <span class="k">elif</span> <span class="n">period</span> <span class="o">==</span> <span class="s2">&quot;month&quot;</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;max_year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">])</span>
+            <span class="n">df_sub</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
+                <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;max_year&#39;</span><span class="p">])</span>
+            <span class="p">]</span>
+            <span class="n">df_sub</span><span class="p">[</span><span class="s1">&#39;max_month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">df_sub</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">])</span>
+            <span class="n">df_sub</span> <span class="o">=</span> <span class="n">df_sub</span><span class="p">[</span>
+                <span class="p">(</span><span class="n">df_sub</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df_sub</span><span class="p">[</span><span class="s1">&#39;max_month&#39;</span><span class="p">])</span>
+            <span class="p">]</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">idxx</span><span class="p">,</span> <span class="n">val_field</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">val_fields</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">val_field</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">dim</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                    <span class="n">val_field</span><span class="p">:</span>
+                        <span class="p">(</span><span class="n">df_sub</span>
+                         <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+                         <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="n">val_field</span><span class="p">:</span> <span class="n">kpi</span><span class="p">})</span>  <span class="c1"># [0]</span>
+                         <span class="p">)</span>
+                <span class="p">})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                    <span class="n">val_field</span><span class="p">:</span>
+                        <span class="n">df_sub</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="n">val_field</span><span class="p">:</span> <span class="n">kpi</span><span class="p">})[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">})</span></div>
+
+<div class="viewcode-block" id="Pandas.find_na_holder"><a class="viewcode-back" href="../../_autosummary/fusetools.analytics_tools.Pandas.html#fusetools.analytics_tools.Pandas.find_na_holder">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">find_na_holder</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">col_new</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the combination of 2 de-duped columns in a Pandas DataFrame.</span>
+
+<span class="sd">        :param df: Pandas DataFrame</span>
+<span class="sd">        :param col: Original column.</span>
+<span class="sd">        :param col_new: New column.</span>
+<span class="sd">        :return: Combination of 2 de-duped columns in a Pandas DataFrame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">col</span><span class="p">,</span> <span class="p">(</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">isnull</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">])][</span><span class="n">col_new</span><span class="p">]</span>
+                <span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">reset_index</span><span class="p">())[</span><span class="n">col_new</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span></div>
+
+<div class="viewcode-block" id="Pandas.append_window_agg"><a class="viewcode-back" href="../../_autosummary/fusetools.analytics_tools.Pandas.html#fusetools.analytics_tools.Pandas.append_window_agg">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">append_window_agg</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">metric_agg</span><span class="p">,</span> <span class="n">comp_col</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Joins a window function&#39;s aggregation to a Pandas DataFrame.</span>
+
+<span class="sd">        :param df: Pandas DataFrame.</span>
+<span class="sd">        :param dim: Column for which to partition of data by.</span>
+<span class="sd">        :param metric: Column to aggregate.</span>
+<span class="sd">        :param metric_agg: Type of calculation to perform.</span>
+<span class="sd">        :param comp_col: Flag of whether or not to create a comparison column.</span>
+<span class="sd">        :return: Pandas DataFrame with a window function&#39;s aggregation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">agg</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span>
+               <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+               <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="n">metric</span><span class="p">:</span> <span class="n">metric_agg</span><span class="p">})</span>
+               <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+               <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">metric</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s1">&#39;&#39;&#39;</span><span class="p">})</span>
+               <span class="p">)</span>
+        <span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="n">df</span><span class="p">,</span>
+            <span class="n">agg</span><span class="p">,</span>
+            <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span>
+            <span class="n">left_on</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span>
+            <span class="n">right_on</span><span class="o">=</span><span class="n">dim</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">comp_col</span><span class="p">:</span>
+            <span class="n">df2</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s1">_pct&#39;&#39;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df2</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">/</span> <span class="n">df2</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s1">&#39;&#39;&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">df2</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

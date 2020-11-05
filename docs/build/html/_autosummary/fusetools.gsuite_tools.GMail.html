@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fusetools.gsuite_tools.GMail &mdash; FuseTools 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="fusetools.gsuite_tools.GSheets" href="fusetools.gsuite_tools.GSheets.html" />
+    <link rel="prev" title="fusetools.gsuite_tools.GDrive" href="fusetools.gsuite_tools.GDrive.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> FuseTools
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../links.html">Links</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="fusetools.html">fusetools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="fusetools.analytics_tools.html">fusetools.analytics_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.cloud_tools.html">fusetools.cloud_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.comm_tools.html">fusetools.comm_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.commerce_tools.html">fusetools.commerce_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.dashboard_tools.html">fusetools.dashboard_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.date_tools.html">fusetools.date_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.db_conn_tools.html">fusetools.db_conn_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.db_etl_tools.html">fusetools.db_etl_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.devops_tools.html">fusetools.devops_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.financial_tools.html">fusetools.financial_tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="fusetools.gsuite_tools.html">fusetools.gsuite_tools</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="fusetools.gsuite_tools.GDrive.html">fusetools.gsuite_tools.GDrive</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">fusetools.gsuite_tools.GMail</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fusetools.gsuite_tools.GSheets.html">fusetools.gsuite_tools.GSheets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.job_tools.html">fusetools.job_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.logging_tools.html">fusetools.logging_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.marketing_tools.html">fusetools.marketing_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.ml_tools.html">fusetools.ml_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.music_tools.html">fusetools.music_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.office_tools.html">fusetools.office_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.pm_tools.html">fusetools.pm_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.research_tools.html">fusetools.research_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.screen_tools.html">fusetools.screen_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.social_tools.html">fusetools.social_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.stat_tools.html">fusetools.stat_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.text_tools.html">fusetools.text_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.transfer_tools.html">fusetools.transfer_tools</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FuseTools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="fusetools.html">fusetools</a> &raquo;</li>
+        
+          <li><a href="fusetools.gsuite_tools.html">fusetools.gsuite_tools</a> &raquo;</li>
+        
+      <li>fusetools.gsuite_tools.GMail</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="fusetools-gsuite-tools-gmail">
+<h1>fusetools.gsuite_tools.GMail<a class="headerlink" href="#fusetools-gsuite-tools-gmail" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="fusetools.gsuite_tools.GMail">
+<em class="property">class </em><code class="sig-prename descclassname">fusetools.gsuite_tools.</code><code class="sig-name descname">GMail</code><a class="reference internal" href="../_modules/fusetools/gsuite_tools.html#GMail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.gsuite_tools.GMail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Functions for interacting with GMail.</p>
+<img alt="../_images/gmail1.png" src="../_images/gmail1.png" />
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.gsuite_tools.GMail.create_service" title="fusetools.gsuite_tools.GMail.create_service"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_service</span></code></a></p></td>
+<td><p>Creates an authenticated service object for GMail.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.gsuite_tools.GMail.download_email_attachment" title="fusetools.gsuite_tools.GMail.download_email_attachment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_email_attachment</span></code></a></p></td>
+<td><p>Downloads email attachments for a given emails.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.gsuite_tools.GMail.get_emails" title="fusetools.gsuite_tools.GMail.get_emails"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_emails</span></code></a></p></td>
+<td><p>Returns a Pandas DataFrame of received email details.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.gsuite_tools.GMail.send_email" title="fusetools.gsuite_tools.GMail.send_email"><code class="xref py py-obj docutils literal notranslate"><span class="pre">send_email</span></code></a></p></td>
+<td><p>Sends an email via GMail.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="fusetools.gsuite_tools.GMail.create_service">
+<em class="property">classmethod </em><code class="sig-name descname">create_service</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cred_path</span></em>, <em class="sig-param"><span class="n">token_path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">working_dir</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/gsuite_tools.html#GMail.create_service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.gsuite_tools.GMail.create_service" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an authenticated service object for GMail.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cred_path</strong> – Path to Google credentials object.</p></li>
+<li><p><strong>token_path</strong> – Path of authentication token.</p></li>
+<li><p><strong>working_dir</strong> – Path of working directory to store token if token path not specified.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Authenticated service object for GMail</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.gsuite_tools.GMail.download_email_attachment">
+<em class="property">classmethod </em><code class="sig-name descname">download_email_attachment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">service</span></em>, <em class="sig-param"><span class="n">msg_id</span></em>, <em class="sig-param"><span class="n">sav_dir</span></em>, <em class="sig-param"><span class="n">user_id</span><span class="o">=</span><span class="default_value">'me'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/gsuite_tools.html#GMail.download_email_attachment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.gsuite_tools.GMail.download_email_attachment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads email attachments for a given emails.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service</strong> – Authenticated service object for GMail.</p></li>
+<li><p><strong>msg_id</strong> – ID of message to download attachments for.</p></li>
+<li><p><strong>sav_dir</strong> – Directory to save an attachment into.</p></li>
+<li><p><strong>user_id</strong> – User ID to pull emails for, default=”me”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Downloaded email attachments.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.gsuite_tools.GMail.get_emails">
+<em class="property">classmethod </em><code class="sig-name descname">get_emails</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">service</span></em>, <em class="sig-param"><span class="n">label_ids</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">user_id</span><span class="o">=</span><span class="default_value">'me'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/gsuite_tools.html#GMail.get_emails"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.gsuite_tools.GMail.get_emails" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Pandas DataFrame of received email details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service</strong> – Authenticated service object for GMail.</p></li>
+<li><p><strong>user_id</strong> – User ID to pull emails for, default=”me”</p></li>
+<li><p><strong>label_ids</strong> – GMail label IDs to pull messages for, default=”INBOX”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pandas DataFrame of received email details.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.gsuite_tools.GMail.send_email">
+<em class="property">classmethod </em><code class="sig-name descname">send_email</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">service</span></em>, <em class="sig-param"><span class="n">to</span></em>, <em class="sig-param"><span class="n">sender</span></em>, <em class="sig-param"><span class="n">subject</span></em>, <em class="sig-param"><span class="n">message_text</span></em>, <em class="sig-param"><span class="n">attachments</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">message_is_html</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/gsuite_tools.html#GMail.send_email"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.gsuite_tools.GMail.send_email" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends an email via GMail.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>service</strong> – Authenticated service object for GMail.</p></li>
+<li><p><strong>to</strong> – Target email address.</p></li>
+<li><p><strong>sender</strong> – Sender email address.</p></li>
+<li><p><strong>subject</strong> – Subject for email.</p></li>
+<li><p><strong>message_text</strong> – Message body text.</p></li>
+<li><p><strong>attachments</strong> – List of message attachments.</p></li>
+<li><p><strong>message_is_html</strong> – Whether or not message_text is in HTML format.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Sent message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="fusetools.gsuite_tools.GSheets.html" class="btn btn-neutral float-right" title="fusetools.gsuite_tools.GSheets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="fusetools.gsuite_tools.GDrive.html" class="btn btn-neutral float-left" title="fusetools.gsuite_tools.GDrive" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

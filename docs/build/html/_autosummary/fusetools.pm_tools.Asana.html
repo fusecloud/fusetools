@@ -1,0 +1,380 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>fusetools.pm_tools.Asana &mdash; FuseTools 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="fusetools.pm_tools.Workfront" href="fusetools.pm_tools.Workfront.html" />
+    <link rel="prev" title="fusetools.pm_tools" href="fusetools.pm_tools.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> FuseTools
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../links.html">Links</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="fusetools.html">fusetools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="fusetools.analytics_tools.html">fusetools.analytics_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.cloud_tools.html">fusetools.cloud_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.comm_tools.html">fusetools.comm_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.commerce_tools.html">fusetools.commerce_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.dashboard_tools.html">fusetools.dashboard_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.date_tools.html">fusetools.date_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.db_conn_tools.html">fusetools.db_conn_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.db_etl_tools.html">fusetools.db_etl_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.devops_tools.html">fusetools.devops_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.financial_tools.html">fusetools.financial_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.gsuite_tools.html">fusetools.gsuite_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.job_tools.html">fusetools.job_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.logging_tools.html">fusetools.logging_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.marketing_tools.html">fusetools.marketing_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.ml_tools.html">fusetools.ml_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.music_tools.html">fusetools.music_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.office_tools.html">fusetools.office_tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="fusetools.pm_tools.html">fusetools.pm_tools</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">fusetools.pm_tools.Asana</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fusetools.pm_tools.Workfront.html">fusetools.pm_tools.Workfront</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.research_tools.html">fusetools.research_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.screen_tools.html">fusetools.screen_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.social_tools.html">fusetools.social_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.stat_tools.html">fusetools.stat_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.text_tools.html">fusetools.text_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fusetools.transfer_tools.html">fusetools.transfer_tools</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">FuseTools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="fusetools.html">fusetools</a> &raquo;</li>
+        
+          <li><a href="fusetools.pm_tools.html">fusetools.pm_tools</a> &raquo;</li>
+        
+      <li>fusetools.pm_tools.Asana</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="fusetools-pm-tools-asana">
+<h1>fusetools.pm_tools.Asana<a class="headerlink" href="#fusetools-pm-tools-asana" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="fusetools.pm_tools.Asana">
+<em class="property">class </em><code class="sig-prename descclassname">fusetools.pm_tools.</code><code class="sig-name descname">Asana</code><a class="reference internal" href="../_modules/fusetools/pm_tools.html#Asana"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.pm_tools.Asana" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Functions for interacting with Asana.</p>
+<img alt="_autosummary/../images/asana2.png" src="_autosummary/../images/asana2.png" />
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.pm_tools.Asana.create_task" title="fusetools.pm_tools.Asana.create_task"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_task</span></code></a></p></td>
+<td><p>Creates an Asana task.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.pm_tools.Asana.get_project_tasks" title="fusetools.pm_tools.Asana.get_project_tasks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_project_tasks</span></code></a></p></td>
+<td><p>Retrieve tasks on an Asana project.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.pm_tools.Asana.get_task_detail" title="fusetools.pm_tools.Asana.get_task_detail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_task_detail</span></code></a></p></td>
+<td><p>Retrieve Asana task details.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">move_task</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.pm_tools.Asana.pull_tasks_for_project" title="fusetools.pm_tools.Asana.pull_tasks_for_project"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pull_tasks_for_project</span></code></a></p></td>
+<td><p>Retrieve tasks on an Asana project.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="fusetools.pm_tools.Asana.create_task">
+<em class="property">classmethod </em><code class="sig-name descname">create_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">asana_token</span></em>, <em class="sig-param"><span class="n">project</span></em>, <em class="sig-param"><span class="n">taskName</span></em>, <em class="sig-param"><span class="n">taskDue</span></em>, <em class="sig-param"><span class="n">assignee</span></em>, <em class="sig-param"><span class="n">taskNotes</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/pm_tools.html#Asana.create_task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.pm_tools.Asana.create_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an Asana task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>asana_token</strong> – Asana API token.</p></li>
+<li><p><strong>project</strong> – Asana project id.</p></li>
+<li><p><strong>taskName</strong> – Name of task.</p></li>
+<li><p><strong>taskDue</strong> – Due date for task.</p></li>
+<li><p><strong>assignee</strong> – Assigned person for task.</p></li>
+<li><p><strong>taskNotes</strong> – Notes on task.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>API call response.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.pm_tools.Asana.get_project_tasks">
+<em class="property">classmethod </em><code class="sig-name descname">get_project_tasks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">asana_token</span></em>, <em class="sig-param"><span class="n">project</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/pm_tools.html#Asana.get_project_tasks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.pm_tools.Asana.get_project_tasks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve tasks on an Asana project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>asana_token</strong> – Asana API token.</p></li>
+<li><p><strong>project</strong> – Asana project Id.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Project tasks.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.pm_tools.Asana.get_task_detail">
+<em class="property">classmethod </em><code class="sig-name descname">get_task_detail</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">asana_token</span></em>, <em class="sig-param"><span class="n">task_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/pm_tools.html#Asana.get_task_detail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.pm_tools.Asana.get_task_detail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve Asana task details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>asana_token</strong> – Asana API token.</p></li>
+<li><p><strong>task_id</strong> – Asana task Id.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Project task details.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.pm_tools.Asana.pull_tasks_for_project">
+<em class="property">classmethod </em><code class="sig-name descname">pull_tasks_for_project</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">asana_token</span></em>, <em class="sig-param"><span class="n">project</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/pm_tools.html#Asana.pull_tasks_for_project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.pm_tools.Asana.pull_tasks_for_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve tasks on an Asana project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>asana_token</strong> – Asana API token.</p></li>
+<li><p><strong>project</strong> – Asana project Id.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Project tasks.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="fusetools.pm_tools.Workfront.html" class="btn btn-neutral float-right" title="fusetools.pm_tools.Workfront" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="fusetools.pm_tools.html" class="btn btn-neutral float-left" title="fusetools.pm_tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

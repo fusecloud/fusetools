@@ -6,7 +6,9 @@ Tools for automating package deployment tasks.
         :width: 25%
 
 """
+import json
 
+import requests
 import os
 import pexpect
 import sys
@@ -32,7 +34,9 @@ class Local:
                        tgt_pkg_dir, tgt_pkg_name,
                        folder_list, file_list,
                        module_list=False,
-                       install_pkg=False,
+                       install_pkg=True,
+                       os_type="unix",
+                       pkg_version="0.0.1",
                        python_alias="python3"):
         """
         Creates a package from another package using specified details.
@@ -89,7 +93,7 @@ class Local:
 from setuptools import setup, find_packages\n
 setup(\n
 name="{tgt_pkg_name}",
-version="0.0.1",
+version="{pkg_version}",
 packages=["{tgt_pkg_name}"]
 )
 '''.strip()
@@ -103,9 +107,6 @@ packages=["{tgt_pkg_name}"]
         )
         myBat.close()
 
-        # make requirements.txt
-        os.system(f"pipreqs {tgt_pkg_dir}")
-
         # replace pkg references in files:
         Export.find_replace_text(
             directory=tgt_pkg_dir,
@@ -115,39 +116,157 @@ packages=["{tgt_pkg_name}"]
 
         # compile
         os.chdir(tgt_pkg_dir)
-        os.system(f"{python_alias} setup.py sdist")
 
-        # install package
-        if install_pkg:
-            os.chdir(tgt_pkg_dir + "dist")
-            os.getcwd()
-            os.system(f"pip install {os.listdir(os.getcwd())[0]}")
+        # compile & install package
+        Local.compile_python_pkg(
+            pkg_name=tgt_pkg_name,
+            pkg_dir=tgt_pkg_dir,
+            pkg_version=pkg_version,
+            os_type=os_type,
+            install_pkg=install_pkg
+        )
 
     @classmethod
     def compile_python_pkg(cls,
-                           pkg_name="fusetools",
-                           pkg_dir=False,
-                           pkg_version="0.0.2",
-                           os_type="unix"):
+                           pkg_dir,
+                           pkg_name,
+                           pkg_version="0.0.1",
+                           os_type="unix",
+                           install_pkg=True):
         """
         Compiles the Python package.
 
         :param pkg_name: Name for package.
         :param pkg_dir: Directory of setup.py file for package.
+        :param install_pkg: Whether or not to install package.
         :return: Command line logs for compilation steps.
 
         """
-        if pkg_dir:
-            os.chdir(pkg_dir)
-            print(f'''pkg setup folder: {os.getcwd()}''')
-
+        os.chdir(pkg_dir)
+        print(f'''pkg setup folder: {os.getcwd()}''')
         os.system("python setup.py sdist")
-        if os_type != "unix":
-            install_cmd = f'''pip install "{os.getcwd()}/dist/{pkg_name}-{pkg_version}.tar.gz"'''.replace("/", "\\")
-        else:
-            install_cmd = f'''pip install "{os.getcwd()}/dist/{pkg_name}-{pkg_version}.tar.gz"'''
+        print(f'''Building requirements.txt''')
+        # make requirements.txt
+        os.system(f"pipreqs {pkg_name} --force")
+        try:
+            file_util.copy_file(pkg_dir+pkg_name+"/requirements.txt",
+                                pkg_dir + "requirements.txt")
+        except:
+            pass
 
-        os.system(install_cmd)
+        if install_pkg:
+            if os_type != "unix":
+                install_cmd = f'''pip install "{os.getcwd()}/dist/{pkg_name}-{pkg_version}.tar.gz"'''.replace("/", "\\")
+            else:
+                install_cmd = f'''pip install "{os.getcwd()}/dist/{pkg_name}-{pkg_version}.tar.gz"'''
+
+            os.system(install_cmd)
+            os.system("pip install -r requirements.txt")
+
+
+
+
+class ReadTheDocs:
+    """
+    Functions for dealing with software documentation
+
+    """
+
+    @classmethod
+    def get_projects(cls, token, project_name=False):
+        URL = f'https://readthedocs.org/api/v3/projects/{project_name if project_name else ""}'
+        TOKEN = token
+        HEADERS = {'Authorization': f'token {TOKEN}'}
+        response = requests.get(URL, headers=HEADERS)
+        return response
+
+    @classmethod
+    def create_project(cls, token, project_json_path):
+        URL = 'https://readthedocs.org/api/v3/projects/'
+        TOKEN = token
+        HEADERS = {'Authorization': f'token {TOKEN}'}
+        data = json.load(open(project_json_path, 'rb'))
+        response = requests.post(
+            URL,
+            json=data,
+            headers=HEADERS,
+        )
+        return response
+
+    @classmethod
+    def update_project(cls, token, project_json_path):
+        URL = 'https://readthedocs.org/api/v3/projects/pip/'
+        TOKEN = token
+        HEADERS = {'Authorization': f'token {TOKEN}'}
+        data = json.load(open(project_json_path, 'rb'))
+        response = requests.patch(
+            URL,
+            json=data,
+            headers=HEADERS,
+        )
+        return response
+
+
+class Sphinx:
+    """
+    Functions for building Sphinx documentation
+
+    """
+
+    @classmethod
+    def build_sphinx_docs(cls, os_type,
+                          pkg_name,
+                          pkg_dir,
+                          python_alias="python",
+                          docs_folder_name="docs",
+                          compile_pkg=False,
+                          show_html=True):
+        if compile_pkg:
+            Local.compile_python_pkg(
+                pkg_name=pkg_name,
+                pkg_dir=pkg_dir,
+                os_type=os_type,
+                install_pkg=True
+            )
+
+        os.chdir(pkg_dir + docs_folder_name)
+        os.system("make html")
+        if show_html:
+            os.system(f"{python_alias} -m http.server")
+
+
+class PyPi:
+    """
+    Functions for distributing software packages
+
+    """
+
+    @classmethod
+    def publish_pypi(cls, pkg_dir, api_key, test_prod_env="test", python_alias="python3"):
+        """
+        Publishes a Python package to the PyPi repository
+
+        :param pkg_dir: Directory containing package to publish
+        :param api_key: PyPi API key
+        :param python_name: Locally installed python name (ex: python -m ...)
+        :return: Published Python package on PyPi
+
+        """
+        # https://packaging.python.org/tutorials/packaging-projects/
+        os.chdir(pkg_dir)
+        input_name = "__token__"
+        if test_prod_env == "test":
+            cmd = f"{python_alias} -m twine upload --repository testpypi dist/* --verbose"
+        else:
+            cmd = f"{python_alias} -m twine upload --repository pypi dist/*  --verbose"
+
+        child = pexpect.spawn(cmd, encoding='utf-8')
+        child.logfile = sys.stdout
+        child.expect(".*username:", timeout=None)
+        child.sendline(input_name)
+        child.expect(".*password:", timeout=None)
+        child.sendline(api_key)
+        child.expect(".*pypi")
 
 
 class Terraform:
@@ -183,50 +302,3 @@ class GitHub:
     """
     # todo implement
     pass
-
-
-class Docs:
-    """
-    Functions for dealing with software documentation
-
-    """
-
-    @classmethod
-    def publish_read_the_docs(cls):
-        """
-
-        :return:
-
-        """
-        # https://readthedocs.org/projects/docs/downloads/pdf/latest/
-        pass
-
-
-class Publish:
-    """
-    Functions for distributing software packages
-
-    """
-
-    @classmethod
-    def publish_pypi(cls, pkg_dir, api_key, python_name="python3"):
-        """
-        Publishes a Python package to the PyPi repository
-
-        :param pkg_dir: Directory containing package to publish
-        :param api_key: PyPi API key
-        :param python_name: Locally installed python name (ex: python -m ...)
-        :return: Published Python package on PyPi
-
-        """
-        # https://packaging.python.org/tutorials/packaging-projects/
-        os.chdir(pkg_dir)
-        input_name = "__token__"
-        cmd = f"{python_name} -m twine upload --repository testpypi dist/*"
-        child = pexpect.spawn(cmd, encoding='utf-8')
-        child.logfile = sys.stdout
-        child.expect(".*username:", timeout=None)
-        child.sendline(input_name)
-        child.expect(".*password:", timeout=None)
-        child.sendline(api_key)
-        child.expect(".*pypi")
