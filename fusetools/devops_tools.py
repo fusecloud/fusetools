@@ -149,7 +149,7 @@ packages=["{tgt_pkg_name}"]
         # make requirements.txt
         os.system(f"pipreqs {pkg_name} --force")
         try:
-            file_util.copy_file(pkg_dir+pkg_name+"/requirements.txt",
+            file_util.copy_file(pkg_dir + pkg_name + "/requirements.txt",
                                 pkg_dir + "requirements.txt")
         except:
             pass
@@ -162,8 +162,6 @@ packages=["{tgt_pkg_name}"]
 
             os.system(install_cmd)
             os.system("pip install -r requirements.txt")
-
-
 
 
 class ReadTheDocs:
@@ -181,11 +179,11 @@ class ReadTheDocs:
         return response
 
     @classmethod
-    def create_project(cls, token, project_json_path):
+    def create_project(cls, token, project_def_path):
         URL = 'https://readthedocs.org/api/v3/projects/'
         TOKEN = token
         HEADERS = {'Authorization': f'token {TOKEN}'}
-        data = json.load(open(project_json_path, 'rb'))
+        data = json.load(open(project_def_path, 'rb'))
         response = requests.post(
             URL,
             json=data,
@@ -194,11 +192,11 @@ class ReadTheDocs:
         return response
 
     @classmethod
-    def update_project(cls, token, project_json_path):
+    def update_project(cls, token, project_def_path):
         URL = 'https://readthedocs.org/api/v3/projects/pip/'
         TOKEN = token
         HEADERS = {'Authorization': f'token {TOKEN}'}
-        data = json.load(open(project_json_path, 'rb'))
+        data = json.load(open(project_def_path, 'rb'))
         response = requests.patch(
             URL,
             json=data,
