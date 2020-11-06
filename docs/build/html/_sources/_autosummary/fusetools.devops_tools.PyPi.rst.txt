@@ -16,6 +16,7 @@ fusetools.devops\_tools.PyPi
    .. autosummary::
       :nosignatures:
    
+      ~PyPi.get_pkg_dtl
       ~PyPi.publish_pypi
    
    

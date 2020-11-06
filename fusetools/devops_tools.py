@@ -292,6 +292,11 @@ class PyPi:
     """
 
     @classmethod
+    def get_pkg_dtl(cls, pkg_name):
+        ret = requests.get(f"https://pypi.python.org/pypi/{pkg_name}/json")
+        return json.loads(ret.content)
+
+    @classmethod
     def publish_pypi(cls, pkg_dir, api_key, test_prod_env="test", python_alias="python3"):
         """
         Publishes a Python package to the PyPi repository

@@ -17,7 +17,6 @@ fusetools.financial\_tools.Quotes
       :nosignatures:
    
       ~Quotes.alpha_vantage
-      ~Quotes.yahoo_finance_quotes
    
    
 

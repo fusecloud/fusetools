@@ -162,14 +162,9 @@
 <span class="sd">        :width: 50%</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">fix_yahoo_finance</span> <span class="k">as</span> <span class="nn">yf</span>
-<span class="kn">import</span> <span class="nn">alpha_vantage</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">alpha_vantage.timeseries</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">ib_insync</span> <span class="kn">import</span> <span class="o">*</span>
 
 
@@ -219,52 +214,7 @@
         <span class="k">elif</span> <span class="n">freq</span> <span class="o">==</span> <span class="s2">&quot;M&quot;</span><span class="p">:</span>
             <span class="n">data</span><span class="p">,</span> <span class="n">meta_data</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">get_monthly_adjusted</span><span class="p">(</span><span class="n">symbol</span><span class="o">=</span><span class="n">ticker</span><span class="p">,</span> <span class="n">outputsize</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">meta_data</span></div>
-
-<div class="viewcode-block" id="Quotes.yahoo_finance_quotes"><a class="viewcode-back" href="../../_autosummary/fusetools.financial_tools.Quotes.html#fusetools.financial_tools.Quotes.yahoo_finance_quotes">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">yahoo_finance_quotes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ticker</span><span class="p">,</span> <span class="n">from_date</span><span class="p">,</span> <span class="n">to_date</span><span class="p">,</span> <span class="n">time_frame</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Pull stock quote data from the YahooFinance API.</span>
-
-<span class="sd">        :param ticker: Stock ticker to query for quotes</span>
-<span class="sd">        :param from_date: Date to pull quotes from</span>
-<span class="sd">        :param to_date: Date to pull quotes until</span>
-<span class="sd">        :param time_frame: Ticker frequency (ex: D for &#39;Daily&#39; or W for &#39;Weekly&#39;)</span>
-<span class="sd">        :return: Quote data from YahooFinance API</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">data</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">ticker</span><span class="p">,</span> <span class="n">from_date</span><span class="p">,</span> <span class="n">to_date</span><span class="p">)</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Date&quot;</span><span class="p">:</span> <span class="s1">&#39;datetime2&#39;</span><span class="p">,</span> <span class="s1">&#39;Open&#39;</span><span class="p">:</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="s1">&#39;High&#39;</span><span class="p">:</span> <span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="s2">&quot;Low&quot;</span><span class="p">:</span> <span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="s2">&quot;Close&quot;</span><span class="p">:</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s2">&quot;Adj Close&quot;</span><span class="p">:</span> <span class="s2">&quot;ac&quot;</span><span class="p">,</span> <span class="s2">&quot;Volume&quot;</span><span class="p">:</span> <span class="s2">&quot;v&quot;</span><span class="p">}</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
-        <span class="c1">#     data[&#39;datetime2&#39;] = data[&#39;datetime2&#39;].astype(datetime)</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;datetime2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;datetime2&#39;</span><span class="p">])</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ticker</span>
-
-        <span class="k">if</span> <span class="n">time_frame</span> <span class="o">==</span> <span class="s1">&#39;d&#39;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span>
-
-        <span class="k">elif</span> <span class="n">time_frame</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;week_number&#39;</span><span class="p">]</span> <span class="o">=</span> \
-                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;datetime2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> \
-                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;datetime2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">week</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-
-            <span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span>
-                <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;week_number&quot;</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">agg</span><span class="p">(</span>
-                <span class="n">ticker</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;ticker&quot;</span><span class="p">,</span> <span class="s2">&quot;first&quot;</span><span class="p">),</span>
-                <span class="n">date_start</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;datetime2&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">),</span>
-                <span class="n">date_end</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;datetime2&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">),</span>
-                <span class="n">o</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;first&quot;</span><span class="p">),</span>
-                <span class="n">c</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;last&quot;</span><span class="p">),</span>
-                <span class="n">h</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">),</span>
-                <span class="n">l</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">),</span>
-                <span class="n">v</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-            <span class="k">return</span> <span class="n">data</span></div></div>
+        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">meta_data</span></div></div>
 
 
 <div class="viewcode-block" id="InteractiveBrokers"><a class="viewcode-back" href="../../_autosummary/fusetools.financial_tools.InteractiveBrokers.html#fusetools.financial_tools.InteractiveBrokers">[docs]</a><span class="k">class</span> <span class="nc">InteractiveBrokers</span><span class="p">:</span>

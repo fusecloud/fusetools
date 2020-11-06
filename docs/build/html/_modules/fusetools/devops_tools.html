@@ -447,6 +447,11 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_pkg_dtl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pkg_name</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;https://pypi.python.org/pypi/</span><span class="si">{</span><span class="n">pkg_name</span><span class="si">}</span><span class="s2">/json&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
 <div class="viewcode-block" id="PyPi.publish_pypi"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.PyPi.html#fusetools.devops_tools.PyPi.publish_pypi">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">publish_pypi</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pkg_dir</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">test_prod_env</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">python_alias</span><span class="o">=</span><span class="s2">&quot;python3&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

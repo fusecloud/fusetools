@@ -6,14 +6,9 @@ Financial tasks and calculations.
         :width: 50%
 """
 
-import fix_yahoo_finance as yf
-import alpha_vantage
-import pandas as pd
-import numpy as np
 from alpha_vantage.timeseries import TimeSeries
 import pandas as pd
 import numpy as np
-from datetime import datetime
 from ib_insync import *
 
 
@@ -64,51 +59,6 @@ class Quotes:
             data, meta_data = ts.get_monthly_adjusted(symbol=ticker, outputsize=size)
 
         return data, meta_data
-
-    @classmethod
-    def yahoo_finance_quotes(cls, ticker, from_date, to_date, time_frame='d'):
-        """
-        Pull stock quote data from the YahooFinance API.
-
-        :param ticker: Stock ticker to query for quotes
-        :param from_date: Date to pull quotes from
-        :param to_date: Date to pull quotes until
-        :param time_frame: Ticker frequency (ex: D for 'Daily' or W for 'Weekly')
-        :return: Quote data from YahooFinance API
-        """
-
-        data = yf.download(ticker, from_date, to_date)
-        data.reset_index(inplace=True)
-
-        d = {"Date": 'datetime2', 'Open': 'o', 'High': 'h', "Low": "l", "Close": 'c', "Adj Close": "ac", "Volume": "v"}
-        data.columns = data.columns.map(lambda col: d[col])
-        #     data['datetime2'] = data['datetime2'].astype(datetime)
-        data['datetime2'] = pd.to_datetime(data['datetime2'])
-        data['ticker'] = ticker
-
-        if time_frame == 'd':
-            return data
-
-        elif time_frame == 'w':
-            data['week_number'] = \
-                data['datetime2'].dt.year.astype(str) + \
-                data['datetime2'].dt.week.astype(str).str.zfill(2)
-
-            data = (data
-                .groupby("week_number")
-                .agg(
-                ticker=("ticker", "first"),
-                date_start=("datetime2", np.min),
-                date_end=("datetime2", np.max),
-                o=("o", "first"),
-                c=("c", "last"),
-                h=("h", np.max),
-                l=("l", np.min),
-                v=("v", np.sum)
-            )
-            ).reset_index(drop=True)
-
-            return data
 
 
 class InteractiveBrokers:
