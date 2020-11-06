@@ -7,7 +7,6 @@ Tools for automating package deployment tasks.
 
 """
 import json
-import nbsphinx
 import requests
 import os
 import pexpect
@@ -16,6 +15,7 @@ import os
 from fusetools.transfer_tools import Local as TransferLocal
 from fusetools.text_tools import Export
 from distutils import dir_util, file_util
+import nbsphinx
 
 
 class Local:
@@ -132,6 +132,7 @@ packages=["{tgt_pkg_name}"]
                            pkg_name,
                            pkg_version="0.0.1",
                            os_type="unix",
+                           add_docs=False,
                            install_pkg=True):
         """
         Compiles the Python package.
@@ -143,16 +144,45 @@ packages=["{tgt_pkg_name}"]
 
         """
         os.chdir(pkg_dir)
-        print(f'''pkg setup folder: {os.getcwd()}''')
-        os.system("python setup.py sdist")
-        print(f'''Building requirements.txt''')
-        # make requirements.txt
-        os.system(f"pipreqs {pkg_name} --force")
+        # attempt to clear our dist folder
         try:
-            file_util.copy_file(pkg_dir + pkg_name + "/requirements.txt",
-                                pkg_dir + "requirements.txt")
+            [os.remove(pkg_dir + x) for x in os.listdir(pkg_dir + "dist")]
         except:
             pass
+
+        os.system("python setup.py sdist")
+        print(f'''Building requirements.txt''')
+        # make sphinx_requirements.txt
+        os.system(f"pipreqs {pkg_name} --force")
+
+        # concatenate requirements files
+        if add_docs:
+            # main directory
+            Export.concat_text_files(
+                input_files=[
+                    pkg_dir + pkg_name + "/requirements.txt",
+                    pkg_dir + "docs/" + "sphinx_requirements.txt"
+                ],
+                output_file=pkg_dir + "requirements.txt"
+            )
+
+            # docs directory
+            Export.concat_text_files(
+                input_files=[
+                    pkg_dir + pkg_name + "/requirements.txt",
+                    pkg_dir + "docs/" + "sphinx_requirements.txt"
+                ],
+                output_file=pkg_dir + "docs/" + "requirements.txt"
+            )
+        else:
+            try:
+                os.remove(pkg_dir + "requirements.txt")
+            except:
+                pass
+            file_util.move_file(
+                src=pkg_dir + pkg_name + "/requirements.txt",
+                dst=pkg_dir + "requirements.txt"
+            )
 
         if install_pkg:
             if os_type != "unix":

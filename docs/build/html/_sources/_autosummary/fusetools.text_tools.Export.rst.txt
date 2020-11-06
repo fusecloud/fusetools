@@ -16,6 +16,7 @@ fusetools.text\_tools.Export
    .. autosummary::
       :nosignatures:
    
+      ~Export.concat_text_files
       ~Export.dump_json
       ~Export.dump_sql
       ~Export.find_replace_text

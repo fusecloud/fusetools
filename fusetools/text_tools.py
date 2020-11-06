@@ -57,6 +57,13 @@ class Export:
     """
 
     @classmethod
+    def concat_text_files(cls, input_files, output_file):
+        with open(output_file, 'w') as outfile:
+            for fname in input_files:
+                with open(fname) as infile:
+                    outfile.write(infile.read())
+
+    @classmethod
     def find_replace_text(cls, directory, find, replace, file_pattern):
         for path, dirs, files in os.walk(os.path.abspath(directory)):
             for filename in fnmatch.filter(files, file_pattern):
