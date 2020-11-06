@@ -19,7 +19,7 @@ warnings.filterwarnings('ignore', message = 'sphinx.util.inspect.Signature\(\) i
 
 # -- Project information -----------------------------------------------------
 
-project = 'FuseTools'
+project = 'Fusetools'
 author = 'FuseCloud'
 
 # The full version, including alpha/beta/rc tags
