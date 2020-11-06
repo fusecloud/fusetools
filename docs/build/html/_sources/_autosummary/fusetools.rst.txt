@@ -1,4 +1,4 @@
-﻿fusetools
+fusetools
 =========
 
 .. automodule:: fusetools
