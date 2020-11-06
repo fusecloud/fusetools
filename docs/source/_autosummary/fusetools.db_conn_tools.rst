@@ -24,7 +24,6 @@ fusetools.db\_conn\_tools
       Oracle
       Postgres
       Redshift
-      SqlServer
       TeraData
    
    

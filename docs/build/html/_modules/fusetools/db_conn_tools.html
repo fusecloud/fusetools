@@ -164,8 +164,6 @@
 <span class="sd">        :width: 20%</span>
 <span class="sd">    .. |pic3| image:: ../images_source/db_conn_tools/teradata.png</span>
 <span class="sd">        :width: 20%</span>
-<span class="sd">    .. |pic4| image:: ../images_source/db_conn_tools/sqlserver1.png</span>
-<span class="sd">        :width: 20%</span>
 <span class="sd">    .. |pic5| image:: ../images_source/db_conn_tools/redshift1.png</span>
 <span class="sd">        :width: 20%</span>
 <span class="sd">    .. |pic6| image:: ../images_source/db_conn_tools/mysql.png</span>
@@ -240,31 +238,6 @@
             <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">conn</span></div></div>
-
-
-<div class="viewcode-block" id="SqlServer"><a class="viewcode-back" href="../../_autosummary/fusetools.db_conn_tools.SqlServer.html#fusetools.db_conn_tools.SqlServer">[docs]</a><span class="k">class</span> <span class="nc">SqlServer</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    MS SqlServer database connections.</span>
-
-<span class="sd">    .. image:: ../images_source/db_conn_tools/sqlserver1.png</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># Engines</span>
-<div class="viewcode-block" id="SqlServer.eng_ms"><a class="viewcode-back" href="../../_autosummary/fusetools.db_conn_tools.SqlServer.html#fusetools.db_conn_tools.SqlServer.eng_ms">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">eng_ms</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">usr</span><span class="p">,</span> <span class="n">pwd</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create an MS SqlServer data engine object.</span>
-
-<span class="sd">        :param usr: MS SqlServer username.</span>
-<span class="sd">        :param pwd: MS SqlServer password.</span>
-<span class="sd">        :param db: MS SqlServer database name.</span>
-<span class="sd">        :return: MS SqlServer data engine object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">pyodbc</span>
-        <span class="n">eng</span> <span class="o">=</span> <span class="n">pyodbc</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;DSN=</span><span class="si">{</span><span class="n">db</span><span class="si">}</span><span class="s1">;UID=</span><span class="si">{</span><span class="n">usr</span><span class="si">}</span><span class="s1">;PWD=</span><span class="si">{</span><span class="n">pwd</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">eng</span></div></div>
-
-
 
 <div class="viewcode-block" id="Postgres"><a class="viewcode-back" href="../../_autosummary/fusetools.db_conn_tools.Postgres.html#fusetools.db_conn_tools.Postgres">[docs]</a><span class="k">class</span> <span class="nc">Postgres</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>

@@ -8,8 +8,6 @@ Database connections and engines.
         :width: 20%
     .. |pic3| image:: ../images_source/db_conn_tools/teradata.png
         :width: 20%
-    .. |pic4| image:: ../images_source/db_conn_tools/sqlserver1.png
-        :width: 20%
     .. |pic5| image:: ../images_source/db_conn_tools/redshift1.png
         :width: 20%
     .. |pic6| image:: ../images_source/db_conn_tools/mysql.png
@@ -84,31 +82,6 @@ class Oracle:
             encoding="utf-8")
 
         return conn
-
-
-class SqlServer:
-    """
-    MS SqlServer database connections.
-
-    .. image:: ../images_source/db_conn_tools/sqlserver1.png
-    """
-
-    # Engines
-    @classmethod
-    def eng_ms(cls, usr, pwd, db):
-        """
-        Create an MS SqlServer data engine object.
-
-        :param usr: MS SqlServer username.
-        :param pwd: MS SqlServer password.
-        :param db: MS SqlServer database name.
-        :return: MS SqlServer data engine object.
-        """
-        import pyodbc
-        eng = pyodbc.connect(f'DSN={db};UID={usr};PWD={pwd}')
-        return eng
-
-
 
 class Postgres:
     """
