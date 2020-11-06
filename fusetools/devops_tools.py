@@ -146,9 +146,30 @@ packages=["{tgt_pkg_name}"]
         os.chdir(pkg_dir)
         # attempt to clear our dist folder
         try:
-            [os.remove(pkg_dir + x) for x in os.listdir(pkg_dir + "dist")]
+            [os.remove(pkg_dir + "dist/" + x) for x in os.listdir(pkg_dir + "dist")]
         except:
             pass
+
+        # grep setup.py and find version number
+        with open(pkg_dir + "setup.py", "r") as fp:
+            setup_text = fp.readlines()
+
+        prior_pkg_version = (
+            str(setup_text)
+                .split("version=")[1]
+                .split(",")[0]
+                .replace('"', "")
+        )
+
+        # see if the version number in setup.py
+        # is different than the one we've specified, replace if so
+        if prior_pkg_version != pkg_version:
+            Export.find_replace_text(
+                directory=pkg_dir,
+                find=prior_pkg_version,
+                replace=pkg_version,
+                file_pattern="setup.py"
+            )
 
         os.system("python setup.py sdist")
         print(f'''Building requirements.txt''')
