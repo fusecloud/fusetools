@@ -64,14 +64,16 @@ class Local:
                 method="clear")
 
         # copy folders and contents
-        for folder in folder_list:
-            dir_util.copy_tree(src_pkg_dir + folder,
-                               tgt_pkg_dir + folder)
+        if folder_list:
+            for folder in folder_list:
+                dir_util.copy_tree(src_pkg_dir + folder,
+                                   tgt_pkg_dir + folder)
 
         # copy files
-        for file in file_list:
-            file_util.copy_file(src_pkg_dir + file,
-                                tgt_pkg_dir + file)
+        if file_list:
+            for file in file_list:
+                file_util.copy_file(src_pkg_dir + file,
+                                    tgt_pkg_dir + file)
 
         # make pkg folder
         os.mkdir(tgt_pkg_dir + tgt_pkg_name)
