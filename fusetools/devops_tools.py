@@ -47,7 +47,7 @@ class Local:
         :param file_list: List of files to copy from source package directory
         :param module_list: List of package modules to copy from source package
         :param install_pkg: Whether or not to install the package after copying
-        :param python_alias: System alias for Python to compile package (ex: python/python3 setup.py sdist)
+        :param python_alias: System alias for Python to compile package (ex: python/python3 steps.py sdist)
         :return: Copied package directory
 
         """
@@ -87,7 +87,7 @@ class Local:
                 tgt_pkg_dir + tgt_pkg_name + "/" + module
             )
 
-        # make setup.py
+        # make steps.py
         setup_py_text = \
             f'''
 from setuptools import setup, find_packages\n
@@ -98,7 +98,7 @@ packages=["{tgt_pkg_name}"]
 )
 '''.strip()
 
-        myBat = open(tgt_pkg_dir + "setup.py", 'w+')
+        myBat = open(tgt_pkg_dir + "steps.py", 'w+')
         (
             myBat
                 .write(
@@ -119,7 +119,7 @@ packages=["{tgt_pkg_name}"]
 
         # compile
         os.chdir(tgt_pkg_dir)
-        os.system(f"{python_alias} setup.py sdist")
+        os.system(f"{python_alias} steps.py sdist")
 
         # install package
         if install_pkg:
@@ -140,7 +140,7 @@ def compile_python_pkg(cls,
     Compiles the Python package.
 
     :param pkg_name: Name for package.
-    :param pkg_dir: Directory of setup.py file for package.
+    :param pkg_dir: Directory of steps.py file for package.
     :param install_pkg: Whether or not to install package.
     :return: Command line logs for compilation steps.
 
@@ -152,8 +152,8 @@ def compile_python_pkg(cls,
     except:
         pass
 
-    # grep setup.py and find version number
-    with open(pkg_dir + "setup.py", "r") as fp:
+    # grep steps.py and find version number
+    with open(pkg_dir + "steps.py", "r") as fp:
         setup_text = fp.readlines()
 
     prior_pkg_version = (
@@ -163,17 +163,17 @@ def compile_python_pkg(cls,
             .replace('"', "")
     )
 
-    # see if the version number in setup.py
+    # see if the version number in steps.py
     # is different than the one we've specified, replace if so
     if prior_pkg_version != pkg_version:
         Export.find_replace_text(
             directory=pkg_dir,
             find=prior_pkg_version,
             replace=pkg_version,
-            file_pattern="setup.py"
+            file_pattern="steps.py"
         )
 
-    os.system("python setup.py sdist")
+    os.system("python steps.py sdist")
     print(f'''Building requirements.txt''')
     # make sphinx_requirements.txt
     os.system(f"pipreqs {pkg_name} --force")

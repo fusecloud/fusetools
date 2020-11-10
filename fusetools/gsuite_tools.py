@@ -5,6 +5,7 @@ Google Suite Tools.
     .. |pic1| image:: ../images_source/gsuite_tools/gsuitelogo1.png
         :width: 45%
 """
+import json
 from email.mime.text import MIMEText
 import base64
 import logging
@@ -15,6 +16,7 @@ import smtplib
 import time
 import urllib
 import html
+# import pyOpenSSL
 from email import encoders
 from email.headerregistry import Address
 from email.message import EmailMessage
@@ -34,9 +36,11 @@ from apiclient import discovery
 from apiclient.discovery import build
 import io
 from google.auth.transport.requests import Request
+from google.oauth2.service_account import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
 from oauth2client import file, client, tools
+from oauth2client.service_account import ServiceAccountCredentials
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
           "https://www.googleapis.com/auth/drive.file",
@@ -53,6 +57,21 @@ class GSheets:
     .. image:: ../images_source/gsuite_tools/googlesheets1.png
 
     """
+
+    @classmethod
+    def create_service_serv_acct(cls, member_acct_email, token_path):
+
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(
+            filename=token_path,
+            scopes=SCOPES)
+
+        credentials = (
+            credentials
+                .create_delegated(member_acct_email)
+        )
+
+        service = build('sheets', 'v4', credentials=credentials)
+        return service
 
     @classmethod
     def make_google_sheet(cls, ss_name, credentials):
@@ -313,6 +332,22 @@ class GDrive:
     """
 
     @classmethod
+    def create_service_serv_acct(cls, member_acct_email, token_path):
+
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(
+            filename=token_path,
+            scopes=SCOPES)
+
+        credentials = (
+            credentials
+                .create_delegated(member_acct_email)
+        )
+
+        service = build('drive', 'v3', credentials=credentials)
+        return service
+
+
+    @classmethod
     def authorize_credentials(cls, cred_path, token_path):
         """
         Creates an authorized credentials object for Google Drive.
@@ -549,6 +584,21 @@ class GMail:
     .. image:: ../images_source/gsuite_tools/gmail1.png
 
     """
+
+    @classmethod
+    def create_service_serv_acct(cls, member_acct_email, token_path):
+
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(
+            filename=token_path,
+            scopes=SCOPES)
+
+        credentials = (
+            credentials
+                .create_delegated(member_acct_email)
+        )
+
+        service = build('gmail', 'v1', credentials=credentials)
+        return service
 
     @classmethod
     def create_service(cls, cred_path, token_path=None, working_dir=None):

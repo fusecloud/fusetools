@@ -14,6 +14,7 @@ from pathlib import Path
 import pandas as pd
 import pexpect
 import requests
+import zipfile
 from selenium.webdriver.chrome import webdriver
 
 
@@ -51,6 +52,23 @@ class Local:
     Functions for accessing local files.
 
     """
+
+    @classmethod
+    def zip_unzip(cls, zip_file_name, file_paths, method="zip"):
+
+        if method == "zip":
+            zf = zipfile.ZipFile(zip_file_name, "w")
+            for file in file_paths:
+                zf.write(
+                    os.path.join(
+                        "/".join(file.split("/")[:-1]),
+                        file.split("/")[-1]
+                    ),
+                    arcname=file.split("/")[-1])
+            zf.close()
+        # todo: unzip
+
+        pass
 
     @classmethod
     def clear_delete_directory(cls, directory, method="delete"):
