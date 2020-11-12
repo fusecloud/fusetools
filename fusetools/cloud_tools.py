@@ -426,7 +426,8 @@ class AWS:
             return sql
 
     @classmethod
-    def rs_to_s3(cls, cursor, sql, bucket_path, delimiter, pub, sec, exec=True):
+    def rs_to_s3(cls, cursor, sql, bucket_path, delimiter, pub, sec, exec=True, zip_file=False):
+        # todo: test zip functionality
         """
         Transfers a Redshift query result to a data object on S3.
 
@@ -441,10 +442,11 @@ class AWS:
         """
 
         sql_exec = f'''unload ('{sql}') 
-                    to '{bucket_path}' 
+                    to '{bucket_path}{".giz" if zip_file else ""}' 
                     credentials 'aws_access_key_id={pub};aws_secret_access_key={sec}' 
                     delimiter '{delimiter}' 
                     header 
+                    {"GZIP" if zip_file else ""}
                     allowoverwrite 
                     parallel off
                     '''
@@ -790,3 +792,9 @@ class AWS:
 
         cursor.execute(sql_exec)
         cursor.execute("commit")
+
+
+class GCP:
+    pass
+
+    #todo: upload to bucket

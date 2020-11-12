@@ -6,6 +6,8 @@ Google Suite Tools.
         :width: 45%
 """
 import json
+import shutil
+from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 import base64
 import logging
@@ -38,7 +40,7 @@ import io
 from google.auth.transport.requests import Request
 from google.oauth2.service_account import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
+from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload, MediaIoBaseUpload
 from oauth2client import file, client, tools
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -346,7 +348,6 @@ class GDrive:
         service = build('drive', 'v3', credentials=credentials)
         return service
 
-
     @classmethod
     def authorize_credentials(cls, cred_path, token_path):
         """
@@ -375,7 +376,7 @@ class GDrive:
         return creds
 
     @classmethod
-    def download_file(cls, file_id, credentials):
+    def download_file(cls, file_id, file_name, credentials, save_local=False):
         """
         Downloads a file from a Google Drive account.
 
@@ -384,13 +385,27 @@ class GDrive:
         :return:
         """
         drive_service = build('drive', 'v3', credentials=credentials)
-        request = drive_service.files().get_media(fileId=file_id)
+        request = drive_service.files().get_media(
+            fileId=file_id,
+            # mimeType=content_type
+        )
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
         done = False
         while done is False:
             status, done = downloader.next_chunk()
             print("Download %d%%." % int(status.progress() * 100))
+
+        # https://stackoverflow.com/questions/54137790/convert-from-io-bytesio-to-a-bytes-like-object-in-python3-6
+        # write to file handler object
+        fh.seek(0)
+        file_bytes = fh.read()
+        # The file has been downloaded into RAM, now save it in a file
+        if save_local:
+            fh.seek(0)
+            with open(file_name, 'wb') as f:
+                shutil.copyfileobj(fh, f, length=131072)
+        return file_bytes
 
     @classmethod
     def get_all_google_items(cls, credentials, folder_id=False):
@@ -465,7 +480,10 @@ class GDrive:
         return folder
 
     @classmethod
-    def upload_files(cls, folder_id, upload_filepaths, credentials, upload_filenames=False):
+    def upload_files(cls, folder_id, upload_filepaths,
+                     credentials, upload_filenames=False,
+                     upload_from_memory=False,
+                     ):
         """
         Uploads files to a folder on Google Drive.
 
@@ -479,10 +497,10 @@ class GDrive:
 
         files = []
         for idx, file in enumerate(upload_filepaths):
-            name = os.fsdecode(file)
-            filename, file_extension = splitext(name, )
-            if upload_filenames:
-                filename, file_extension = splitext(upload_filenames[idx], )
+            # name = os.fsdecode(file)
+            # filename, file_extension = splitext(name, )
+            # if upload_filenames:
+            filename, file_extension = splitext(upload_filenames[idx], )
 
             # setting mimeType for each file
             # more types available here:
@@ -555,24 +573,54 @@ class GDrive:
                 'parents': [folder_id]
             }
 
-            try:
-                media = MediaFileUpload(file, resumable=True)
+            if upload_from_memory:
 
-                file_ = (
-                    drive_service
-                        .files()
-                        .create(
-                        body=file_metadata,
-                        media_body=media,
-                        fields='id')
-                        .execute())
+                try:
+                    fh = io.BytesIO(file)
+                    media = MediaIoBaseUpload(
+                        fh,
+                        mimetype=mimeType,
+                        chunksize=1024 * 1024,
+                        resumable=True)
 
-                print(f'''file upload success for: {file}''')
-                files.append(file_)
-            except Exception as e:
-                print(str(e))
-                print(f'''file upload failed for: {file}''')
-                continue
+                    file_ = (
+                        drive_service
+                            .files()
+                            .create(
+                            body=file_metadata,
+                            media_body=media,
+                            fields='id')
+                            .execute()
+                    )
+
+                    print(f'''file upload success for: {file}''')
+                    files.append(file_)
+
+                except Exception as e:
+                    print(str(e))
+                    print(f'''file upload failed for: {file}, method: memory''')
+                    continue
+
+            else:
+                try:
+                    media = MediaFileUpload(file, resumable=True)
+
+                    file_ = (
+                        drive_service
+                            .files()
+                            .create(
+                            body=file_metadata,
+                            media_body=media,
+                            fields='id')
+                            .execute()
+                    )
+
+                    print(f'''file upload success for: {file}''')
+                    files.append(file_)
+                except Exception as e:
+                    print(str(e))
+                    print(f'''file upload failed for: {file}, method: disk''')
+                    continue
 
         return files
 
@@ -631,7 +679,12 @@ class GMail:
         return service
 
     @classmethod
-    def send_email(cls, service, to, sender, subject, message_text, attachments=False, message_is_html=False):
+    def send_email(cls, service, to, sender, subject,
+                   message_text, attachments=False,
+                   attachments_bytes=False,
+                   attachment_types=False,
+                   attachment_names=False,
+                   message_is_html=False):
         """
         Sends an email via GMail.
 
@@ -656,44 +709,73 @@ class GMail:
             msg = MIMEText(
                 message_text, "html" if message_is_html else "plain"
             )
-            # message.attach(msg)
 
-            # loop through attachment list
-            for idx, attch in enumerate(attachments):
-                content_type, encoding = mimetypes.guess_type(attch)
+            # if the attachments are passed as bytes
+            if attachments_bytes:
 
-                if content_type is None or encoding is not None:
-                    content_type = 'application/octet-stream'
-                main_type, sub_type = content_type.split('/', 1)
+                for idx, attch in enumerate(attachments):
+                    print(f"Adding attachment from memory: {attch}")
 
-                if main_type == 'text':
-                    fp = open(attch, 'rb')
-                    msg = MIMEText(fp.read(), _subtype=sub_type)
-                    fp.close()
+                    main_type = "application"
+                    sub_type = attachment_types[idx]
 
-                elif main_type == 'image':
-                    fp = open(attch, 'rb')
-                    msg = MIMEImage(fp.read(), _subtype=sub_type)
-                    fp.close()
-
-                elif main_type == 'audio':
-                    fp = open(attch, 'rb')
-                    msg = MIMEAudio(fp.read(), _subtype=sub_type)
-                    fp.close()
-
-                else:
-                    fp = open(attch, 'rb')
                     msg = MIMEBase(main_type, sub_type)
-                    msg.set_payload(fp.read())
+                    msg.set_payload(attch)
                     encoders.encode_base64(msg)
-                    fp.close()
 
-                filename = os.path.basename(attch)
-                msg.add_header('Content-Disposition',
-                               'attachment',
-                               filename=filename)
+                    msg.add_header('Content-Disposition',
+                                   'attachment',
+                                   filename=attachment_names[idx])
 
-                message.attach(msg)
+                    message.attach(msg)
+
+            else:
+
+                # loop through attachment list
+                for idx, attch in enumerate(attachments):
+                    print(f"Adding attachment from disk: {attch}")
+
+                    content_type, encoding = mimetypes.guess_type(attch)
+                    if content_type is None or encoding is not None:
+                        content_type = 'application/octet-stream'
+                    main_type, sub_type = content_type.split('/', 1)
+
+                    if main_type == 'text':
+                        fp = open(attch, 'rb')
+                        msg = MIMEText(fp.read(), _subtype=sub_type)
+                        fp.close()
+
+                    elif main_type == 'image':
+                        fp = open(attch, 'rb')
+                        msg = MIMEImage(fp.read(), _subtype=sub_type)
+                        fp.close()
+
+                    elif main_type == 'audio':
+                        fp = open(attch, 'rb')
+                        msg = MIMEAudio(fp.read(), _subtype=sub_type)
+                        fp.close()
+
+                    elif main_type == "application":
+                        fp = open(attch, 'rb')
+                        msg = MIMEApplication(fp.read(), _subtype=sub_type)
+                        fp.close()
+
+                    else:
+                        fp = open(attch, 'rb')
+                        msg = MIMEBase(main_type, sub_type)
+                        msg.set_payload(fp.read())
+                        encoders.encode_base64(msg)
+                        fp.close()
+
+                    filename = os.path.basename(attch) \
+                        if not attachment_names \
+                        else attachment_names[idx]
+
+                    msg.add_header('Content-Disposition',
+                                   'attachment',
+                                   filename=filename)
+
+                    message.attach(msg)
 
         msg = {
             'raw': (
@@ -819,7 +901,10 @@ class GMail:
         return msg_df
 
     @classmethod
-    def download_email_attachment(cls, service, msg_id, sav_dir, user_id="me"):
+    def download_email_attachment(cls, service, msg_id,
+                                  sav_dir=False, user_id="me",
+                                  save_memory=False
+                                  ):
         """
         Downloads email attachments for a given emails.
 
@@ -833,6 +918,7 @@ class GMail:
         # get message details
         message = service.users().messages().get(userId=user_id, id=msg_id).execute()
 
+        file_data_list = []
         # loop through payload sections
         for part in message['payload']['parts']:
             # if there is a filename with an attachment id
@@ -853,7 +939,11 @@ class GMail:
                     data = att['data']
                 file_data = (base64.urlsafe_b64decode(data.encode('UTF-8')))
                 path = part['filename']
+                if save_memory:
+                    file_data_list.append({path: file_data})
+                else:
+                    # save attachment
+                    with open(sav_dir + path, 'wb') as f:
+                        f.write(file_data)
 
-                # save attachment
-                with open(sav_dir + path, 'wb') as f:
-                    f.write(file_data)
+        return file_data_list

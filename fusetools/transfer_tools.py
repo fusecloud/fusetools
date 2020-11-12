@@ -66,6 +66,7 @@ class Local:
                     ),
                     arcname=file.split("/")[-1])
             zf.close()
+        # todo: zip while maintaining folder structure
         # todo: unzip
 
         pass
