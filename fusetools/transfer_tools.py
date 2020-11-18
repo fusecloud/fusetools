@@ -197,13 +197,24 @@ class SSH:
                            target_file_path,
                            target_user,
                            target_ip,
-                           target_pwd):
-        cmd = f"scp -rp {local_file_path} {target_user}@{target_ip}:{target_file_path}"
-        child = pexpect.spawn(cmd, encoding='utf-8')
-        child.logfile = sys.stdout
-        child.expect(".*password:", timeout=None)
-        child.sendline(target_pwd)
-        child.expect(pexpect.EOF, timeout=None)
+                           target_pwd,
+                           direction="send"
+                           ):
+
+        if direction == "send":
+            cmd = f"scp -rp {local_file_path} {target_user}@{target_ip}:{target_file_path}"
+            child = pexpect.spawn(cmd, encoding='utf-8')
+            child.logfile = sys.stdout
+            child.expect(".*password:", timeout=None)
+            child.sendline(target_pwd)
+            child.expect(pexpect.EOF, timeout=None)
+        else:
+            cmd = f"scp -r {target_user}@{target_ip}:{target_file_path} {local_file_path}"
+            child = pexpect.spawn(cmd, encoding='utf-8')
+            child.logfile = sys.stdout
+            child.expect(".*password:", timeout=None)
+            child.sendline(target_pwd)
+            child.expect(pexpect.EOF, timeout=None)
 
 
 class SFTP:

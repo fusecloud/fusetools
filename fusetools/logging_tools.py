@@ -95,6 +95,32 @@ def log_setup(name, filename, warning_type):
     return logger_obj
 
 
+def log_all_thread(filename, thread_type="main"):
+    """
+
+    :param filename:
+    :return:
+    """
+
+    if thread_type == "main":
+        # ignores other threads
+
+        thread_handler = logging.FileHandler(filename, 'a')
+        thread_handler.addFilter(IgnoreThreadsFilter())
+
+    else:
+
+        # listens to only this thread
+        thread_handler = logging.FileHandler(filename, 'a')
+        thread_handler.addFilter(ThreadFilter(threadid=threading.get_ident()))
+
+    logger = logging.getLogger()
+    sys.stderr.write = logger.error
+    sys.stdout.write = logger.info
+
+    logging.basicConfig(filename=filename, level=logging.INFO)
+
+
 def log_all(filename=False):
     """
     Log all stdout to a local logfile.
