@@ -12,6 +12,35 @@ import sys
 import importlib
 import pandas as pd
 from datetime import datetime
+from logging import Filter
+import threading
+
+
+class ThreadFilter(Filter):
+    """Only accept log records from a specific thread or thread name"""
+
+    def __init__(self, threadid=None, threadname=None):
+        if threadid is None and threadname is None:
+            raise ValueError("Must set at a threadid and/or threadname to filter on")
+        self._threadid = threadid
+        self._threadname = threadname
+
+    def filter(self, record):
+        if self._threadid is not None and record.thread != self._threadid:
+            return False
+        if self._threadname is not None and record.threadName != self._threadname:
+            return False
+        return True
+
+
+class IgnoreThreadsFilter(Filter):
+    """Only accepts log records that originated from the main thread"""
+
+    def __init__(self):
+        self._main_thread_id = threading.main_thread().ident
+
+    def filter(self, record):
+        return record.thread == self._main_thread_id
 
 
 def make_script_function(module, path):
