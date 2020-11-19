@@ -95,7 +95,10 @@ def log_setup(name, filename, warning_type):
     return logger_obj
 
 
-def log_all_thread(filename, thread_type="main"):
+def log_all_thread(filename,
+                   level='INFO',
+                   thread_type="main",
+                   main_log=False):
     """
 
     :param filename:
@@ -104,21 +107,34 @@ def log_all_thread(filename, thread_type="main"):
 
     if thread_type == "main":
         # ignores other threads
-
         thread_handler = logging.FileHandler(filename, 'a')
         thread_handler.addFilter(IgnoreThreadsFilter())
 
-    else:
+        logging.basicConfig(
+            handlers=[thread_handler],
+            level=logging.INFO)
+        logger = logging.getLogger()
 
-        # listens to only this thread
+        if level == "INFO":
+            logger.setLevel(logging.INFO)
+        elif level == "WARNING":
+            logger.setLevel(logging.WARNING)
+        elif level == "CRITICAL":
+            logger.setLevel(logging.CRITICAL)
+        elif level == "DEBUG":
+            logger.setLevel(logging.DEBUG)
+        elif level == "ERROR":
+            logger.setLevel(logging.ERROR)
+
+        return logger
+
+    else:
+        # listens to only a sub thread thread
         thread_handler = logging.FileHandler(filename, 'a')
         thread_handler.addFilter(ThreadFilter(threadid=threading.get_ident()))
+        main_log.addHandler(thread_handler)
 
-    logger = logging.getLogger()
-    sys.stderr.write = logger.error
-    sys.stdout.write = logger.info
-
-    logging.basicConfig(filename=filename, level=logging.INFO)
+        return main_log
 
 
 def log_all(filename=False):

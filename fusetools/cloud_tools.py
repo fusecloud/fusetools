@@ -18,6 +18,8 @@ from datetime import datetime
 import boto3
 import firebase_admin
 from firebase_admin import credentials, firestore, db, storage
+from gcloud import storage as storage_gcp
+from oauth2client.service_account import ServiceAccountCredentials
 
 
 class Firebase:
@@ -795,6 +797,49 @@ class AWS:
 
 
 class GCP:
-    pass
 
-    #todo: upload to bucket
+    @classmethod
+    def make_credentials(cls, cred_method, gcloud_project_name,
+                         gcloud_token_dict=None, gcloud_token_path=None):
+        if cred_method == "file":
+            credentials = (
+                ServiceAccountCredentials
+                    .from_json_keyfile_name(gcloud_token_path)
+            )
+        elif cred_method == "dict":
+            credentials = (
+                ServiceAccountCredentials
+                    .from_json_keyfile_dict(gcloud_token_dict)
+            )
+
+        client = storage_gcp.Client(
+            credentials=credentials,
+            project=gcloud_project_name)
+
+        return client
+
+    @classmethod
+    def get_bucket(cls, client, bucket_name):
+        bucket = client.get_bucket(bucket_name)
+        return bucket
+
+    @classmethod
+    def get_bucket_objects(cls, bucket_obj):
+        return [x for x in bucket_obj.list_blobs()]
+
+    @classmethod
+    def bucket_load_objects(cls, bucket, file_list, sav_dir):
+        for file in file_list:
+            blob = bucket.blob(file)
+            blob.upload_from_filename(sav_dir + file)
+
+    @classmethod
+    def bucket_download_objects(cls, bucket, obj_list, sav_dir):
+        for file in obj_list:
+            blob = bucket.blob(file)
+            # Download the file to a destination
+            blob.download_to_filename(
+                sav_dir + (
+                    file if "/" not in file
+                    else file.split("/")[-1])
+            )
