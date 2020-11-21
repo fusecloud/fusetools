@@ -824,17 +824,20 @@ class GCP:
         return bucket
 
     @classmethod
-    def get_bucket_objects(cls, bucket_obj):
-        return [x for x in bucket_obj.list_blobs()]
+    def get_bucket_objects(cls, bucket_obj, prefix=False):
+        if prefix:
+            return [x for x in bucket_obj.list_blobs(prefix=prefix)]
+        else:
+            return [x for x in bucket_obj.list_blobs()]
 
     @classmethod
-    def bucket_load_objects(cls, bucket, file_list, sav_dir):
+    def load_bucket_objects(cls, bucket, file_list, sav_dir):
         for file in file_list:
             blob = bucket.blob(file)
             blob.upload_from_filename(sav_dir + file)
 
     @classmethod
-    def bucket_download_objects(cls, bucket, obj_list, sav_dir):
+    def download_bucket_objects(cls, bucket, obj_list, sav_dir):
         for file in obj_list:
             blob = bucket.blob(file)
             # Download the file to a destination
@@ -843,3 +846,8 @@ class GCP:
                     file if "/" not in file
                     else file.split("/")[-1])
             )
+
+    @classmethod
+    def delete_bucket_objects(cls, bucket, obj_list):
+        for obj in obj_list:
+            obj.delete()
