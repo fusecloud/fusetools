@@ -17,6 +17,7 @@ fusetools.gsuite\_tools.GMail
       :nosignatures:
    
       ~GMail.create_service
+      ~GMail.create_service_serv_acct
       ~GMail.download_email_attachment
       ~GMail.get_emails
       ~GMail.send_email

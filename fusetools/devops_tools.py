@@ -47,7 +47,7 @@ class Local:
         :param file_list: List of files to copy from source package directory
         :param module_list: List of package modules to copy from source package
         :param install_pkg: Whether or not to install the package after copying
-        :param python_alias: System alias for Python to compile package (ex: python/python3 steps.py sdist)
+        :param python_alias: System alias for Python to compile package (ex: python/python3 setup.py sdist)
         :return: Copied package directory
 
         """
@@ -87,7 +87,7 @@ class Local:
                 tgt_pkg_dir + tgt_pkg_name + "/" + module
             )
 
-        # make steps.py
+        # make setup.py
         setup_py_text = \
             f'''
 from setuptools import setup, find_packages\n
@@ -98,7 +98,7 @@ packages=["{tgt_pkg_name}"]
 )
 '''.strip()
 
-        myBat = open(tgt_pkg_dir + "steps.py", 'w+')
+        myBat = open(tgt_pkg_dir + "setup.py", 'w+')
         (
             myBat
                 .write(
@@ -119,7 +119,7 @@ packages=["{tgt_pkg_name}"]
 
         # compile
         os.chdir(tgt_pkg_dir)
-        os.system(f"{python_alias} steps.py sdist")
+        os.system(f"{python_alias} setup.py sdist")
 
         # install package
         if install_pkg:
@@ -128,93 +128,93 @@ packages=["{tgt_pkg_name}"]
             os.system(f"pip install {os.listdir(os.getcwd())[0]}")
 
 
-@classmethod
-def compile_python_pkg(cls,
-                       pkg_dir,
-                       pkg_name,
-                       pkg_version="0.0.1",
-                       os_type="unix",
-                       add_docs=False,
-                       install_pkg=True):
-    """
-    Compiles the Python package.
+    @classmethod
+    def compile_python_pkg(cls,
+                           pkg_dir,
+                           pkg_name,
+                           pkg_version="0.0.1",
+                           os_type="unix",
+                           add_docs=False,
+                           install_pkg=True):
+        """
+        Compiles the Python package.
 
-    :param pkg_name: Name for package.
-    :param pkg_dir: Directory of steps.py file for package.
-    :param install_pkg: Whether or not to install package.
-    :return: Command line logs for compilation steps.
+        :param pkg_name: Name for package.
+        :param pkg_dir: Directory of setup.py file for package.
+        :param install_pkg: Whether or not to install package.
+        :return: Command line logs for compilation steps.
 
-    """
-    os.chdir(pkg_dir)
-    # attempt to clear our dist folder
-    try:
-        [os.remove(pkg_dir + "dist/" + x) for x in os.listdir(pkg_dir + "dist")]
-    except:
-        pass
-
-    # grep steps.py and find version number
-    with open(pkg_dir + "steps.py", "r") as fp:
-        setup_text = fp.readlines()
-
-    prior_pkg_version = (
-        str(setup_text)
-            .split("version=")[1]
-            .split(",")[0]
-            .replace('"', "")
-    )
-
-    # see if the version number in steps.py
-    # is different than the one we've specified, replace if so
-    if prior_pkg_version != pkg_version:
-        Export.find_replace_text(
-            directory=pkg_dir,
-            find=prior_pkg_version,
-            replace=pkg_version,
-            file_pattern="steps.py"
-        )
-
-    os.system("python steps.py sdist")
-    print(f'''Building requirements.txt''')
-    # make sphinx_requirements.txt
-    os.system(f"pipreqs {pkg_name} --force")
-
-    # concatenate requirements files
-    if add_docs:
-        # main directory
-        Export.concat_text_files(
-            input_files=[
-                pkg_dir + pkg_name + "/requirements.txt",
-                pkg_dir + "docs/" + "sphinx_requirements.txt"
-            ],
-            output_file=pkg_dir + "requirements.txt"
-        )
-
-        # docs directory
-        Export.concat_text_files(
-            input_files=[
-                pkg_dir + pkg_name + "/requirements.txt",
-                pkg_dir + "docs/" + "sphinx_requirements.txt"
-            ],
-            output_file=pkg_dir + "docs/" + "requirements.txt"
-        )
-    else:
+        """
+        os.chdir(pkg_dir)
+        # attempt to clear our dist folder
         try:
-            os.remove(pkg_dir + "requirements.txt")
+            [os.remove(pkg_dir + "dist/" + x) for x in os.listdir(pkg_dir + "dist")]
         except:
             pass
-        file_util.move_file(
-            src=pkg_dir + pkg_name + "/requirements.txt",
-            dst=pkg_dir + "requirements.txt"
+
+        # grep setup.py and find version number
+        with open(pkg_dir + "setup.py", "r") as fp:
+            setup_text = fp.readlines()
+
+        prior_pkg_version = (
+            str(setup_text)
+                .split("version=")[1]
+                .split(",")[0]
+                .replace('"', "")
         )
 
-    if install_pkg:
-        if os_type != "unix":
-            install_cmd = f'''pip install "{os.getcwd()}/dist/{pkg_name}-{pkg_version}.tar.gz"'''.replace("/", "\\")
-        else:
-            install_cmd = f'''pip install "{os.getcwd()}/dist/{pkg_name}-{pkg_version}.tar.gz"'''
+        # see if the version number in setup.py
+        # is different than the one we've specified, replace if so
+        if prior_pkg_version != pkg_version:
+            Export.find_replace_text(
+                directory=pkg_dir,
+                find=prior_pkg_version,
+                replace=pkg_version,
+                file_pattern="setup.py"
+            )
 
-        os.system(install_cmd)
-        os.system("pip install -r requirements.txt")
+        os.system("python setup.py sdist")
+        print(f'''Building requirements.txt''')
+        # make sphinx_requirements.txt
+        os.system(f"pipreqs {pkg_name} --force")
+
+        # concatenate requirements files
+        if add_docs:
+            # main directory
+            Export.concat_text_files(
+                input_files=[
+                    pkg_dir + pkg_name + "/requirements.txt",
+                    pkg_dir + "docs/" + "sphinx_requirements.txt"
+                ],
+                output_file=pkg_dir + "requirements.txt"
+            )
+
+            # docs directory
+            Export.concat_text_files(
+                input_files=[
+                    pkg_dir + pkg_name + "/requirements.txt",
+                    pkg_dir + "docs/" + "sphinx_requirements.txt"
+                ],
+                output_file=pkg_dir + "docs/" + "requirements.txt"
+            )
+        else:
+            try:
+                os.remove(pkg_dir + "requirements.txt")
+            except:
+                pass
+            file_util.move_file(
+                src=pkg_dir + pkg_name + "/requirements.txt",
+                dst=pkg_dir + "requirements.txt"
+            )
+
+        if install_pkg:
+            if os_type != "unix":
+                install_cmd = f'''pip install "{os.getcwd()}/dist/{pkg_name}-{pkg_version}.tar.gz"'''.replace("/", "\\")
+            else:
+                install_cmd = f'''pip install "{os.getcwd()}/dist/{pkg_name}-{pkg_version}.tar.gz"'''
+
+            os.system(install_cmd)
+            os.system("pip install -r requirements.txt")
 
 
 class ReadTheDocs:

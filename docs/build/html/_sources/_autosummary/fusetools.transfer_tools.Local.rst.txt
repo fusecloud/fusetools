@@ -21,6 +21,7 @@ fusetools.transfer\_tools.Local
       ~Local.get_all_filetimes
       ~Local.get_latest_file
       ~Local.read_files_like
+      ~Local.zip_unzip
    
    
 

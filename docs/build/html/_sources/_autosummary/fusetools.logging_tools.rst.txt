@@ -16,6 +16,7 @@ fusetools.logging\_tools
       :nosignatures:
    
       log_all
+      log_all_thread
       log_setup
       log_tbl_dict
       make_script_function
@@ -23,6 +24,16 @@ fusetools.logging\_tools
    
 
    
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+      :nosignatures:
+   
+      IgnoreThreadsFilter
+      ThreadFilter
    
    
 

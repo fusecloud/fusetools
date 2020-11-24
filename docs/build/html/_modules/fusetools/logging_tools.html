@@ -168,6 +168,35 @@
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">Filter</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+
+
+<div class="viewcode-block" id="ThreadFilter"><a class="viewcode-back" href="../../_autosummary/fusetools.logging_tools.ThreadFilter.html#fusetools.logging_tools.ThreadFilter">[docs]</a><span class="k">class</span> <span class="nc">ThreadFilter</span><span class="p">(</span><span class="n">Filter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Only accept log records from a specific thread or thread name&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threadid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threadname</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">threadid</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">threadname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must set at a threadid and/or threadname to filter on&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_threadid</span> <span class="o">=</span> <span class="n">threadid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_threadname</span> <span class="o">=</span> <span class="n">threadname</span>
+
+<div class="viewcode-block" id="ThreadFilter.filter"><a class="viewcode-back" href="../../_autosummary/fusetools.logging_tools.ThreadFilter.html#fusetools.logging_tools.ThreadFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threadid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">record</span><span class="o">.</span><span class="n">thread</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threadid</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threadname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">record</span><span class="o">.</span><span class="n">threadName</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threadname</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div></div>
+
+
+<div class="viewcode-block" id="IgnoreThreadsFilter"><a class="viewcode-back" href="../../_autosummary/fusetools.logging_tools.IgnoreThreadsFilter.html#fusetools.logging_tools.IgnoreThreadsFilter">[docs]</a><span class="k">class</span> <span class="nc">IgnoreThreadsFilter</span><span class="p">(</span><span class="n">Filter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Only accepts log records that originated from the main thread&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_main_thread_id</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">main_thread</span><span class="p">()</span><span class="o">.</span><span class="n">ident</span>
+
+<div class="viewcode-block" id="IgnoreThreadsFilter.filter"><a class="viewcode-back" href="../../_autosummary/fusetools.logging_tools.IgnoreThreadsFilter.html#fusetools.logging_tools.IgnoreThreadsFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">record</span><span class="o">.</span><span class="n">thread</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_main_thread_id</span></div></div>
 
 
 <div class="viewcode-block" id="make_script_function"><a class="viewcode-back" href="../../_autosummary/fusetools.logging_tools.make_script_function.html#fusetools.logging_tools.make_script_function">[docs]</a><span class="k">def</span> <span class="nf">make_script_function</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
@@ -220,6 +249,48 @@
     <span class="n">logger_obj</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">logger_obj</span></div>
+
+
+<div class="viewcode-block" id="log_all_thread"><a class="viewcode-back" href="../../_autosummary/fusetools.logging_tools.log_all_thread.html#fusetools.logging_tools.log_all_thread">[docs]</a><span class="k">def</span> <span class="nf">log_all_thread</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span>
+                   <span class="n">level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span>
+                   <span class="n">thread_type</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span>
+                   <span class="n">main_log</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param filename:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">thread_type</span> <span class="o">==</span> <span class="s2">&quot;main&quot;</span><span class="p">:</span>
+        <span class="c1"># ignores other threads</span>
+        <span class="n">thread_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+        <span class="n">thread_handler</span><span class="o">.</span><span class="n">addFilter</span><span class="p">(</span><span class="n">IgnoreThreadsFilter</span><span class="p">())</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+            <span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">thread_handler</span><span class="p">],</span>
+            <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="s2">&quot;INFO&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">level</span> <span class="o">==</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">level</span> <span class="o">==</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">level</span> <span class="o">==</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">level</span> <span class="o">==</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">logger</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># listens to only a sub thread thread</span>
+        <span class="n">thread_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+        <span class="n">thread_handler</span><span class="o">.</span><span class="n">addFilter</span><span class="p">(</span><span class="n">ThreadFilter</span><span class="p">(</span><span class="n">threadid</span><span class="o">=</span><span class="n">threading</span><span class="o">.</span><span class="n">get_ident</span><span class="p">()))</span>
+        <span class="n">main_log</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">thread_handler</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">main_log</span></div>
 
 
 <div class="viewcode-block" id="log_all"><a class="viewcode-back" href="../../_autosummary/fusetools.logging_tools.log_all.html#fusetools.logging_tools.log_all">[docs]</a><span class="k">def</span> <span class="nf">log_all</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>

@@ -22,6 +22,7 @@ fusetools.cloud\_tools
    
       AWS
       Firebase
+      GCP
    
    
 

@@ -17,6 +17,7 @@ fusetools.gsuite\_tools.GDrive
       :nosignatures:
    
       ~GDrive.authorize_credentials
+      ~GDrive.create_service_serv_acct
       ~GDrive.create_upload_folder
       ~GDrive.download_file
       ~GDrive.get_all_google_items

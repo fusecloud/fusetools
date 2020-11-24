@@ -170,6 +170,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">pexpect</span>
 <span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
 <span class="kn">from</span> <span class="nn">selenium.webdriver.chrome</span> <span class="kn">import</span> <span class="n">webdriver</span>
 
 
@@ -207,6 +208,24 @@
 <span class="sd">    Functions for accessing local files.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">zip_unzip</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">zip_file_name</span><span class="p">,</span> <span class="n">file_paths</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;zip&quot;</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;zip&quot;</span><span class="p">:</span>
+            <span class="n">zf</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zip_file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_paths</span><span class="p">:</span>
+                <span class="n">zf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+                        <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="p">),</span>
+                    <span class="n">arcname</span><span class="o">=</span><span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">zf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="c1"># todo: zip while maintaining folder structure</span>
+        <span class="c1"># todo: unzip</span>
+
+        <span class="k">pass</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">clear_delete_directory</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">):</span>
@@ -334,13 +353,24 @@
                            <span class="n">target_file_path</span><span class="p">,</span>
                            <span class="n">target_user</span><span class="p">,</span>
                            <span class="n">target_ip</span><span class="p">,</span>
-                           <span class="n">target_pwd</span><span class="p">):</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scp -rp </span><span class="si">{</span><span class="n">local_file_path</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">target_user</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="n">target_ip</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">target_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">child</span> <span class="o">=</span> <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
-        <span class="n">child</span><span class="o">.</span><span class="n">logfile</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
-        <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s2">&quot;.*password:&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">child</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">target_pwd</span><span class="p">)</span>
-        <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">pexpect</span><span class="o">.</span><span class="n">EOF</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+                           <span class="n">target_pwd</span><span class="p">,</span>
+                           <span class="n">direction</span><span class="o">=</span><span class="s2">&quot;send&quot;</span>
+                           <span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s2">&quot;send&quot;</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scp -rp </span><span class="si">{</span><span class="n">local_file_path</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">target_user</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="n">target_ip</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">target_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">logfile</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s2">&quot;.*password:&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">target_pwd</span><span class="p">)</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">pexpect</span><span class="o">.</span><span class="n">EOF</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scp -r </span><span class="si">{</span><span class="n">target_user</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="n">target_ip</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">target_file_path</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">local_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">pexpect</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">logfile</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s2">&quot;.*password:&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">target_pwd</span><span class="p">)</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">pexpect</span><span class="o">.</span><span class="n">EOF</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="SFTP"><a class="viewcode-back" href="../../_autosummary/fusetools.transfer_tools.SFTP.html#fusetools.transfer_tools.SFTP">[docs]</a><span class="k">class</span> <span class="nc">SFTP</span><span class="p">:</span>

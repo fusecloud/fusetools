@@ -174,6 +174,8 @@
 <span class="kn">import</span> <span class="nn">boto3</span>
 <span class="kn">import</span> <span class="nn">firebase_admin</span>
 <span class="kn">from</span> <span class="nn">firebase_admin</span> <span class="kn">import</span> <span class="n">credentials</span><span class="p">,</span> <span class="n">firestore</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">storage</span>
+<span class="kn">from</span> <span class="nn">gcloud</span> <span class="kn">import</span> <span class="n">storage</span> <span class="k">as</span> <span class="n">storage_gcp</span>
+<span class="kn">from</span> <span class="nn">oauth2client.service_account</span> <span class="kn">import</span> <span class="n">ServiceAccountCredentials</span>
 
 
 <div class="viewcode-block" id="Firebase"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.Firebase.html#fusetools.cloud_tools.Firebase">[docs]</a><span class="k">class</span> <span class="nc">Firebase</span><span class="p">:</span>
@@ -582,7 +584,8 @@
             <span class="k">return</span> <span class="n">sql</span></div>
 
 <div class="viewcode-block" id="AWS.rs_to_s3"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.AWS.html#fusetools.cloud_tools.AWS.rs_to_s3">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">rs_to_s3</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">bucket_path</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">pub</span><span class="p">,</span> <span class="n">sec</span><span class="p">,</span> <span class="n">exec</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">rs_to_s3</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cursor</span><span class="p">,</span> <span class="n">sql</span><span class="p">,</span> <span class="n">bucket_path</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">,</span> <span class="n">pub</span><span class="p">,</span> <span class="n">sec</span><span class="p">,</span> <span class="n">exec</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">zip_file</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="c1"># todo: test zip functionality</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Transfers a Redshift query result to a data object on S3.</span>
 
@@ -597,10 +600,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">sql_exec</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&#39;&#39;unload (&#39;</span><span class="si">{</span><span class="n">sql</span><span class="si">}</span><span class="s1">&#39;) </span>
-<span class="s1">                    to &#39;</span><span class="si">{</span><span class="n">bucket_path</span><span class="si">}</span><span class="s1">&#39; </span>
+<span class="s1">                    to &#39;</span><span class="si">{</span><span class="n">bucket_path</span><span class="si">}{</span><span class="s2">&quot;.giz&quot;</span> <span class="k">if</span> <span class="n">zip_file</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="si">}</span><span class="s1">&#39; </span>
 <span class="s1">                    credentials &#39;aws_access_key_id=</span><span class="si">{</span><span class="n">pub</span><span class="si">}</span><span class="s1">;aws_secret_access_key=</span><span class="si">{</span><span class="n">sec</span><span class="si">}</span><span class="s1">&#39; </span>
 <span class="s1">                    delimiter &#39;</span><span class="si">{</span><span class="n">delimiter</span><span class="si">}</span><span class="s1">&#39; </span>
 <span class="s1">                    header </span>
+<span class="s1">                    </span><span class="si">{</span><span class="s2">&quot;GZIP&quot;</span> <span class="k">if</span> <span class="n">zip_file</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="si">}</span><span class="s1"></span>
 <span class="s1">                    allowoverwrite </span>
 <span class="s1">                    parallel off</span>
 <span class="s1">                    &#39;&#39;&#39;</span>
@@ -946,6 +950,63 @@
 
         <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_exec</span><span class="p">)</span>
         <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;commit&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="GCP"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.GCP.html#fusetools.cloud_tools.GCP">[docs]</a><span class="k">class</span> <span class="nc">GCP</span><span class="p">:</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">make_credentials</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cred_method</span><span class="p">,</span> <span class="n">gcloud_project_name</span><span class="p">,</span>
+                         <span class="n">gcloud_token_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gcloud_token_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cred_method</span> <span class="o">==</span> <span class="s2">&quot;file&quot;</span><span class="p">:</span>
+            <span class="n">credentials</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">ServiceAccountCredentials</span>
+                    <span class="o">.</span><span class="n">from_json_keyfile_name</span><span class="p">(</span><span class="n">gcloud_token_path</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">cred_method</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
+            <span class="n">credentials</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">ServiceAccountCredentials</span>
+                    <span class="o">.</span><span class="n">from_json_keyfile_dict</span><span class="p">(</span><span class="n">gcloud_token_dict</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">client</span> <span class="o">=</span> <span class="n">storage_gcp</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span>
+            <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">,</span>
+            <span class="n">project</span><span class="o">=</span><span class="n">gcloud_project_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">client</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_bucket</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">bucket_name</span><span class="p">):</span>
+        <span class="n">bucket</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bucket</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_bucket_objects</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bucket_obj</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">prefix</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bucket_obj</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bucket_obj</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">()]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">load_bucket_objects</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">file_list</span><span class="p">,</span> <span class="n">sav_dir</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
+            <span class="n">blob</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="n">blob</span><span class="o">.</span><span class="n">upload_from_filename</span><span class="p">(</span><span class="n">sav_dir</span> <span class="o">+</span> <span class="n">file</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">download_bucket_objects</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">obj_list</span><span class="p">,</span> <span class="n">sav_dir</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">obj_list</span><span class="p">:</span>
+            <span class="n">blob</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="c1"># Download the file to a destination</span>
+            <span class="n">blob</span><span class="o">.</span><span class="n">download_to_filename</span><span class="p">(</span>
+                <span class="n">sav_dir</span> <span class="o">+</span> <span class="p">(</span>
+                    <span class="n">file</span> <span class="k">if</span> <span class="s2">&quot;/&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file</span>
+                    <span class="k">else</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">delete_bucket_objects</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">obj_list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">obj_list</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
 </pre></div>
 
            </div>

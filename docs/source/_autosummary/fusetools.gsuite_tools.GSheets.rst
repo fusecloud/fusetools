@@ -17,6 +17,7 @@ fusetools.gsuite\_tools.GSheets
       :nosignatures:
    
       ~GSheets.add_google_sheet_tab
+      ~GSheets.create_service_serv_acct
       ~GSheets.freeze_rows_google_sheet
       ~GSheets.get_google_sheet
       ~GSheets.get_google_sheet_tabs
