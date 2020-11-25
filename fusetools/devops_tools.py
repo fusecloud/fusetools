@@ -127,7 +127,6 @@ packages=["{tgt_pkg_name}"]
             os.getcwd()
             os.system(f"pip install {os.listdir(os.getcwd())[0]}")
 
-
     @classmethod
     def compile_python_pkg(cls,
                            pkg_dir,
@@ -374,4 +373,7 @@ class GitHub:
         child.sendline(user)
         child.expect(".*Password", timeout=None)
         child.sendline(pwd)
-        child.expect(f".*{tgt_branch}")
+        try:
+            child.expect(f".*{tgt_branch}")
+        except:
+            child.expect(f".*Everything")
