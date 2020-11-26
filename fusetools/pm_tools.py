@@ -313,8 +313,8 @@ class Asana:
             "data": {
                 "projects": [project],
                 "name": taskName,
-                "notes": taskNotes,
-                "assignee": assignee,
+                "notes": taskNotes if taskNotes else "",
+                "assignee": assignee if assignee else "",
                 "due_on": taskDue
             }
         }
