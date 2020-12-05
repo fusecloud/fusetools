@@ -54,22 +54,38 @@ class Local:
     """
 
     @classmethod
-    def zip_unzip(cls, zip_file_name, file_paths, method="zip"):
+    def zip_dir(cls, directory_list, zipname):
+        """
+        Compress a directory (ZIP file).
+        """
+        outZipFile = zipfile.ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
 
-        if method == "zip":
-            zf = zipfile.ZipFile(zip_file_name, "w")
-            for file in file_paths:
-                zf.write(
-                    os.path.join(
-                        "/".join(file.split("/")[:-1]),
-                        file.split("/")[-1]
-                    ),
-                    arcname=file.split("/")[-1])
-            zf.close()
-        # todo: zip while maintaining folder structure
-        # todo: unzip
+        for idx, dir in enumerate(directory_list):
+            # if idx == 0: break
+            if not os.path.exists(dir):
+                print(f"Error, directory {dir} does not exist")
+                continue
 
-        pass
+            # The root directory within the ZIP file.
+            rootdir = os.path.basename(dir)
+
+            try:
+                os.listdir(dir)
+                for dirpath, dirnames, filenames in os.walk(dir):
+                    for filename in filenames:
+                        # Write the file named filename to the archive,
+                        # giving it the archive name 'arcname'.
+                        filepath = os.path.join(dirpath, filename)
+                        parentpath = os.path.relpath(filepath, dir)
+                        arcname = os.path.join(rootdir, parentpath)
+
+                        outZipFile.write(filepath, arcname)
+            except:
+                # exception means there are no files inside the directory
+                # so we write the normal file
+                outZipFile.write(dir, dir.split("/")[-1])
+
+        outZipFile.close()
 
     @classmethod
     def clear_delete_directory(cls, directory, method="delete"):
