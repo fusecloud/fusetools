@@ -157,8 +157,13 @@ def log_all(filename=False):
         logging.basicConfig(filename=filename + "_" + dt_str, level=logging.INFO)
 
 
-def log_tbl_dict(proc_owner, proc_cat, proc_name, rundate=False, proc_runtime=False,
-                 max_completed_step=False, outcome=False,
+def log_tbl_dict(proc_owner,
+                 proc_cat,
+                 proc_name,
+                 run_datetime=False,
+                 elapsed_run_time=False,
+                 max_completed_step=False,
+                 outcome=False,
                  notes1_key=False, notes1_note=False, notes1_val=False,
                  notes2_key=False, notes2_note=False, notes2_val=False,
                  notes3_key=False, notes3_note=False, notes3_val=False,
@@ -258,8 +263,8 @@ def log_tbl_dict(proc_owner, proc_cat, proc_name, rundate=False, proc_runtime=Fa
         "proc_owner": proc_owner,
         "proc_cat": proc_cat,
         "proc_name": proc_name,
-        "rundate": rundate,
-        "proc_runtime": proc_runtime,
+        "run_datetime": run_datetime,
+        "elapsed_run_time": elapsed_run_time,
         "max_completed_step": max_completed_step,
         "outcome": outcome,
         "notes1_key": notes1_key,

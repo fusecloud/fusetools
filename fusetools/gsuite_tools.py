@@ -73,7 +73,7 @@ class GSheets:
         )
 
         service = build('sheets', 'v4', credentials=credentials)
-        return service
+        return service, credentials
 
     @classmethod
     def make_google_sheet(cls, ss_name, credentials):
@@ -265,7 +265,7 @@ class GSheets:
         return res
 
     @classmethod
-    def update_google_sheet_df(cls, spreadsheet_id, df, data_range, credentials):
+    def update_google_sheet_df(cls, spreadsheet_id, df, data_range, credentials, header=False):
         """
         Uploads a Pandas DataFrame to a Google Sheet.
 
@@ -284,7 +284,8 @@ class GSheets:
         for idx, row in df.iterrows():
             write_df.append(df.iloc[idx].tolist())
 
-        write_df = [df.columns.tolist()] + write_df
+        if header:
+            write_df = [df.columns.tolist()] + write_df
 
         body = dict({"values": write_df})
 
@@ -346,7 +347,7 @@ class GDrive:
         )
 
         service = build('drive', 'v3', credentials=credentials)
-        return service
+        return service, credentials
 
     @classmethod
     def authorize_credentials(cls, cred_path, token_path):
@@ -646,7 +647,7 @@ class GMail:
         )
 
         service = build('gmail', 'v1', credentials=credentials)
-        return service
+        return service, credentials
 
     @classmethod
     def create_service(cls, cred_path, token_path=None, working_dir=None):
