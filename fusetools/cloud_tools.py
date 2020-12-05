@@ -839,12 +839,14 @@ class GCP:
     @classmethod
     def download_bucket_objects(cls, bucket, obj_list, sav_dir):
         for file in obj_list:
-            blob = bucket.blob(file)
             # Download the file to a destination
-            blob.download_to_filename(
+            file.download_to_filename(
                 sav_dir + (
-                    file if "/" not in file
-                    else file.split("/")[-1])
+                    str(file)
+                        .split(",")[-1]
+                        .replace(">", "")
+                        .strip()
+                )
             )
 
     @classmethod
