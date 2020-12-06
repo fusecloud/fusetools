@@ -303,5 +303,6 @@ def log_tbl_dict(proc_owner,
     df.columns = dat.keys()
     df = df.iloc[1:]
     df.replace(False, '', inplace=True)
+    df.reset_index(drop=True, inplace=True)
 
     return df
