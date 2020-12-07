@@ -10,6 +10,8 @@ Logging tasks.
 import logging
 import sys
 import importlib
+from typing import List, Optional
+
 import pandas as pd
 from datetime import datetime
 from logging import Filter
@@ -157,23 +159,44 @@ def log_all(filename=False):
         logging.basicConfig(filename=filename + "_" + dt_str, level=logging.INFO)
 
 
-def log_tbl_dict(proc_owner,
-                 proc_cat,
-                 proc_name,
-                 run_datetime=False,
-                 elapsed_run_time=False,
-                 max_completed_step=False,
-                 outcome=False,
-                 notes1_key=False, notes1_note=False, notes1_val=False,
-                 notes2_key=False, notes2_note=False, notes2_val=False,
-                 notes3_key=False, notes3_note=False, notes3_val=False,
-                 notes4_key=False, notes4_note=False, notes4_val=False,
-                 notes5_key=False, notes5_note=False, notes5_val=False,
-                 notes6_key=False, notes6_note=False, notes6_val=False,
-                 notes7_key=False, notes7_note=False, notes7_val=False,
-                 notes8_key=False, notes8_note=False, notes8_val=False,
-                 notes9_key=False, notes9_note=False, notes9_val=False,
-                 notes10_key=False, notes10_note=False, notes10_val=False):
+def log_tbl_df(
+        proc_owner: Optional[list] = None,
+        proc_cat: Optional[list] = None,
+        proc_name: Optional[list] = None,
+        run_datetime: Optional[list] = None,
+        elapsed_run_time: Optional[list] = None,
+        max_completed_step: Optional[list] = None,
+        outcome: Optional[list] = None,
+        notes1_key: Optional[list] = None,
+        notes1_note: Optional[list] = None,
+        notes1_val: Optional[list] = None,
+        notes2_key: Optional[list] = None,
+        notes2_note: Optional[list] = None,
+        notes2_val: Optional[list] = None,
+        notes3_key: Optional[list] = None,
+        notes3_note: Optional[list] = None,
+        notes3_val: Optional[list] = None,
+        notes4_key: Optional[list] = None,
+        notes4_note: Optional[list] = None,
+        notes4_val: Optional[list] = None,
+        notes5_key: Optional[list] = None,
+        notes5_note: Optional[list] = None,
+        notes5_val: Optional[list] = None,
+        notes6_key: Optional[list] = None,
+        notes6_note: Optional[list] = None,
+        notes6_val: Optional[list] = None,
+        notes7_key: Optional[list] = None,
+        notes7_note: Optional[list] = None,
+        notes7_val: Optional[list] = None,
+        notes8_key: Optional[list] = None,
+        notes8_note: Optional[list] = None,
+        notes8_val: Optional[list] = None,
+        notes9_key: Optional[list] = None,
+        notes9_note: Optional[list] = None,
+        notes9_val: Optional[list] = None,
+        notes10_key: Optional[list] = None,
+        notes10_note: Optional[list] = None,
+        notes10_val: Optional[list] = None, ):
     """
     Creates a Pandas DataFrame of logging details.
 
@@ -259,7 +282,7 @@ def log_tbl_dict(proc_owner,
     # )
     # '''
 
-    dat = ({
+    df = pd.DataFrame({
         "proc_owner": proc_owner,
         "proc_cat": proc_cat,
         "proc_name": proc_name,
@@ -298,11 +321,5 @@ def log_tbl_dict(proc_owner,
         "notes10_note": notes10_note,
         "notes10_val": notes10_val
     })
-
-    df = pd.DataFrame(dat.items()).T
-    df.columns = dat.keys()
-    df = df.iloc[1:]
-    df.replace(False, '', inplace=True)
-    df.reset_index(drop=True, inplace=True)
 
     return df
