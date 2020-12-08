@@ -10,6 +10,7 @@ Cloud services.
 """
 
 import io
+import json
 import os
 import boto3
 import pandas as pd
@@ -17,6 +18,7 @@ from io import StringIO
 from datetime import datetime
 import boto3
 import firebase_admin
+from botocore.exceptions import ClientError
 from firebase_admin import credentials, firestore, db, storage
 from gcloud import storage as storage_gcp
 from oauth2client.service_account import ServiceAccountCredentials
@@ -794,6 +796,172 @@ class AWS:
 
         cursor.execute(sql_exec)
         cursor.execute("commit")
+
+    @classmethod
+    def create_iam_role_for_lambda(cls, iam_resource, iam_role_name):
+        """
+        Creates an IAM role.
+        :param iam_resource: The Boto3 IAM resource object.
+        :param iam_role_name: The name of the role to create.
+        :return: The newly created role.
+        """
+        lambda_assume_role_policy = {
+            'Version': '2012-10-17',
+            'Statement': [
+                {
+                    'Effect': 'Allow',
+                    'Principal': {
+                        'Service': 'lambda.amazonaws.com'
+                    },
+                    'Action': 'sts:AssumeRole'
+                }
+            ]
+        }
+        policy_arn = 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+
+        try:
+            role = iam_resource.create_role(
+                RoleName=iam_role_name,
+                AssumeRolePolicyDocument=json.dumps(lambda_assume_role_policy))
+            iam_resource.meta.client.get_waiter('role_exists').wait(RoleName=iam_role_name)
+            print("Created role %s.", role.name)
+
+            role.attach_policy(PolicyArn=policy_arn)
+            print("Attached basic execution policy to role %s.", role.name)
+        except ClientError as error:
+            if error.response['Error']['Code'] == 'EntityAlreadyExists':
+                role = iam_resource.Role(iam_role_name)
+                print("The role %s already exists. Using it.", iam_role_name)
+            else:
+                print(
+                    "Couldn't create role %s or attach policy %s.",
+                    iam_role_name, policy_arn)
+                raise
+
+        return role
+
+    @classmethod
+    def create_iam_role_for_lambda(cls, iam_resource, iam_role_name):
+        """
+        Creates an AWS Identity and Access Management (IAM) role that grants the
+        AWS Lambda function basic permission to run. If a role with the specified
+        name already exists, it is used for the demo.
+        :param iam_resource: The Boto3 IAM resource object.
+        :param iam_role_name: The name of the role to create.
+        :return: The newly created role.
+        """
+        lambda_assume_role_policy = {
+            'Version': '2012-10-17',
+            'Statement': [
+                {
+                    'Effect': 'Allow',
+                    'Principal': {
+                        'Service': 'lambda.amazonaws.com'
+                    },
+                    'Action': 'sts:AssumeRole'
+                }
+            ]
+        }
+        policy_arn = 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+
+        try:
+            role = iam_resource.create_role(
+                RoleName=iam_role_name,
+                AssumeRolePolicyDocument=json.dumps(lambda_assume_role_policy))
+            iam_resource.meta.client.get_waiter('role_exists').wait(RoleName=iam_role_name)
+            print("Created role %s.", role.name)
+
+            role.attach_policy(PolicyArn=policy_arn)
+            print("Attached basic execution policy to role %s.", role.name)
+        except ClientError as error:
+            if error.response['Error']['Code'] == 'EntityAlreadyExists':
+                role = iam_resource.Role(iam_role_name)
+                print("The role %s already exists. Using it.", iam_role_name)
+            else:
+                print(
+                    "Couldn't create role %s or attach policy %s.",
+                    iam_role_name, policy_arn)
+                raise
+
+        return role
+
+    @classmethod
+    def deploy_lambda_function(cls,
+                               lambda_client,
+                               function_name,
+                               handler_name,
+                               iam_role,
+                               deployment_package,
+                               function_runtime="python3.8",
+                               timeout_seconds=900,
+                               memory_size=128,
+                               env_vars=False,
+                               tags=False,
+                               function_description=None):
+        """
+        Deploys the AWS Lambda function.
+        :param lambda_client: The Boto3 AWS Lambda client object.
+        :param function_name: The name of the AWS Lambda function.
+        :param handler_name: The fully qualified name of the handler function. This
+                             must include the file name and the function name.
+        :param iam_role: The IAM role to use for the function.
+        :param deployment_package: The deployment package that contains the function
+                                   code in ZIP format.
+        :return: The Amazon Resource Name (ARN) of the newly created function.
+        """
+        try:
+            response = lambda_client.create_function(
+                FunctionName=function_name,
+                Description=function_description if function_description else "",
+                Runtime=function_runtime,
+                Role=iam_role.arn,
+                Handler=handler_name,
+                Code=deployment_package,
+                Timeout=timeout_seconds,
+                Tags=tags if tags else {},
+                MemorySize=memory_size,
+                Environment={'Variables': env_vars} if env_vars else False,
+                Publish=True)
+            function_arn = response['FunctionArn']
+            print(f"Created function '{function_name}' with ARN: {function_arn}")
+        except ClientError:
+            print(f"Couldn't create function '{function_name}'")
+            raise
+        else:
+            return function_arn
+
+    @classmethod
+    def delete_lambda_function(cls, lambda_client, function_name):
+        """
+        Deletes an AWS Lambda function.
+        :param lambda_client: The Boto3 AWS Lambda client object.
+        :param function_name: The name of the function to delete.
+        """
+        try:
+            lambda_client.delete_function(FunctionName=function_name)
+        except ClientError:
+            print(f"Couldn't delete function '{function_name}'")
+            raise
+
+    @classmethod
+    def invoke_lambda_function(cls, lambda_client, function_name, function_params):
+        """
+        Invokes an AWS Lambda function.
+        :param lambda_client: The Boto3 AWS Lambda client object.
+        :param function_name: The name of the function to invoke.
+        :param function_params: The parameters of the function as a dict. This dict
+                                is serialized to JSON before it is sent to AWS Lambda.
+        :return: The response from the function invocation.
+        """
+        try:
+            response = lambda_client.invoke(
+                FunctionName=function_name,
+                Payload=json.dumps(function_params).encode())
+            print(f"Invoked function '{function_name}'")
+        except ClientError:
+            print(f"Couldn't invoke function '{function_name}'")
+            raise
+        return response
 
 
 class GCP:
