@@ -869,18 +869,16 @@ class AWS:
                 RoleName=iam_role_name,
                 AssumeRolePolicyDocument=json.dumps(lambda_assume_role_policy))
             iam_resource.meta.client.get_waiter('role_exists').wait(RoleName=iam_role_name)
-            print("Created role %s.", role.name)
+            print(f"Created role '{role.name}")
 
             role.attach_policy(PolicyArn=policy_arn)
-            print("Attached basic execution policy to role %s.", role.name)
+            print(f"Attached basic execution policy to role '{role.name}'")
         except ClientError as error:
             if error.response['Error']['Code'] == 'EntityAlreadyExists':
                 role = iam_resource.Role(iam_role_name)
-                print("The role %s already exists. Using it.", iam_role_name)
+                print(f"The role '{iam_role_name}' already exists. Using it.")
             else:
-                print(
-                    "Couldn't create role %s or attach policy %s.",
-                    iam_role_name, policy_arn)
+                print(f"Couldn't create role '{iam_role_name}' or attach policy '{policy_arn}'", )
                 raise
 
         return role
