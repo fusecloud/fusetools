@@ -796,7 +796,7 @@ class GMail:
         return message
 
     @classmethod
-    def get_emails(cls, service, label_ids=False, user_id="me"):
+    def get_emails(cls, service, label_ids=False, custom_tree_branch_list=False, user_id="me"):
         """
         Returns a Pandas DataFrame of received email details.
 
@@ -837,12 +837,25 @@ class GMail:
 
             # if there are multiple parts of the message get the message body from first part
             if msg.get("payload").get("parts"):
-                # message text
-                text = (msg
-                        .get("payload")
-                        .get("parts")[0]
-                        .get("body")
-                        .get("data"))
+                # if we passed a custom list of branches to follow to get the data
+                if custom_tree_branch_list:
+                    try:
+                        tree_trunk = msg.get("payload")
+                        for idxx, branch in enumerate(custom_tree_branch_list):
+                            print(branch)
+                            tree_trunk = tree_trunk.get("parts")[branch]
+                        text = tree_trunk.get('body').get('data')
+                    except Exception as e:
+                        print(str(e))
+                        text = False
+
+                else:
+                    # message text
+                    text = (msg
+                            .get("payload")
+                            .get("parts")[0]
+                            .get("body")
+                            .get("data"))
                 if text:
                     text = (
                         base64.urlsafe_b64decode(
