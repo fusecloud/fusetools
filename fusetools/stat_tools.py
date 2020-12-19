@@ -9,7 +9,6 @@ Functions for interacting with Machine Learning Tools.
 
 """
 
-
 from fusetools.text_tools import Blob
 import numpy as np
 import pandas as pd
@@ -87,11 +86,12 @@ class Desc:
     @classmethod
     def group_stats(cls, df, dim_cols, agg_dict):
         """
-        Creates a Pandas DataFrame with the following aggregations over a dimension: Count, Percentage of Occurrence, Median.
+        Creates a Pandas DataFrame with specified aggregations over specified dimensions.
 
-        :param df: Pandas DataFrame of
-        :param col:
-        :return:
+        :param df: Pandas DataFrame.
+        :param dim_cols: List of columns to group by.
+        :param agg_dict: Dictionary of columns and calculations to perform.
+        :return: Pandas DataFrame of calculated results.
         """
         df1 = (df
                .groupby(dim_cols)
@@ -99,42 +99,6 @@ class Desc:
                .reset_index(inplace=True)
                )
 
-        d = {col: 'bins', 'Page_Link': 'count', 'End_Price': 'median'}
-        df1.columns = df1.columns.map(lambda col: d[col])
-
-        df1['pct'] = round(100 * (df1['count'] / np.sum(df1['count'])), 3)
-        df1.index = df1['bins']
-        del df1['bins']
-        df1 = df1[["count", "pct", "median"]]
-        return df1
-
-    @classmethod
-    def group_stats_bins(cls, df, col, bin_st, bin_end, bin_n):
-        """
-        Creates a Pandas DataFrame with the following aggregations over a dimension binned by specified intervals: Count, Percentage of Occurrence, Median.
-
-        :param df:
-        :param col:
-        :param bin_st:
-        :param bin_end:
-        :param bin_n:
-        :return:
-        """
-        bins = np.arange(bin_st, bin_end, bin_n)
-        df['bins'] = pd.cut(df[col], bins, include_lowest=True, precision=3, right=False)
-        df1 = pd.DataFrame(df.groupby(['bins']).agg({
-            "End_Price": "median",
-            "Page_Link": "size"
-        }))
-        df1.reset_index(inplace=True)
-
-        d = {'bins': 'bins', 'Page_Link': 'count', 'End_Price': 'median'}
-        df1.columns = df1.columns.map(lambda col: d[col])
-
-        df1['pct'] = 100 * round(df1['count'] / np.sum(df1['count']), 3)
-        df1.index = df1['bins']
-        del df1['bins']
-        df1 = df1[["count", "pct", "median"]]
         return df1
 
 
@@ -145,18 +109,21 @@ class Test:
     """
 
     @classmethod
-    def ttest(cls, df, col):
+    def ttest(cls, df, grp_col, grp_1_flag, grp_2_flag, target_kpi):
         """
-        Performs a t-test
+        Performs a t-test between two groups split by a flag.
 
-        :param df:
-        :param col:
-        :return:
+        :param df: Pandas DataFrame containing data.
+        :param grp_col: Column used to group the data.
+        :param grp_1_flag: Value used to distinguish group 1.
+        :param grp_2_flag: Value used to distinguish group 2.
+        :param target_kpi: Column for the target metric to compare test across groups.
+        :return: T-Test p-value.
         """
-        a = df[df[col] == 0]
-        a = a[['End_Price']]
-        b = df[df[col] == 1]
-        b = b[['End_Price']]
+        a = df[df[grp_col] == grp_1_flag]
+        a = a[[target_kpi]]
+        b = df[df[grp_col] == grp_2_flag]
+        b = b[[target_kpi]]
         t, p = ttest_ind(a, b, equal_var=False)
         return p
 
@@ -166,10 +133,11 @@ class Test:
             sample1_dat_ttest,
             sample2_dat_ttest):
         """
+        Performs a T-Test between two groups of data.
 
-        :param sample1_dat_ttest:
-        :param sample2_dat_ttest:
-        :return:
+        :param sample1_dat_ttest: Sample 1 dataset.
+        :param sample2_dat_ttest: Sample 2 dataset.
+        :return: T-Test p-value.
         """
         p1, p2 = Blob.text_parse(sample1_dat_ttest, sample2_dat_ttest)
         t, p = ttest_ind(p1, p2, equal_var=False)
@@ -179,11 +147,11 @@ class Test:
     @classmethod
     def cramers_corrected_stat(cls, cat_col1, cat_col2):
         """
-        Calculates correlation between 2 categorical variables using Cramer's method
+        Calculates correlation between 2 categorical variables using Cramer's method.
 
-        :param cat_col1:
-        :param cat_col2:
-        :return: Correlation between 2 categorical variables using Cramer's method
+        :param cat_col1: Categorical column 1.
+        :param cat_col2: Categorical column 2.
+        :return: Correlation between 2 categorical variables using Cramer's method.
         """
 
         # https://stackoverflow.com/questions/20892799/using-pandas-calculate-cram%C3%A9rs-coefficient-matrix
@@ -206,13 +174,13 @@ class Test:
                      significance_level_input,
                      statistical_power_input):
         """
-        Calculates
+        Calculates sample size needed for desired measuring effect size.
 
-        :param baseline_input:
-        :param effect_size_input:
-        :param significance_level_input:
-        :param statistical_power_input:
-        :return:
+        :param baseline_input: Baseline rate to measure effect against against.
+        :param effect_size_input: Desired effect size to measure.
+        :param significance_level_input: Desired level of statistical significance.
+        :param statistical_power_input: Desired level of statistical power.
+        :return: Calculated sample size.
         """
 
         z = norm.isf([float(significance_level_input) / 2])  # two-sided t test
@@ -232,12 +200,13 @@ class Test:
                            sample2_successes,
                            sample2_trials):
         """
+        Calculates correlation between 2 proportions using a Chi-Squared test..
 
-        :param sample1_successes:
-        :param sample1_trials:
-        :param sample2_successes:
-        :param sample2_trials:
-        :return:
+        :param sample1_successes: Sample 1's successes.
+        :param sample1_trials: Sample 1's trials.
+        :param sample2_successes: Sample 2's successes.
+        :param sample2_trials: Sample 2's successes.
+        :return: Chi-Squared p-value.
         """
 
         successes = np.array([int(sample1_successes), int(sample2_successes)])

@@ -19,13 +19,13 @@ class Economics:
     @classmethod
     def bls_query(cls, series_id, start_year, end_year, api_key):
         """
-        Retrieves Consumer Price Index figures from the Bureau of Labor Statistics API
+        Retrieves Consumer Price Index figures from the Bureau of Labor Statistics API.
 
-        :param series_id: Unique ID for a geography and an economic measure
-        :param start_year:
-        :param end_year:
-        :param api_key:
-        :return:
+        :param series_id: Unique ID for a geography and an economic measure.
+        :param start_year: Starting year for query.
+        :param end_year: Ending year for query.
+        :param api_key: API key for BLS.
+        :return: JSON response for API call.
         """
         headers = {'Content-type': 'application/json'}
 
@@ -44,13 +44,14 @@ class Economics:
     @classmethod
     def bls_query_lookup(cls, lookup_df, lookup_area_type, start_year, end_year, api_keys):
         """
+        Executes a series of queries against the BLS database using a DataFrame of lookups.
 
-        :param lookup_df:
-        :param lookup_area_type:
-        :param start_year:
-        :param end_year:
-        :param api_keys:
-        :return:
+        :param lookup_df: Pandas DataFrame of BLS lookup codes.
+        :param lookup_area_type: Type of area to lookup data for.
+        :param start_year: Starting year for query.
+        :param end_year: Ending year for query.
+        :param api_keys: API key for BLS.
+        :return: Pandas DataFrame of responses for all queried lookup codes.
         """
 
         headers = {'Content-type': 'application/json'}
@@ -149,10 +150,11 @@ class Economics:
     @classmethod
     def bea_gdp(cls, api_key, tbl_name="SQGDP1"):
         """
+        Performs a query against the BEA API.
 
-        :param api_key:
-        :param tbl_name:
-        :return:
+        :param api_key: BEA API.
+        :param tbl_name: Name of data table to query from BEA database.
+        :return: Pandas DataFrame of responses.
         """
         r = requests.get(
             f'''
@@ -192,9 +194,10 @@ class Geography:
     @classmethod
     def get_city_lat_lon(cls, city):
         """
+        Calculates the latitude and longitude for a city.
 
-        :param city:
-        :return:
+        :param city: Name of city.
+        :return: Location (latitude and longitude).
         """
         geolocator = Nominatim()
         loc = geolocator.geocode(city)
@@ -203,12 +206,13 @@ class Geography:
     @classmethod
     def calculate_distance(cls, lat_from, lon_from, lat_to, lon_to):
         """
+        Calculates the distance between two latitude/longitude coordinate pairs.
 
-        :param lat_from:
-        :param lon_from:
-        :param lat_to:
-        :param lon_to:
-        :return:
+        :param lat_from: Latitude of the point being compared from.
+        :param lon_from: Longitude of the point being compared from.
+        :param lat_to: Latitude of the point being compared to.
+        :param lon_to: Longitude of the point being compared to.
+        :return: Calculated distance.
         """
         coords_from = (lat_from, lon_from)
         coords_to = (lat_to, lon_to)

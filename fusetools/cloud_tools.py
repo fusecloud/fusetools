@@ -278,6 +278,14 @@ class AWS:
 
     @classmethod
     def create_s3_bucket(cls, pub, sec, bucket_name):
+        """
+        Creates an S3 bucket.
+
+        :param pub: AWS account public key.
+        :param sec: AWS account secret key.
+        :param bucket_name: Name of new S3 bucket.
+        :return: JSON response for API call.
+        """
         session = boto3.Session(
             aws_access_key_id=pub,
             aws_secret_access_key=sec
@@ -963,10 +971,26 @@ class AWS:
 
 
 class GCP:
+    """
+    Functions for interacting with GCP infrastructure.
+
+    .. image:: ../images_source/cloud_tools/gcp3.png
+        :width: 45%
+
+    """
 
     @classmethod
     def make_credentials(cls, cred_method, gcloud_project_name,
                          gcloud_token_dict=None, gcloud_token_path=None):
+        """
+        Creates an authenticated GCP client object.
+
+        :param cred_method: Credentials object, JSON file from disk or JSON object in memory.
+        :param gcloud_project_name: Name of GCP project.
+        :param gcloud_token_dict: Name of JSON GCP token if in memory.
+        :param gcloud_token_path: Name of JSON GCP token if on disk.
+        :return: Authenticated GCP client.
+        """
         if cred_method == "file":
             credentials = (
                 ServiceAccountCredentials
@@ -986,11 +1010,25 @@ class GCP:
 
     @classmethod
     def get_bucket(cls, client, bucket_name):
+        """
+        Returns a GCP storage bucket object.
+
+        :param client: Authenticated GCP client object
+        :param bucket_name: Name of GCP bucket.
+        :return: GCP storage bucket object.
+        """
         bucket = client.get_bucket(bucket_name)
         return bucket
 
     @classmethod
     def get_bucket_objects(cls, bucket_obj, prefix=False):
+        """
+        Returns a list of bucket objects from a GCP storage object.
+
+        :param bucket_obj: GCP storage bucket object to pull list of contained objects from.
+        :param prefix: Optional filter to include to filter bucket object paths by.
+        :return: List of GCP storage bucket objects.
+        """
         if prefix:
             return [x for x in bucket_obj.list_blobs(prefix=prefix)]
         else:
@@ -998,12 +1036,27 @@ class GCP:
 
     @classmethod
     def load_bucket_objects(cls, bucket, file_list, sav_dir):
+        """
+        Loads a list of objects to a GCP storage bucket.
+
+        :param bucket: Name of GCP storage bucket.
+        :param file_list: List of local names to load.
+        :param sav_dir: Local directory containing files to load.
+        :return: Nothing
+        """
         for file in file_list:
             blob = bucket.blob(file)
             blob.upload_from_filename(sav_dir + file)
 
     @classmethod
-    def download_bucket_objects(cls, bucket, obj_list, sav_dir):
+    def download_bucket_objects(cls, obj_list, sav_dir):
+        """
+        Saves a list of GCP storage objects to a local directory.
+
+        :param obj_list: List of GCP bucket storage objects.
+        :param sav_dir: Local directory to save objects to.
+        :return: Nothing
+        """
         for file in obj_list:
             # Download the file to a destination
             file.download_to_filename(
@@ -1016,6 +1069,12 @@ class GCP:
             )
 
     @classmethod
-    def delete_bucket_objects(cls, bucket, obj_list):
+    def delete_bucket_objects(cls, obj_list):
+        """
+        Deletes objects from a GCP storage bucket.
+
+        :param obj_list: List of GCP storage objects to delete.
+        :return: Nothing
+        """
         for obj in obj_list:
             obj.delete()

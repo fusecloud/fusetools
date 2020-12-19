@@ -102,9 +102,13 @@ def log_all_thread(filename,
                    thread_type="main",
                    main_log=False):
     """
+    Logs all specified data on a 'main' thread or a 'sub' thread. Main thread excluded logging from other threads. Sub thread logs data for only that threadId.
 
-    :param filename:
-    :return:
+    :param filename: Filename to log the thread contents to.
+    :param level: Level of logging for the thread (ie: INFO, DEBUG, WARNING, etc)
+    :param thread_type: 'Main' thread or 'Sub' thread.
+    :param main_log: Main log to specify if using a sub thread.
+    :return: A logfile with thread's output.
     """
 
     if thread_type == "main":

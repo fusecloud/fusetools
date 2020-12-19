@@ -143,7 +143,7 @@ class SendGrid:
     """
     SendGrid's API infrastructure.
 
-    .. image:: ../images/sendgrid1.png
+    .. image:: ../images_source/comm_tools/sendgrid1.png
     """
 
     @classmethod

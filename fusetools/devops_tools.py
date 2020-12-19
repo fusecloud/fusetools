@@ -1,9 +1,17 @@
 """
 Tools for automating package deployment tasks.
 
-|pic1|
-    .. |pic1| image:: ../images_source/pkg_tools/pypkg.jpeg
-        :width: 25%
+|pic1| |pic2| |pic3| |pic4| |pic5|
+    .. |pic1| image:: ../images_source/devops_tools/local_folder.png
+        :width: 20%
+    .. |pic2| image:: ../images_source/devops_tools/rtd.png
+        :width: 20%
+    .. |pic3| image:: ../images_source/devops_tools/sphinx.png
+        :width: 20%
+    .. |pic4| image:: ../images_source/devops_tools/pypi.jpeg
+        :width: 20%
+    .. |pic5| image:: ../images_source/devops_tools/github.png
+        :width: 20%
 
 """
 import json
@@ -22,12 +30,8 @@ class Local:
     """
     Functions for dealing with Local DevOps tasks.
 
+    .. image:: ../images_source/devops_tools/local_folder.png
     """
-
-    @classmethod
-    def run_handle_cmds(cls):
-        pass
-        # todo: this lets you define commands, run them, and then handle outputs
 
     @classmethod
     def create_sub_pkg(cls, src_pkg_dir, src_pkg_name,
@@ -218,12 +222,20 @@ packages=["{tgt_pkg_name}"]
 
 class ReadTheDocs:
     """
-    Functions for dealing with software documentation
+    Functions for dealing with software documentation.
 
+    .. image:: ../images_source/devops_tools/rtd.png
     """
 
     @classmethod
     def get_projects(cls, token, project_name=False):
+        """
+        Get projects on RTD, pulls a specific project if specified.
+
+        :param token: RTD API token.
+        :param project_name: Project name (optional).
+        :return: JSON response from API call.
+        """
         URL = f'https://readthedocs.org/api/v3/projects/{project_name if project_name else ""}'
         TOKEN = token
         HEADERS = {'Authorization': f'token {TOKEN}'}
@@ -232,6 +244,13 @@ class ReadTheDocs:
 
     @classmethod
     def create_project(cls, token, project_def_path):
+        """
+        Creates a project on RTD.
+
+        :param token: RTD API token.
+        :param project_def_path: Local path to project files.
+        :return: JSON response from API call.
+        """
         URL = 'https://readthedocs.org/api/v3/projects/'
         TOKEN = token
         HEADERS = {'Authorization': f'token {TOKEN}'}
@@ -245,6 +264,14 @@ class ReadTheDocs:
 
     @classmethod
     def update_project(cls, token, project_def_path, project_name):
+        """
+        Updates a project on RTD.
+
+        :param token: RTD API token.
+        :param project_def_path: Local path to project files.
+        :param project_name: Name of project on RTD.
+        :return: JSON response from API call.
+        """
         URL = f'https://readthedocs.org/api/v3/projects/{project_name}/'
         TOKEN = token
         HEADERS = {'Authorization': f'token {TOKEN}'}
@@ -259,8 +286,9 @@ class ReadTheDocs:
 
 class Sphinx:
     """
-    Functions for building Sphinx documentation
+    Functions for building Sphinx documentation.
 
+    .. image:: ../images_source/devops_tools/sphinx.png
     """
 
     @classmethod
@@ -271,6 +299,18 @@ class Sphinx:
                           docs_folder_name="docs",
                           compile_pkg=False,
                           show_html=True):
+        """
+        Creates Sphinx documentation for a Python package.
+
+        :param os_type: Type of operating system the program is running on.
+        :param pkg_name: Name of Python package if being compiled.
+        :param pkg_dir: Directory containing Python package.
+        :param python_alias: Name of Python alias on machine (ex: python3, python)
+        :param docs_folder_name: Folder name containing documents in Python package directory.
+        :param compile_pkg: Whether or not to compile the Python package before creating documentation.
+        :param show_html: Whether or not to show the Sphinx documentation in the browser after build.
+        :return:
+        """
         if compile_pkg:
             Local.compile_python_pkg(
                 pkg_name=pkg_name,
@@ -290,22 +330,30 @@ class PyPi:
     """
     Functions for distributing software packages
 
+    .. image:: ../images_source/devops_tools/pypi.jpeg
     """
 
     @classmethod
     def get_pkg_dtl(cls, pkg_name):
+        """
+        Get the details for a Python package on PyPi.
+
+        :param pkg_name: Name of Python package to search for on PyPi.
+        :return: JSON API response call.
+        """
         ret = requests.get(f"https://pypi.python.org/pypi/{pkg_name}/json")
         return json.loads(ret.content)
 
     @classmethod
     def publish_pypi(cls, pkg_dir, api_key, test_prod_env="test", python_alias="python3"):
         """
-        Publishes a Python package to the PyPi repository
+        Publishes a Python package to the PyPi repository.
 
-        :param pkg_dir: Directory containing package to publish
-        :param api_key: PyPi API key
-        :param python_name: Locally installed python name (ex: python -m ...)
-        :return: Published Python package on PyPi
+        :param pkg_dir: Directory containing package to publish.
+        :param api_key: PyPi API key.
+        :param test_prod_env: PyPi environment ('test' or other string (production)).
+        :param python_alias: Locally installed python name (ex: python -m ...).
+        :return: Published Python package on PyPi.
 
         """
         # https://packaging.python.org/tutorials/packaging-projects/
@@ -325,36 +373,11 @@ class PyPi:
         child.expect(".*pypi")
 
 
-class Terraform:
-    """
-    Functions for interacting with Terraform
-
-    """
-
-    @classmethod
-    def create_backend_file(cls, tf_folder, init=False):
-        # todo; create and save backend.tf
-        if init:
-            os.system("terraform init")
-        pass
-
-    # @classmethod
-    # def create_variable_file(cls, variable_list):
-    #     # todo; create and save variables.tf
-    #     for idx, variable in enumerate(variable_list):
-    #         variable_ = f'''
-    #             variable "profile" {
-    #                 type="string"
-    #         default = "default"
-    #         }
-    #             '''
-    #         pass
-
-
 class GitHub:
     """
-    Functions for interacting with GitHub
+    Functions for interacting with GitHub.
 
+    .. image:: ../images_source/devops_tools/github.png
     """
 
     @classmethod
@@ -362,6 +385,16 @@ class GitHub:
                     commit_msg,
                     tgt_branch,
                     user, pwd):
+        """
+        Performs a commit and push for a Git repository.
+
+        :param repo_dir: Directory of repository.
+        :param commit_msg: Commit message.
+        :param tgt_branch: Name of branch to target.
+        :param user: GitHub username.
+        :param pwd: GitHub password.
+        :return: Command line responses from actions performed.
+        """
         os.chdir(repo_dir)
         os.getcwd()
 

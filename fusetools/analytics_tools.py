@@ -24,7 +24,7 @@ class SQL:
                             date_join_time_end_col=False):
         """
         Performs a cumulative aggregation over the year as well as provided dimensional columns
-        OR if agg_func param is not provided,
+        OR if agg_func param is not provided.
 
         :param tbl_name: Table with data to perform calculation on
         :param time_col: Column with sub-year time granularity to compare across years

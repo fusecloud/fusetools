@@ -231,3 +231,7 @@ class InteractiveBrokers:
             ib.sleep(5)
 
         return ret.last
+
+
+class ThinkOrSwim:
+    pass

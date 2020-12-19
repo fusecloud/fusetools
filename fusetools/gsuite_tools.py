@@ -62,6 +62,13 @@ class GSheets:
 
     @classmethod
     def create_service_serv_acct(cls, member_acct_email, token_path):
+        """
+        Creates a GSheets authenticated credentials object.
+
+        :param member_acct_email: GSuite service acct email address.
+        :param token_path: Path to GSuite authentication token.
+        :return: Return GSheets authenticated credentials object.
+        """
 
         credentials = ServiceAccountCredentials.from_json_keyfile_name(
             filename=token_path,
@@ -336,6 +343,13 @@ class GDrive:
 
     @classmethod
     def create_service_serv_acct(cls, member_acct_email, token_path):
+        """
+        Creates a GDrive authenticated credentials object.
+
+        :param member_acct_email: GDrive service acct email address.
+        :param token_path: Path to GDrive authentication token.
+        :return: Return GDrive authenticated credentials object.
+        """
 
         credentials = ServiceAccountCredentials.from_json_keyfile_name(
             filename=token_path,
@@ -354,9 +368,9 @@ class GDrive:
         """
         Creates an authorized credentials object for Google Drive.
 
-        :param cred_path: Local path to GSuite credentials object
-        :param token_path: Local path to GSuite authorization token
-        :return: Authorized credentials object for GSuite
+        :param cred_path: Local path to GSuite credentials object.
+        :param token_path: Local path to GSuite authorization token.
+        :return: Authorized credentials object for GSuite.
         """
 
         creds = None
@@ -381,9 +395,9 @@ class GDrive:
         """
         Downloads a file from a Google Drive account.
 
-        :param file_id: ID for Google Drive file
+        :param file_id: ID for Google Drive file.
         :param credentials: GSuite credentials object.
-        :return:
+        :return: Downloaded file from Google Drive.
         """
         drive_service = build('drive', 'v3', credentials=credentials)
         request = drive_service.files().get_media(
@@ -636,6 +650,13 @@ class GMail:
 
     @classmethod
     def create_service_serv_acct(cls, member_acct_email, token_path):
+        """
+        Creates a GMail authenticated credentials object.
+
+        :param member_acct_email: GSuite service acct email address.
+        :param token_path: Path to GSuite authentication token.
+        :return: Return GMail authenticated credentials object.
+        """
 
         credentials = ServiceAccountCredentials.from_json_keyfile_name(
             filename=token_path,
@@ -803,6 +824,7 @@ class GMail:
         :param service: Authenticated service object for GMail.
         :param user_id: User ID to pull emails for, default="me"
         :param label_ids: GMail label IDs to pull messages for, default="INBOX"
+        :param custom_tree_branch_list: List of branch elements to navigate HTML body data (ex: [0,1,0])
         :return: Pandas DataFrame of received email details.
         """
         # get mailbox items

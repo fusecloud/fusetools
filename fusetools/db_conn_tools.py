@@ -1,16 +1,16 @@
 """
 Database connections and engines.
 
-|pic1| |pic2| |pic3| |pic4| |pic5| |pic6|
-    .. |pic1| image:: ../images_source/db_conn_tools/oracle1.png
+|pic1| |pic2| |pic3| |pic4| |pic5|
+    .. |pic1| image:: ../images_source/db_conn_tools/mysql.png
         :width: 20%
-    .. |pic2| image:: ../images_source/db_conn_tools/postgres1.png
+    .. |pic2| image:: ../images_source/db_conn_tools/oracle1.png
         :width: 20%
-    .. |pic3| image:: ../images_source/db_conn_tools/teradata.png
+    .. |pic3| image:: ../images_source/db_conn_tools/postgres1.png
         :width: 20%
-    .. |pic5| image:: ../images_source/db_conn_tools/redshift1.png
+    .. |pic4| image:: ../images_source/db_conn_tools/redshift1.png
         :width: 20%
-    .. |pic6| image:: ../images_source/db_conn_tools/mysql.png
+    .. |pic5| image:: ../images_source/db_conn_tools/teradata.png
         :width: 20%
 
 """
@@ -83,6 +83,7 @@ class Oracle:
 
         return conn
 
+
 class Postgres:
     """
     Postgres database connections.
@@ -140,7 +141,7 @@ class TeraData:
     @classmethod
     def conn_td(cls, host):
         """
-        Create a Teradata database connection object via teradata Python package.
+        Create a Teradata database connection object via Teradata Python package.
 
         :param host: Teradata hostname.
         :return: Returns a Teradata database connection object.
@@ -236,7 +237,7 @@ class MySQL:
     @classmethod
     def eng_mysql(cls, usr, pwd):
         """
-        Create a MySQL database engine object via psycopg2 package.
+        Create a MySQL database engine object via SqlAlchemy.
 
         :param usr: MySQL username.
         :param pwd: MySQL password.
