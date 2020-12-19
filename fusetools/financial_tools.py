@@ -1,15 +1,17 @@
 """
 Financial tasks and calculations.
 
-|pic1|
+|pic1| |pic2|
     .. |pic1| image:: ../images_source/financial_tools/interactivebrokers1.png
+        :width: 50%
+    .. |pic2| image:: ../images_source/financial_tools/tos.png
         :width: 50%
 """
 
 from alpha_vantage.timeseries import TimeSeries
 import pandas as pd
-import numpy as np
 from ib_insync import *
+from tda import auth, client
 
 
 class Misc:
@@ -234,4 +236,52 @@ class InteractiveBrokers:
 
 
 class ThinkOrSwim:
-    pass
+    """
+    ThinkOrSwim API.
+
+    .. image:: ../images_source/financial_tools/tos.png
+    """
+
+    @classmethod
+    def authenticate(cls, token_path, api_key, chromedriver_path, redirect_uri='http://localhost:8888/callback'):
+        """
+        Creates an authenticated ThinkOrSwim API session object.
+
+        :param token_path: Path to API token on disk (if exists or where to save).
+        :param api_key: ThinkOrSwim API key.
+        :param chromedriver_path: Path to chromedriver executable on disk.
+        :param redirect_uri: Redirect url for web authentication.
+        :return: Authenticated ThinkOrSwim API session object.
+        """
+        try:
+            c = auth.client_from_token_file(token_path, api_key)
+        except FileNotFoundError:
+            from selenium import webdriver
+
+            with webdriver.Chrome(chromedriver_path) as driver:
+                c = auth.client_from_login_flow(
+                    driver, api_key, redirect_uri, token_path)
+        return c
+
+    @classmethod
+    def pull_quote_history(cls, authentication_object, ticker, start_date=None, end_date=None):
+        """
+        Pulls price history for a stock ticker.
+
+        :param authentication_object: Authenticated ThinkOrSwim API session object.
+        :param ticker: Stock ticker to pull quotes for.
+        :param start_date: Start date of data to pull quotes for (optional).
+        :param end_date: End date of data to pull quotes for (optional).
+        :return: Stock quotes JSON response object.
+        """
+        r = authentication_object.get_price_history(
+            ticker,
+            period_type=client.Client.PriceHistory.PeriodType.YEAR,
+            period=client.Client.PriceHistory.Period.TWENTY_YEARS,
+            frequency_type=client.Client.PriceHistory.FrequencyType.DAILY,
+            frequency=client.Client.PriceHistory.Frequency.DAILY,
+            # todo: convert dates to timestamp
+            start_datetime=start_date,
+            end_datetime=end_date
+        )
+        return r
