@@ -10,7 +10,11 @@ Financial tasks and calculations.
 
 from alpha_vantage.timeseries import TimeSeries
 import pandas as pd
-from ib_insync import *
+
+try:
+    from ib_insync import *
+except:
+    pass
 from tda import auth, client
 
 
@@ -274,13 +278,13 @@ class ThinkOrSwim:
         :param end_date: End date of data to pull quotes for (optional).
         :return: Stock quotes JSON response object.
         """
+        # https://developer.tdameritrade.com/price-history/apis/get/marketdata/%7Bsymbol%7D/pricehistory
         r = authentication_object.get_price_history(
             ticker,
             period_type=client.Client.PriceHistory.PeriodType.YEAR,
             period=client.Client.PriceHistory.Period.TWENTY_YEARS,
             frequency_type=client.Client.PriceHistory.FrequencyType.DAILY,
             frequency=client.Client.PriceHistory.Frequency.DAILY,
-            # todo: convert dates to timestamp
             start_datetime=start_date,
             end_datetime=end_date
         )
