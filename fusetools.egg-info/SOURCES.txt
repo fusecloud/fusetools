@@ -19,7 +19,6 @@ fusetools/office_tools.py
 fusetools/pm_tools.py
 fusetools/research_tools.py
 fusetools/screen_tools.py
-fusetools/social_tools.py
 fusetools/stat_tools.py
 fusetools/text_tools.py
 fusetools/transfer_tools.py

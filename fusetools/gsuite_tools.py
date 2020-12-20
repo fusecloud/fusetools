@@ -314,6 +314,44 @@ class GSheets:
         return res
 
     @classmethod
+    def delete_google_sheet_data(cls, spreadsheet_id, sheet_id, idx_start, idx_end, credentials, dimension="ROWS"):
+        """
+        Deletes data from a Google Sheet.
+
+        :param spreadsheet_id: ID of spreadsheet to update.
+        :param idx_start: Starting index of row/column for range to delete.
+        :param idx_end: Ending index of row/column for range to delete.
+        :param credentials:
+        :param dimension:
+        :return:
+        """
+        service = build('sheets', 'v4', credentials=credentials)
+        spreadsheet_data = [
+            {
+                "deleteDimension": {
+                    "range": {
+                        "sheetId": sheet_id,
+                        "dimension": dimension,
+                        "startIndex": idx_start,
+                        "endIndex": idx_end
+                    }
+                }
+            }
+        ]
+
+        request = {"requests": spreadsheet_data}
+        res = (
+            service
+                .spreadsheets()
+                .batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body=request
+            ).execute()
+        )
+
+        return res
+
+    @classmethod
     def get_google_sheet_tabs(cls, spreadsheet_id, credentials):
         """
         Get the names and IDs of tabs for a given Google Sheet.
