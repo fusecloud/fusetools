@@ -19,7 +19,7 @@ PyAutoGUI==0.9.48
 psycopg2==2.8.6
 statsmodels==0.10.2
 more_itertools==7.2.0
-requests==2.24.0
+requests
 colorama==0.4.3
 oauth2==1.9.0.post1
 firebase_admin==4.3.0
