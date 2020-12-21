@@ -23,6 +23,7 @@ fusetools.financial\_tools
       InteractiveBrokers
       Misc
       Quotes
+      ThinkOrSwim
    
    
 

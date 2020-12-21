@@ -46,7 +46,6 @@ fusetools
    fusetools.pm_tools
    fusetools.research_tools
    fusetools.screen_tools
-   fusetools.social_tools
    fusetools.stat_tools
    fusetools.text_tools
    fusetools.transfer_tools

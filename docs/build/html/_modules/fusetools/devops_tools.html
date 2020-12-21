@@ -157,9 +157,17 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Tools for automating package deployment tasks.</span>
 
-<span class="sd">|pic1|</span>
-<span class="sd">    .. |pic1| image:: ../images_source/pkg_tools/pypkg.jpeg</span>
-<span class="sd">        :width: 25%</span>
+<span class="sd">|pic1| |pic2| |pic3| |pic4| |pic5|</span>
+<span class="sd">    .. |pic1| image:: ../images_source/devops_tools/local_folder.png</span>
+<span class="sd">        :width: 20%</span>
+<span class="sd">    .. |pic2| image:: ../images_source/devops_tools/rtd.png</span>
+<span class="sd">        :width: 20%</span>
+<span class="sd">    .. |pic3| image:: ../images_source/devops_tools/sphinx.png</span>
+<span class="sd">        :width: 20%</span>
+<span class="sd">    .. |pic4| image:: ../images_source/devops_tools/pypi.jpeg</span>
+<span class="sd">        :width: 20%</span>
+<span class="sd">    .. |pic5| image:: ../images_source/devops_tools/github.png</span>
+<span class="sd">        :width: 20%</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -178,12 +186,8 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Functions for dealing with Local DevOps tasks.</span>
 
+<span class="sd">    .. image:: ../images_source/devops_tools/local_folder.png</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">run_handle_cmds</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="k">pass</span>
-        <span class="c1"># todo: this lets you define commands, run them, and then handle outputs</span>
 
 <div class="viewcode-block" id="Local.create_sub_pkg"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.Local.html#fusetools.devops_tools.Local.create_sub_pkg">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_sub_pkg</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">src_pkg_dir</span><span class="p">,</span> <span class="n">src_pkg_name</span><span class="p">,</span>
@@ -283,7 +287,6 @@
             <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
             <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pip install </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="Local.compile_python_pkg"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.Local.html#fusetools.devops_tools.Local.compile_python_pkg">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">compile_python_pkg</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
                            <span class="n">pkg_dir</span><span class="p">,</span>
@@ -375,20 +378,35 @@
 
 <div class="viewcode-block" id="ReadTheDocs"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.ReadTheDocs.html#fusetools.devops_tools.ReadTheDocs">[docs]</a><span class="k">class</span> <span class="nc">ReadTheDocs</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Functions for dealing with software documentation</span>
+<span class="sd">    Functions for dealing with software documentation.</span>
 
+<span class="sd">    .. image:: ../images_source/devops_tools/rtd.png</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ReadTheDocs.get_projects"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.ReadTheDocs.html#fusetools.devops_tools.ReadTheDocs.get_projects">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_projects</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">project_name</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get projects on RTD, pulls a specific project if specified.</span>
+
+<span class="sd">        :param token: RTD API token.</span>
+<span class="sd">        :param project_name: Project name (optional).</span>
+<span class="sd">        :return: JSON response from API call.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">URL</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://readthedocs.org/api/v3/projects/</span><span class="si">{</span><span class="n">project_name</span> <span class="k">if</span> <span class="n">project_name</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="n">TOKEN</span> <span class="o">=</span> <span class="n">token</span>
         <span class="n">HEADERS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;token </span><span class="si">{</span><span class="n">TOKEN</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">}</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">URL</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">HEADERS</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">response</span>
+        <span class="k">return</span> <span class="n">response</span></div>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ReadTheDocs.create_project"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.ReadTheDocs.html#fusetools.devops_tools.ReadTheDocs.create_project">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_project</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">project_def_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a project on RTD.</span>
+
+<span class="sd">        :param token: RTD API token.</span>
+<span class="sd">        :param project_def_path: Local path to project files.</span>
+<span class="sd">        :return: JSON response from API call.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">URL</span> <span class="o">=</span> <span class="s1">&#39;https://readthedocs.org/api/v3/projects/&#39;</span>
         <span class="n">TOKEN</span> <span class="o">=</span> <span class="n">token</span>
         <span class="n">HEADERS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;token </span><span class="si">{</span><span class="n">TOKEN</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">}</span>
@@ -398,10 +416,18 @@
             <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
             <span class="n">headers</span><span class="o">=</span><span class="n">HEADERS</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">response</span>
+        <span class="k">return</span> <span class="n">response</span></div>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ReadTheDocs.update_project"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.ReadTheDocs.html#fusetools.devops_tools.ReadTheDocs.update_project">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">update_project</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">project_def_path</span><span class="p">,</span> <span class="n">project_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates a project on RTD.</span>
+
+<span class="sd">        :param token: RTD API token.</span>
+<span class="sd">        :param project_def_path: Local path to project files.</span>
+<span class="sd">        :param project_name: Name of project on RTD.</span>
+<span class="sd">        :return: JSON response from API call.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">URL</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://readthedocs.org/api/v3/projects/</span><span class="si">{</span><span class="n">project_name</span><span class="si">}</span><span class="s1">/&#39;</span>
         <span class="n">TOKEN</span> <span class="o">=</span> <span class="n">token</span>
         <span class="n">HEADERS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;token </span><span class="si">{</span><span class="n">TOKEN</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">}</span>
@@ -411,16 +437,17 @@
             <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
             <span class="n">headers</span><span class="o">=</span><span class="n">HEADERS</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">response</span></div>
+        <span class="k">return</span> <span class="n">response</span></div></div>
 
 
 <div class="viewcode-block" id="Sphinx"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.Sphinx.html#fusetools.devops_tools.Sphinx">[docs]</a><span class="k">class</span> <span class="nc">Sphinx</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Functions for building Sphinx documentation</span>
+<span class="sd">    Functions for building Sphinx documentation.</span>
 
+<span class="sd">    .. image:: ../images_source/devops_tools/sphinx.png</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Sphinx.build_sphinx_docs"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.Sphinx.html#fusetools.devops_tools.Sphinx.build_sphinx_docs">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">build_sphinx_docs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">os_type</span><span class="p">,</span>
                           <span class="n">pkg_name</span><span class="p">,</span>
                           <span class="n">pkg_dir</span><span class="p">,</span>
@@ -428,6 +455,18 @@
                           <span class="n">docs_folder_name</span><span class="o">=</span><span class="s2">&quot;docs&quot;</span><span class="p">,</span>
                           <span class="n">compile_pkg</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                           <span class="n">show_html</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates Sphinx documentation for a Python package.</span>
+
+<span class="sd">        :param os_type: Type of operating system the program is running on.</span>
+<span class="sd">        :param pkg_name: Name of Python package if being compiled.</span>
+<span class="sd">        :param pkg_dir: Directory containing Python package.</span>
+<span class="sd">        :param python_alias: Name of Python alias on machine (ex: python3, python)</span>
+<span class="sd">        :param docs_folder_name: Folder name containing documents in Python package directory.</span>
+<span class="sd">        :param compile_pkg: Whether or not to compile the Python package before creating documentation.</span>
+<span class="sd">        :param show_html: Whether or not to show the Sphinx documentation in the browser after build.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">compile_pkg</span><span class="p">:</span>
             <span class="n">Local</span><span class="o">.</span><span class="n">compile_python_pkg</span><span class="p">(</span>
                 <span class="n">pkg_name</span><span class="o">=</span><span class="n">pkg_name</span><span class="p">,</span>
@@ -440,29 +479,37 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nbsphinx version: </span><span class="si">{</span><span class="n">nbsphinx</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;make html&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">show_html</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">python_alias</span><span class="si">}</span><span class="s2"> -m http.server&quot;</span><span class="p">)</span></div>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">python_alias</span><span class="si">}</span><span class="s2"> -m http.server&quot;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="PyPi"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.PyPi.html#fusetools.devops_tools.PyPi">[docs]</a><span class="k">class</span> <span class="nc">PyPi</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Functions for distributing software packages</span>
 
+<span class="sd">    .. image:: ../images_source/devops_tools/pypi.jpeg</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="PyPi.get_pkg_dtl"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.PyPi.html#fusetools.devops_tools.PyPi.get_pkg_dtl">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_pkg_dtl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pkg_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the details for a Python package on PyPi.</span>
+
+<span class="sd">        :param pkg_name: Name of Python package to search for on PyPi.</span>
+<span class="sd">        :return: JSON API response call.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;https://pypi.python.org/pypi/</span><span class="si">{</span><span class="n">pkg_name</span><span class="si">}</span><span class="s2">/json&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">content</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyPi.publish_pypi"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.PyPi.html#fusetools.devops_tools.PyPi.publish_pypi">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">publish_pypi</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pkg_dir</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">test_prod_env</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">python_alias</span><span class="o">=</span><span class="s2">&quot;python3&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Publishes a Python package to the PyPi repository</span>
+<span class="sd">        Publishes a Python package to the PyPi repository.</span>
 
-<span class="sd">        :param pkg_dir: Directory containing package to publish</span>
-<span class="sd">        :param api_key: PyPi API key</span>
-<span class="sd">        :param python_name: Locally installed python name (ex: python -m ...)</span>
-<span class="sd">        :return: Published Python package on PyPi</span>
+<span class="sd">        :param pkg_dir: Directory containing package to publish.</span>
+<span class="sd">        :param api_key: PyPi API key.</span>
+<span class="sd">        :param test_prod_env: PyPi environment (&#39;test&#39; or other string (production)).</span>
+<span class="sd">        :param python_alias: Locally installed python name (ex: python -m ...).</span>
+<span class="sd">        :return: Published Python package on PyPi.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># https://packaging.python.org/tutorials/packaging-projects/</span>
@@ -482,43 +529,28 @@
         <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s2">&quot;.*pypi&quot;</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="Terraform"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.Terraform.html#fusetools.devops_tools.Terraform">[docs]</a><span class="k">class</span> <span class="nc">Terraform</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Functions for interacting with Terraform</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_backend_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tf_folder</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="c1"># todo; create and save backend.tf</span>
-        <span class="k">if</span> <span class="n">init</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;terraform init&quot;</span><span class="p">)</span>
-        <span class="k">pass</span></div>
-
-    <span class="c1"># @classmethod</span>
-    <span class="c1"># def create_variable_file(cls, variable_list):</span>
-    <span class="c1">#     # todo; create and save variables.tf</span>
-    <span class="c1">#     for idx, variable in enumerate(variable_list):</span>
-    <span class="c1">#         variable_ = f&#39;&#39;&#39;</span>
-    <span class="c1">#             variable &quot;profile&quot; {</span>
-    <span class="c1">#                 type=&quot;string&quot;</span>
-    <span class="c1">#         default = &quot;default&quot;</span>
-    <span class="c1">#         }</span>
-    <span class="c1">#             &#39;&#39;&#39;</span>
-    <span class="c1">#         pass</span>
-
-
 <div class="viewcode-block" id="GitHub"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.GitHub.html#fusetools.devops_tools.GitHub">[docs]</a><span class="k">class</span> <span class="nc">GitHub</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Functions for interacting with GitHub</span>
+<span class="sd">    Functions for interacting with GitHub.</span>
 
+<span class="sd">    .. image:: ../images_source/devops_tools/github.png</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="GitHub.commit_push"><a class="viewcode-back" href="../../_autosummary/fusetools.devops_tools.GitHub.html#fusetools.devops_tools.GitHub.commit_push">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">commit_push</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">repo_dir</span><span class="p">,</span>
                     <span class="n">commit_msg</span><span class="p">,</span>
                     <span class="n">tgt_branch</span><span class="p">,</span>
                     <span class="n">user</span><span class="p">,</span> <span class="n">pwd</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs a commit and push for a Git repository.</span>
+
+<span class="sd">        :param repo_dir: Directory of repository.</span>
+<span class="sd">        :param commit_msg: Commit message.</span>
+<span class="sd">        :param tgt_branch: Name of branch to target.</span>
+<span class="sd">        :param user: GitHub username.</span>
+<span class="sd">        :param pwd: GitHub password.</span>
+<span class="sd">        :return: Command line responses from actions performed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">repo_dir</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 
@@ -530,7 +562,10 @@
         <span class="n">child</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
         <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="s2">&quot;.*Password&quot;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">child</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">pwd</span><span class="p">)</span>
-        <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;.*</span><span class="si">{</span><span class="n">tgt_branch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;.*</span><span class="si">{</span><span class="n">tgt_branch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;.*Everything&quot;</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

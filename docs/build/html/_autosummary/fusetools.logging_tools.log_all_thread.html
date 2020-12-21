@@ -108,7 +108,7 @@
 <li class="toctree-l3"><a class="reference internal" href="fusetools.logging_tools.log_all.html">fusetools.logging_tools.log_all</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">fusetools.logging_tools.log_all_thread</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fusetools.logging_tools.log_setup.html">fusetools.logging_tools.log_setup</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fusetools.logging_tools.log_tbl_dict.html">fusetools.logging_tools.log_tbl_dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fusetools.logging_tools.log_tbl_df.html">fusetools.logging_tools.log_tbl_df</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fusetools.logging_tools.make_script_function.html">fusetools.logging_tools.make_script_function</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fusetools.logging_tools.IgnoreThreadsFilter.html">fusetools.logging_tools.IgnoreThreadsFilter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fusetools.logging_tools.ThreadFilter.html">fusetools.logging_tools.ThreadFilter</a></li>
@@ -121,7 +121,6 @@
 <li class="toctree-l2"><a class="reference internal" href="fusetools.pm_tools.html">fusetools.pm_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.research_tools.html">fusetools.research_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.screen_tools.html">fusetools.screen_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fusetools.social_tools.html">fusetools.social_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.stat_tools.html">fusetools.stat_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.text_tools.html">fusetools.text_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.transfer_tools.html">fusetools.transfer_tools</a></li>
@@ -223,12 +222,18 @@
 <dl class="py function">
 <dt id="fusetools.logging_tools.log_all_thread">
 <code class="sig-prename descclassname">fusetools.logging_tools.</code><code class="sig-name descname">log_all_thread</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">level</span><span class="o">=</span><span class="default_value">'INFO'</span></em>, <em class="sig-param"><span class="n">thread_type</span><span class="o">=</span><span class="default_value">'main'</span></em>, <em class="sig-param"><span class="n">main_log</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/logging_tools.html#log_all_thread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.logging_tools.log_all_thread" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Logs all specified data on a ‘main’ thread or a ‘sub’ thread. Main thread excluded logging from other threads. Sub thread logs data for only that threadId.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filename</strong> – </p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> – Filename to log the thread contents to.</p></li>
+<li><p><strong>level</strong> – Level of logging for the thread (ie: INFO, DEBUG, WARNING, etc)</p></li>
+<li><p><strong>thread_type</strong> – ‘Main’ thread or ‘Sub’ thread.</p></li>
+<li><p><strong>main_log</strong> – Main log to specify if using a sub thread.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>A logfile with thread’s output.</p>
 </dd>
 </dl>
 </dd></dl>

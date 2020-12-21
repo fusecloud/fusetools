@@ -166,6 +166,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">boto3</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -173,6 +174,7 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">boto3</span>
 <span class="kn">import</span> <span class="nn">firebase_admin</span>
+<span class="kn">from</span> <span class="nn">botocore.exceptions</span> <span class="kn">import</span> <span class="n">ClientError</span>
 <span class="kn">from</span> <span class="nn">firebase_admin</span> <span class="kn">import</span> <span class="n">credentials</span><span class="p">,</span> <span class="n">firestore</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">storage</span>
 <span class="kn">from</span> <span class="nn">gcloud</span> <span class="kn">import</span> <span class="n">storage</span> <span class="k">as</span> <span class="n">storage_gcp</span>
 <span class="kn">from</span> <span class="nn">oauth2client.service_account</span> <span class="kn">import</span> <span class="n">ServiceAccountCredentials</span>
@@ -430,8 +432,16 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="AWS.create_s3_bucket"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.AWS.html#fusetools.cloud_tools.AWS.create_s3_bucket">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_s3_bucket</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pub</span><span class="p">,</span> <span class="n">sec</span><span class="p">,</span> <span class="n">bucket_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an S3 bucket.</span>
+
+<span class="sd">        :param pub: AWS account public key.</span>
+<span class="sd">        :param sec: AWS account secret key.</span>
+<span class="sd">        :param bucket_name: Name of new S3 bucket.</span>
+<span class="sd">        :return: JSON response for API call.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span>
             <span class="n">aws_access_key_id</span><span class="o">=</span><span class="n">pub</span><span class="p">,</span>
             <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="n">sec</span>
@@ -439,7 +449,7 @@
 
         <span class="n">s3</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">create_bucket</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="n">bucket_name</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">response</span>
+        <span class="k">return</span> <span class="n">response</span></div>
 
 <div class="viewcode-block" id="AWS.s3_to_s3"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.AWS.html#fusetools.cloud_tools.AWS.s3_to_s3">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">s3_to_s3</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pub</span><span class="p">,</span> <span class="n">sec</span><span class="p">,</span> <span class="n">bucket_from</span><span class="p">,</span> <span class="n">bucket_to</span><span class="p">,</span> <span class="n">from_key</span><span class="p">,</span> <span class="n">to_key</span><span class="p">):</span>
@@ -949,14 +959,194 @@
 <span class="s1">            &#39;&#39;&#39;</span>
 
         <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_exec</span><span class="p">)</span>
-        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;commit&quot;</span><span class="p">)</span></div></div>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;commit&quot;</span><span class="p">)</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_iam_role_for_lambda</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">iam_resource</span><span class="p">,</span> <span class="n">iam_role_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an IAM role.</span>
+<span class="sd">        :param iam_resource: The Boto3 IAM resource object.</span>
+<span class="sd">        :param iam_role_name: The name of the role to create.</span>
+<span class="sd">        :return: The newly created role.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lambda_assume_role_policy</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;Version&#39;</span><span class="p">:</span> <span class="s1">&#39;2012-10-17&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Statement&#39;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;Effect&#39;</span><span class="p">:</span> <span class="s1">&#39;Allow&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Principal&#39;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s1">&#39;Service&#39;</span><span class="p">:</span> <span class="s1">&#39;lambda.amazonaws.com&#39;</span>
+                    <span class="p">},</span>
+                    <span class="s1">&#39;Action&#39;</span><span class="p">:</span> <span class="s1">&#39;sts:AssumeRole&#39;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+        <span class="n">policy_arn</span> <span class="o">=</span> <span class="s1">&#39;arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole&#39;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">role</span> <span class="o">=</span> <span class="n">iam_resource</span><span class="o">.</span><span class="n">create_role</span><span class="p">(</span>
+                <span class="n">RoleName</span><span class="o">=</span><span class="n">iam_role_name</span><span class="p">,</span>
+                <span class="n">AssumeRolePolicyDocument</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">lambda_assume_role_policy</span><span class="p">))</span>
+            <span class="n">iam_resource</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_waiter</span><span class="p">(</span><span class="s1">&#39;role_exists&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">RoleName</span><span class="o">=</span><span class="n">iam_role_name</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Created role </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="n">role</span><span class="o">.</span><span class="n">attach_policy</span><span class="p">(</span><span class="n">PolicyArn</span><span class="o">=</span><span class="n">policy_arn</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Attached basic execution policy to role </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ClientError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">error</span><span class="o">.</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;Error&#39;</span><span class="p">][</span><span class="s1">&#39;Code&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;EntityAlreadyExists&#39;</span><span class="p">:</span>
+                <span class="n">role</span> <span class="o">=</span> <span class="n">iam_resource</span><span class="o">.</span><span class="n">Role</span><span class="p">(</span><span class="n">iam_role_name</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The role </span><span class="si">%s</span><span class="s2"> already exists. Using it.&quot;</span><span class="p">,</span> <span class="n">iam_role_name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">&quot;Couldn&#39;t create role </span><span class="si">%s</span><span class="s2"> or attach policy </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span>
+                    <span class="n">iam_role_name</span><span class="p">,</span> <span class="n">policy_arn</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+        <span class="k">return</span> <span class="n">role</span>
+
+<div class="viewcode-block" id="AWS.create_iam_role_for_lambda"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.AWS.html#fusetools.cloud_tools.AWS.create_iam_role_for_lambda">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_iam_role_for_lambda</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">iam_resource</span><span class="p">,</span> <span class="n">iam_role_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an AWS Identity and Access Management (IAM) role that grants the</span>
+<span class="sd">        AWS Lambda function basic permission to run. If a role with the specified</span>
+<span class="sd">        name already exists, it is used for the demo.</span>
+<span class="sd">        :param iam_resource: The Boto3 IAM resource object.</span>
+<span class="sd">        :param iam_role_name: The name of the role to create.</span>
+<span class="sd">        :return: The newly created role.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lambda_assume_role_policy</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;Version&#39;</span><span class="p">:</span> <span class="s1">&#39;2012-10-17&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Statement&#39;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;Effect&#39;</span><span class="p">:</span> <span class="s1">&#39;Allow&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Principal&#39;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s1">&#39;Service&#39;</span><span class="p">:</span> <span class="s1">&#39;lambda.amazonaws.com&#39;</span>
+                    <span class="p">},</span>
+                    <span class="s1">&#39;Action&#39;</span><span class="p">:</span> <span class="s1">&#39;sts:AssumeRole&#39;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+        <span class="n">policy_arn</span> <span class="o">=</span> <span class="s1">&#39;arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole&#39;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">role</span> <span class="o">=</span> <span class="n">iam_resource</span><span class="o">.</span><span class="n">create_role</span><span class="p">(</span>
+                <span class="n">RoleName</span><span class="o">=</span><span class="n">iam_role_name</span><span class="p">,</span>
+                <span class="n">AssumeRolePolicyDocument</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">lambda_assume_role_policy</span><span class="p">))</span>
+            <span class="n">iam_resource</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_waiter</span><span class="p">(</span><span class="s1">&#39;role_exists&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">RoleName</span><span class="o">=</span><span class="n">iam_role_name</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created role &#39;</span><span class="si">{</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">role</span><span class="o">.</span><span class="n">attach_policy</span><span class="p">(</span><span class="n">PolicyArn</span><span class="o">=</span><span class="n">policy_arn</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attached basic execution policy to role &#39;</span><span class="si">{</span><span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ClientError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">error</span><span class="o">.</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;Error&#39;</span><span class="p">][</span><span class="s1">&#39;Code&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;EntityAlreadyExists&#39;</span><span class="p">:</span>
+                <span class="n">role</span> <span class="o">=</span> <span class="n">iam_resource</span><span class="o">.</span><span class="n">Role</span><span class="p">(</span><span class="n">iam_role_name</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The role &#39;</span><span class="si">{</span><span class="n">iam_role_name</span><span class="si">}</span><span class="s2">&#39; already exists. Using it.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Couldn&#39;t create role &#39;</span><span class="si">{</span><span class="n">iam_role_name</span><span class="si">}</span><span class="s2">&#39; or attach policy &#39;</span><span class="si">{</span><span class="n">policy_arn</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="p">)</span>
+                <span class="k">raise</span>
+
+        <span class="k">return</span> <span class="n">role</span></div>
+
+<div class="viewcode-block" id="AWS.deploy_lambda_function"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.AWS.html#fusetools.cloud_tools.AWS.deploy_lambda_function">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">deploy_lambda_function</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+                               <span class="n">lambda_client</span><span class="p">,</span>
+                               <span class="n">function_name</span><span class="p">,</span>
+                               <span class="n">handler_name</span><span class="p">,</span>
+                               <span class="n">iam_role</span><span class="p">,</span>
+                               <span class="n">deployment_package</span><span class="p">,</span>
+                               <span class="n">function_runtime</span><span class="o">=</span><span class="s2">&quot;python3.8&quot;</span><span class="p">,</span>
+                               <span class="n">timeout_seconds</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span>
+                               <span class="n">memory_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+                               <span class="n">env_vars</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                               <span class="n">tags</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                               <span class="n">function_description</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deploys the AWS Lambda function.</span>
+<span class="sd">        :param lambda_client: The Boto3 AWS Lambda client object.</span>
+<span class="sd">        :param function_name: The name of the AWS Lambda function.</span>
+<span class="sd">        :param handler_name: The fully qualified name of the handler function. This</span>
+<span class="sd">                             must include the file name and the function name.</span>
+<span class="sd">        :param iam_role: The IAM role to use for the function.</span>
+<span class="sd">        :param deployment_package: The deployment package that contains the function</span>
+<span class="sd">                                   code in ZIP format.</span>
+<span class="sd">        :return: The Amazon Resource Name (ARN) of the newly created function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">lambda_client</span><span class="o">.</span><span class="n">create_function</span><span class="p">(</span>
+                <span class="n">FunctionName</span><span class="o">=</span><span class="n">function_name</span><span class="p">,</span>
+                <span class="n">Description</span><span class="o">=</span><span class="n">function_description</span> <span class="k">if</span> <span class="n">function_description</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="n">Runtime</span><span class="o">=</span><span class="n">function_runtime</span><span class="p">,</span>
+                <span class="n">Role</span><span class="o">=</span><span class="n">iam_role</span><span class="o">.</span><span class="n">arn</span><span class="p">,</span>
+                <span class="n">Handler</span><span class="o">=</span><span class="n">handler_name</span><span class="p">,</span>
+                <span class="n">Code</span><span class="o">=</span><span class="n">deployment_package</span><span class="p">,</span>
+                <span class="n">Timeout</span><span class="o">=</span><span class="n">timeout_seconds</span><span class="p">,</span>
+                <span class="n">Tags</span><span class="o">=</span><span class="n">tags</span> <span class="k">if</span> <span class="n">tags</span> <span class="k">else</span> <span class="p">{},</span>
+                <span class="n">MemorySize</span><span class="o">=</span><span class="n">memory_size</span><span class="p">,</span>
+                <span class="n">Environment</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Variables&#39;</span><span class="p">:</span> <span class="n">env_vars</span><span class="p">}</span> <span class="k">if</span> <span class="n">env_vars</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="n">Publish</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">function_arn</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;FunctionArn&#39;</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created function &#39;</span><span class="si">{</span><span class="n">function_name</span><span class="si">}</span><span class="s2">&#39; with ARN: </span><span class="si">{</span><span class="n">function_arn</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ClientError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Couldn&#39;t create function &#39;</span><span class="si">{</span><span class="n">function_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">function_arn</span></div>
+
+<div class="viewcode-block" id="AWS.delete_lambda_function"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.AWS.html#fusetools.cloud_tools.AWS.delete_lambda_function">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">delete_lambda_function</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lambda_client</span><span class="p">,</span> <span class="n">function_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes an AWS Lambda function.</span>
+<span class="sd">        :param lambda_client: The Boto3 AWS Lambda client object.</span>
+<span class="sd">        :param function_name: The name of the function to delete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">lambda_client</span><span class="o">.</span><span class="n">delete_function</span><span class="p">(</span><span class="n">FunctionName</span><span class="o">=</span><span class="n">function_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ClientError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Couldn&#39;t delete function &#39;</span><span class="si">{</span><span class="n">function_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="AWS.invoke_lambda_function"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.AWS.html#fusetools.cloud_tools.AWS.invoke_lambda_function">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">invoke_lambda_function</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lambda_client</span><span class="p">,</span> <span class="n">function_name</span><span class="p">,</span> <span class="n">function_params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Invokes an AWS Lambda function.</span>
+<span class="sd">        :param lambda_client: The Boto3 AWS Lambda client object.</span>
+<span class="sd">        :param function_name: The name of the function to invoke.</span>
+<span class="sd">        :param function_params: The parameters of the function as a dict. This dict</span>
+<span class="sd">                                is serialized to JSON before it is sent to AWS Lambda.</span>
+<span class="sd">        :return: The response from the function invocation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">lambda_client</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+                <span class="n">FunctionName</span><span class="o">=</span><span class="n">function_name</span><span class="p">,</span>
+                <span class="n">Payload</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">function_params</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invoked function &#39;</span><span class="si">{</span><span class="n">function_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ClientError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Couldn&#39;t invoke function &#39;</span><span class="si">{</span><span class="n">function_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">return</span> <span class="n">response</span></div></div>
 
 
 <div class="viewcode-block" id="GCP"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.GCP.html#fusetools.cloud_tools.GCP">[docs]</a><span class="k">class</span> <span class="nc">GCP</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Functions for interacting with GCP infrastructure.</span>
 
-    <span class="nd">@classmethod</span>
+<span class="sd">    .. image:: ../images_source/cloud_tools/gcp3.png</span>
+<span class="sd">        :width: 45%</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GCP.make_credentials"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.GCP.html#fusetools.cloud_tools.GCP.make_credentials">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">make_credentials</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cred_method</span><span class="p">,</span> <span class="n">gcloud_project_name</span><span class="p">,</span>
                          <span class="n">gcloud_token_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gcloud_token_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an authenticated GCP client object.</span>
+
+<span class="sd">        :param cred_method: Credentials object, JSON file from disk or JSON object in memory.</span>
+<span class="sd">        :param gcloud_project_name: Name of GCP project.</span>
+<span class="sd">        :param gcloud_token_dict: Name of JSON GCP token if in memory.</span>
+<span class="sd">        :param gcloud_token_path: Name of JSON GCP token if on disk.</span>
+<span class="sd">        :return: Authenticated GCP client.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">cred_method</span> <span class="o">==</span> <span class="s2">&quot;file&quot;</span><span class="p">:</span>
             <span class="n">credentials</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">ServiceAccountCredentials</span>
@@ -972,41 +1162,78 @@
             <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">,</span>
             <span class="n">project</span><span class="o">=</span><span class="n">gcloud_project_name</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">client</span>
+        <span class="k">return</span> <span class="n">client</span></div>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="GCP.get_bucket"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.GCP.html#fusetools.cloud_tools.GCP.get_bucket">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_bucket</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">bucket_name</span><span class="p">):</span>
-        <span class="n">bucket</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">bucket</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a GCP storage bucket object.</span>
 
-    <span class="nd">@classmethod</span>
+<span class="sd">        :param client: Authenticated GCP client object</span>
+<span class="sd">        :param bucket_name: Name of GCP bucket.</span>
+<span class="sd">        :return: GCP storage bucket object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bucket</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bucket</span></div>
+
+<div class="viewcode-block" id="GCP.get_bucket_objects"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.GCP.html#fusetools.cloud_tools.GCP.get_bucket_objects">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_bucket_objects</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bucket_obj</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of bucket objects from a GCP storage object.</span>
+
+<span class="sd">        :param bucket_obj: GCP storage bucket object to pull list of contained objects from.</span>
+<span class="sd">        :param prefix: Optional filter to include to filter bucket object paths by.</span>
+<span class="sd">        :return: List of GCP storage bucket objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">prefix</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bucket_obj</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bucket_obj</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">()]</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bucket_obj</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">()]</span></div>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="GCP.load_bucket_objects"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.GCP.html#fusetools.cloud_tools.GCP.load_bucket_objects">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load_bucket_objects</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">file_list</span><span class="p">,</span> <span class="n">sav_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads a list of objects to a GCP storage bucket.</span>
+
+<span class="sd">        :param bucket: Name of GCP storage bucket.</span>
+<span class="sd">        :param file_list: List of local names to load.</span>
+<span class="sd">        :param sav_dir: Local directory containing files to load.</span>
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
             <span class="n">blob</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-            <span class="n">blob</span><span class="o">.</span><span class="n">upload_from_filename</span><span class="p">(</span><span class="n">sav_dir</span> <span class="o">+</span> <span class="n">file</span><span class="p">)</span>
+            <span class="n">blob</span><span class="o">.</span><span class="n">upload_from_filename</span><span class="p">(</span><span class="n">sav_dir</span> <span class="o">+</span> <span class="n">file</span><span class="p">)</span></div>
 
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">download_bucket_objects</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">obj_list</span><span class="p">,</span> <span class="n">sav_dir</span><span class="p">):</span>
+<div class="viewcode-block" id="GCP.download_bucket_objects"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.GCP.html#fusetools.cloud_tools.GCP.download_bucket_objects">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">download_bucket_objects</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj_list</span><span class="p">,</span> <span class="n">sav_dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves a list of GCP storage objects to a local directory.</span>
+
+<span class="sd">        :param obj_list: List of GCP bucket storage objects.</span>
+<span class="sd">        :param sav_dir: Local directory to save objects to.</span>
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">obj_list</span><span class="p">:</span>
-            <span class="n">blob</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
             <span class="c1"># Download the file to a destination</span>
-            <span class="n">blob</span><span class="o">.</span><span class="n">download_to_filename</span><span class="p">(</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">download_to_filename</span><span class="p">(</span>
                 <span class="n">sav_dir</span> <span class="o">+</span> <span class="p">(</span>
-                    <span class="n">file</span> <span class="k">if</span> <span class="s2">&quot;/&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file</span>
-                    <span class="k">else</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-            <span class="p">)</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+                        <span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="p">)</span></div>
 
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">delete_bucket_objects</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">obj_list</span><span class="p">):</span>
+<div class="viewcode-block" id="GCP.delete_bucket_objects"><a class="viewcode-back" href="../../_autosummary/fusetools.cloud_tools.GCP.html#fusetools.cloud_tools.GCP.delete_bucket_objects">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">delete_bucket_objects</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes objects from a GCP storage bucket.</span>
+
+<span class="sd">        :param obj_list: List of GCP storage objects to delete.</span>
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">obj_list</span><span class="p">:</span>
-            <span class="n">obj</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div>
+            <span class="n">obj</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>

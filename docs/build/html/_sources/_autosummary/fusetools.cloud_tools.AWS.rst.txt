@@ -16,13 +16,17 @@ fusetools.cloud\_tools.AWS
    .. autosummary::
       :nosignatures:
    
+      ~AWS.create_iam_role_for_lambda
       ~AWS.create_s3_bucket
       ~AWS.delete_dynamo_tbl
+      ~AWS.delete_lambda_function
       ~AWS.delete_s3_object
+      ~AWS.deploy_lambda_function
       ~AWS.df_to_s3
       ~AWS.dynamo_to_redshift
       ~AWS.file_to_s3
       ~AWS.get_dynamo_fields
+      ~AWS.invoke_lambda_function
       ~AWS.load_dynamo
       ~AWS.make_dynamo_tbl
       ~AWS.query_dynamo

@@ -18,7 +18,6 @@ fusetools.devops\_tools.Local
    
       ~Local.compile_python_pkg
       ~Local.create_sub_pkg
-      ~Local.run_handle_cmds
    
    
 

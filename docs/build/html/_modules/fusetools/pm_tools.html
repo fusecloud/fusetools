@@ -469,8 +469,8 @@
             <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;projects&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">project</span><span class="p">],</span>
                 <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">taskName</span><span class="p">,</span>
-                <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="n">taskNotes</span><span class="p">,</span>
-                <span class="s2">&quot;assignee&quot;</span><span class="p">:</span> <span class="n">assignee</span><span class="p">,</span>
+                <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="n">taskNotes</span> <span class="k">if</span> <span class="n">taskNotes</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;assignee&quot;</span><span class="p">:</span> <span class="n">assignee</span> <span class="k">if</span> <span class="n">assignee</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;due_on&quot;</span><span class="p">:</span> <span class="n">taskDue</span>
             <span class="p">}</span>
         <span class="p">}</span>

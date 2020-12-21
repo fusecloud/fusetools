@@ -112,7 +112,6 @@
 <li class="toctree-l2"><a class="reference internal" href="fusetools.pm_tools.html">fusetools.pm_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.research_tools.html">fusetools.research_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.screen_tools.html">fusetools.screen_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fusetools.social_tools.html">fusetools.social_tools</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="fusetools.stat_tools.html">fusetools.stat_tools</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">fusetools.stat_tools.Desc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fusetools.stat_tools.Test.html">fusetools.stat_tools.Test</a></li>
@@ -229,12 +228,9 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Desc.group_stats" title="fusetools.stat_tools.Desc.group_stats"><code class="xref py py-obj docutils literal notranslate"><span class="pre">group_stats</span></code></a></p></td>
-<td><p>Creates a Pandas DataFrame with the following aggregations over a dimension: Count, Percentage of Occurrence, Median.</p></td>
+<td><p>Creates a Pandas DataFrame with specified aggregations over specified dimensions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.stat_tools.Desc.group_stats_bins" title="fusetools.stat_tools.Desc.group_stats_bins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">group_stats_bins</span></code></a></p></td>
-<td><p>Creates a Pandas DataFrame with the following aggregations over a dimension binned by specified intervals: Count, Percentage of Occurrence, Median.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Desc.make_tbl" title="fusetools.stat_tools.Desc.make_tbl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_tbl</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.stat_tools.Desc.make_tbl" title="fusetools.stat_tools.Desc.make_tbl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_tbl</span></code></a></p></td>
 <td><p>Creates a plot of a data table.</p></td>
 </tr>
 </tbody>
@@ -242,36 +238,17 @@
 <dl class="py method">
 <dt id="fusetools.stat_tools.Desc.group_stats">
 <em class="property">classmethod </em><code class="sig-name descname">group_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">dim_cols</span></em>, <em class="sig-param"><span class="n">agg_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Desc.group_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Desc.group_stats" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a Pandas DataFrame with the following aggregations over a dimension: Count, Percentage of Occurrence, Median.</p>
+<dd><p>Creates a Pandas DataFrame with specified aggregations over specified dimensions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> – Pandas DataFrame of</p></li>
-<li><p><strong>col</strong> – </p></li>
+<li><p><strong>df</strong> – Pandas DataFrame.</p></li>
+<li><p><strong>dim_cols</strong> – List of columns to group by.</p></li>
+<li><p><strong>agg_dict</strong> – Dictionary of columns and calculations to perform.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="fusetools.stat_tools.Desc.group_stats_bins">
-<em class="property">classmethod </em><code class="sig-name descname">group_stats_bins</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">col</span></em>, <em class="sig-param"><span class="n">bin_st</span></em>, <em class="sig-param"><span class="n">bin_end</span></em>, <em class="sig-param"><span class="n">bin_n</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Desc.group_stats_bins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Desc.group_stats_bins" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a Pandas DataFrame with the following aggregations over a dimension binned by specified intervals: Count, Percentage of Occurrence, Median.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> – </p></li>
-<li><p><strong>col</strong> – </p></li>
-<li><p><strong>bin_st</strong> – </p></li>
-<li><p><strong>bin_end</strong> – </p></li>
-<li><p><strong>bin_n</strong> – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>Pandas DataFrame of calculated results.</p>
 </dd>
 </dl>
 </dd></dl>

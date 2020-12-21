@@ -116,7 +116,6 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.screen_tools.html">fusetools.screen_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fusetools.social_tools.html">fusetools.social_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.stat_tools.html">fusetools.stat_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.text_tools.html">fusetools.text_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.transfer_tools.html">fusetools.transfer_tools</a></li>
@@ -228,18 +227,10 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.research_tools.Geography.calculate_distance" title="fusetools.research_tools.Geography.calculate_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_distance</span></code></a></p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">param lat_from</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
+<td><p>Calculates the distance between two latitude/longitude coordinate pairs.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#fusetools.research_tools.Geography.get_city_lat_lon" title="fusetools.research_tools.Geography.get_city_lat_lon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_city_lat_lon</span></code></a></p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">param city</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
+<td><p>Calculates the latitude and longitude for a city.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.research_tools.Geography.walk_bike_transit_score" title="fusetools.research_tools.Geography.walk_bike_transit_score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">walk_bike_transit_score</span></code></a></p></td>
 <td><p><dl class="field-list simple">
@@ -253,17 +244,18 @@
 <dl class="py method">
 <dt id="fusetools.research_tools.Geography.calculate_distance">
 <em class="property">classmethod </em><code class="sig-name descname">calculate_distance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lat_from</span></em>, <em class="sig-param"><span class="n">lon_from</span></em>, <em class="sig-param"><span class="n">lat_to</span></em>, <em class="sig-param"><span class="n">lon_to</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/research_tools.html#Geography.calculate_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.research_tools.Geography.calculate_distance" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Calculates the distance between two latitude/longitude coordinate pairs.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>lat_from</strong> – </p></li>
-<li><p><strong>lon_from</strong> – </p></li>
-<li><p><strong>lat_to</strong> – </p></li>
-<li><p><strong>lon_to</strong> – </p></li>
+<li><p><strong>lat_from</strong> – Latitude of the point being compared from.</p></li>
+<li><p><strong>lon_from</strong> – Longitude of the point being compared from.</p></li>
+<li><p><strong>lat_to</strong> – Latitude of the point being compared to.</p></li>
+<li><p><strong>lon_to</strong> – Longitude of the point being compared to.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>Calculated distance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -271,12 +263,13 @@
 <dl class="py method">
 <dt id="fusetools.research_tools.Geography.get_city_lat_lon">
 <em class="property">classmethod </em><code class="sig-name descname">get_city_lat_lon</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">city</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/research_tools.html#Geography.get_city_lat_lon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.research_tools.Geography.get_city_lat_lon" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Calculates the latitude and longitude for a city.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>city</strong> – </p>
+<dd class="field-odd"><p><strong>city</strong> – Name of city.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>Location (latitude and longitude).</p>
 </dd>
 </dl>
 </dd></dl>

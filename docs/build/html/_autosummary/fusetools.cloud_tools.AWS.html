@@ -117,7 +117,6 @@
 <li class="toctree-l2"><a class="reference internal" href="fusetools.pm_tools.html">fusetools.pm_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.research_tools.html">fusetools.research_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.screen_tools.html">fusetools.screen_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fusetools.social_tools.html">fusetools.social_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.stat_tools.html">fusetools.stat_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.text_tools.html">fusetools.text_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.transfer_tools.html">fusetools.transfer_tools</a></li>
@@ -229,26 +228,38 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_s3_bucket</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.create_iam_role_for_lambda" title="fusetools.cloud_tools.AWS.create_iam_role_for_lambda"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_iam_role_for_lambda</span></code></a></p></td>
+<td><p>Creates an AWS Identity and Access Management (IAM) role that grants the AWS Lambda function basic permission to run.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.delete_dynamo_tbl" title="fusetools.cloud_tools.AWS.delete_dynamo_tbl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_dynamo_tbl</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.create_s3_bucket" title="fusetools.cloud_tools.AWS.create_s3_bucket"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_s3_bucket</span></code></a></p></td>
+<td><p>Creates an S3 bucket.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.delete_dynamo_tbl" title="fusetools.cloud_tools.AWS.delete_dynamo_tbl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_dynamo_tbl</span></code></a></p></td>
 <td><p>Deletes a DynamoDB table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.delete_lambda_function" title="fusetools.cloud_tools.AWS.delete_lambda_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_lambda_function</span></code></a></p></td>
+<td><p>Deletes an AWS Lambda function.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.delete_s3_object" title="fusetools.cloud_tools.AWS.delete_s3_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_s3_object</span></code></a></p></td>
 <td><p>Deletes a list of S3 bucket objects.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.df_to_s3" title="fusetools.cloud_tools.AWS.df_to_s3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">df_to_s3</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.deploy_lambda_function" title="fusetools.cloud_tools.AWS.deploy_lambda_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deploy_lambda_function</span></code></a></p></td>
+<td><p>Deploys the AWS Lambda function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.df_to_s3" title="fusetools.cloud_tools.AWS.df_to_s3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">df_to_s3</span></code></a></p></td>
 <td><p>Sends a Pandas DataFrame to S3.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.dynamo_to_redshift" title="fusetools.cloud_tools.AWS.dynamo_to_redshift"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dynamo_to_redshift</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.dynamo_to_redshift" title="fusetools.cloud_tools.AWS.dynamo_to_redshift"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dynamo_to_redshift</span></code></a></p></td>
 <td><p>Copies contents of a DynamoDB table to a Redshift table.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.file_to_s3" title="fusetools.cloud_tools.AWS.file_to_s3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_to_s3</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.file_to_s3" title="fusetools.cloud_tools.AWS.file_to_s3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_to_s3</span></code></a></p></td>
 <td><p>Uploads a local file to an S3 bucket.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.get_dynamo_fields" title="fusetools.cloud_tools.AWS.get_dynamo_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dynamo_fields</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.get_dynamo_fields" title="fusetools.cloud_tools.AWS.get_dynamo_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dynamo_fields</span></code></a></p></td>
 <td><p>Retrieves a list of fields for a given DynamoDB table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.invoke_lambda_function" title="fusetools.cloud_tools.AWS.invoke_lambda_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invoke_lambda_function</span></code></a></p></td>
+<td><p>Invokes an AWS Lambda function.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#fusetools.cloud_tools.AWS.load_dynamo" title="fusetools.cloud_tools.AWS.load_dynamo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_dynamo</span></code></a></p></td>
 <td><p>Inserts either a Dictionary or Pandas DataFrame into DynamoDB.</p></td>
@@ -280,6 +291,35 @@
 </tbody>
 </table>
 <dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.create_iam_role_for_lambda">
+<em class="property">classmethod </em><code class="sig-name descname">create_iam_role_for_lambda</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iam_resource</span></em>, <em class="sig-param"><span class="n">iam_role_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.create_iam_role_for_lambda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.create_iam_role_for_lambda" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an AWS Identity and Access Management (IAM) role that grants the
+AWS Lambda function basic permission to run. If a role with the specified
+name already exists, it is used for the demo.
+:param iam_resource: The Boto3 IAM resource object.
+:param iam_role_name: The name of the role to create.
+:return: The newly created role.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.create_s3_bucket">
+<em class="property">classmethod </em><code class="sig-name descname">create_s3_bucket</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">bucket_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.create_s3_bucket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.create_s3_bucket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an S3 bucket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pub</strong> – AWS account public key.</p></li>
+<li><p><strong>sec</strong> – AWS account secret key.</p></li>
+<li><p><strong>bucket_name</strong> – Name of new S3 bucket.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON response for API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="fusetools.cloud_tools.AWS.delete_dynamo_tbl">
 <em class="property">classmethod </em><code class="sig-name descname">delete_dynamo_tbl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">region_name</span></em>, <em class="sig-param"><span class="n">tbl_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.delete_dynamo_tbl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.delete_dynamo_tbl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes a DynamoDB table.</p>
@@ -299,6 +339,14 @@
 </dd></dl>
 
 <dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.delete_lambda_function">
+<em class="property">classmethod </em><code class="sig-name descname">delete_lambda_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lambda_client</span></em>, <em class="sig-param"><span class="n">function_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.delete_lambda_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.delete_lambda_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes an AWS Lambda function.
+:param lambda_client: The Boto3 AWS Lambda client object.
+:param function_name: The name of the function to delete.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="fusetools.cloud_tools.AWS.delete_s3_object">
 <em class="property">classmethod </em><code class="sig-name descname">delete_s3_object</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pub</span></em>, <em class="sig-param"><span class="n">sec</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">obj_list</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.delete_s3_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.delete_s3_object" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes a list of S3 bucket objects.</p>
@@ -313,6 +361,30 @@
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>JSON response for API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.deploy_lambda_function">
+<em class="property">classmethod </em><code class="sig-name descname">deploy_lambda_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lambda_client</span></em>, <em class="sig-param"><span class="n">function_name</span></em>, <em class="sig-param"><span class="n">handler_name</span></em>, <em class="sig-param"><span class="n">iam_role</span></em>, <em class="sig-param"><span class="n">deployment_package</span></em>, <em class="sig-param"><span class="n">function_runtime</span><span class="o">=</span><span class="default_value">'python3.8'</span></em>, <em class="sig-param"><span class="n">timeout_seconds</span><span class="o">=</span><span class="default_value">900</span></em>, <em class="sig-param"><span class="n">memory_size</span><span class="o">=</span><span class="default_value">128</span></em>, <em class="sig-param"><span class="n">env_vars</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">tags</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">function_description</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.deploy_lambda_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.deploy_lambda_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deploys the AWS Lambda function.
+:param lambda_client: The Boto3 AWS Lambda client object.
+:param function_name: The name of the AWS Lambda function.
+:param handler_name: The fully qualified name of the handler function. This</p>
+<blockquote>
+<div><p>must include the file name and the function name.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iam_role</strong> – The IAM role to use for the function.</p></li>
+<li><p><strong>deployment_package</strong> – The deployment package that contains the function
+code in ZIP format.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Amazon Resource Name (ARN) of the newly created function.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -398,6 +470,23 @@
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>JSON response for API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.cloud_tools.AWS.invoke_lambda_function">
+<em class="property">classmethod </em><code class="sig-name descname">invoke_lambda_function</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lambda_client</span></em>, <em class="sig-param"><span class="n">function_name</span></em>, <em class="sig-param"><span class="n">function_params</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/cloud_tools.html#AWS.invoke_lambda_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.cloud_tools.AWS.invoke_lambda_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invokes an AWS Lambda function.
+:param lambda_client: The Boto3 AWS Lambda client object.
+:param function_name: The name of the function to invoke.
+:param function_params: The parameters of the function as a dict. This dict</p>
+<blockquote>
+<div><p>is serialized to JSON before it is sent to AWS Lambda.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The response from the function invocation.</p>
 </dd>
 </dl>
 </dd></dl>

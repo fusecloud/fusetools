@@ -216,8 +216,15 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="GSheets.create_service_serv_acct"><a class="viewcode-back" href="../../_autosummary/fusetools.gsuite_tools.GSheets.html#fusetools.gsuite_tools.GSheets.create_service_serv_acct">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_service_serv_acct</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">member_acct_email</span><span class="p">,</span> <span class="n">token_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a GSheets authenticated credentials object.</span>
+
+<span class="sd">        :param member_acct_email: GSuite service acct email address.</span>
+<span class="sd">        :param token_path: Path to GSuite authentication token.</span>
+<span class="sd">        :return: Return GSheets authenticated credentials object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">credentials</span> <span class="o">=</span> <span class="n">ServiceAccountCredentials</span><span class="o">.</span><span class="n">from_json_keyfile_name</span><span class="p">(</span>
             <span class="n">filename</span><span class="o">=</span><span class="n">token_path</span><span class="p">,</span>
@@ -229,7 +236,7 @@
         <span class="p">)</span>
 
         <span class="n">service</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="s1">&#39;sheets&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">service</span>
+        <span class="k">return</span> <span class="n">service</span><span class="p">,</span> <span class="n">credentials</span></div>
 
 <div class="viewcode-block" id="GSheets.make_google_sheet"><a class="viewcode-back" href="../../_autosummary/fusetools.gsuite_tools.GSheets.html#fusetools.gsuite_tools.GSheets.make_google_sheet">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">make_google_sheet</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ss_name</span><span class="p">,</span> <span class="n">credentials</span><span class="p">):</span>
@@ -421,7 +428,7 @@
         <span class="k">return</span> <span class="n">res</span></div>
 
 <div class="viewcode-block" id="GSheets.update_google_sheet_df"><a class="viewcode-back" href="../../_autosummary/fusetools.gsuite_tools.GSheets.html#fusetools.gsuite_tools.GSheets.update_google_sheet_df">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">update_google_sheet_df</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">data_range</span><span class="p">,</span> <span class="n">credentials</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">update_google_sheet_df</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">data_range</span><span class="p">,</span> <span class="n">credentials</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Uploads a Pandas DataFrame to a Google Sheet.</span>
 
@@ -440,7 +447,8 @@
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
             <span class="n">write_df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
 
-        <span class="n">write_df</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span> <span class="o">+</span> <span class="n">write_df</span>
+        <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+            <span class="n">write_df</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span> <span class="o">+</span> <span class="n">write_df</span>
 
         <span class="n">body</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span><span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="n">write_df</span><span class="p">})</span>
 
@@ -458,6 +466,44 @@
                 <span class="n">valueInputOption</span><span class="o">=</span><span class="n">value_input_option</span><span class="p">,</span>
                 <span class="c1"># insertDataOption=insert_data_option,</span>
                 <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="GSheets.delete_google_sheet_data"><a class="viewcode-back" href="../../_autosummary/fusetools.gsuite_tools.GSheets.html#fusetools.gsuite_tools.GSheets.delete_google_sheet_data">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">delete_google_sheet_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">spreadsheet_id</span><span class="p">,</span> <span class="n">sheet_id</span><span class="p">,</span> <span class="n">idx_start</span><span class="p">,</span> <span class="n">idx_end</span><span class="p">,</span> <span class="n">credentials</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="s2">&quot;ROWS&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes data from a Google Sheet.</span>
+
+<span class="sd">        :param spreadsheet_id: ID of spreadsheet to update.</span>
+<span class="sd">        :param idx_start: Starting index of row/column for range to delete.</span>
+<span class="sd">        :param idx_end: Ending index of row/column for range to delete.</span>
+<span class="sd">        :param credentials:</span>
+<span class="sd">        :param dimension:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">service</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="s1">&#39;sheets&#39;</span><span class="p">,</span> <span class="s1">&#39;v4&#39;</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">)</span>
+        <span class="n">spreadsheet_data</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;deleteDimension&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;sheetId&quot;</span><span class="p">:</span> <span class="n">sheet_id</span><span class="p">,</span>
+                        <span class="s2">&quot;dimension&quot;</span><span class="p">:</span> <span class="n">dimension</span><span class="p">,</span>
+                        <span class="s2">&quot;startIndex&quot;</span><span class="p">:</span> <span class="n">idx_start</span><span class="p">,</span>
+                        <span class="s2">&quot;endIndex&quot;</span><span class="p">:</span> <span class="n">idx_end</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+
+        <span class="n">request</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;requests&quot;</span><span class="p">:</span> <span class="n">spreadsheet_data</span><span class="p">}</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">service</span>
+                <span class="o">.</span><span class="n">spreadsheets</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">batchUpdate</span><span class="p">(</span>
+                <span class="n">spreadsheetId</span><span class="o">=</span><span class="n">spreadsheet_id</span><span class="p">,</span>
+                <span class="n">body</span><span class="o">=</span><span class="n">request</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">res</span></div>
 
@@ -489,8 +535,15 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="GDrive.create_service_serv_acct"><a class="viewcode-back" href="../../_autosummary/fusetools.gsuite_tools.GDrive.html#fusetools.gsuite_tools.GDrive.create_service_serv_acct">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_service_serv_acct</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">member_acct_email</span><span class="p">,</span> <span class="n">token_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a GDrive authenticated credentials object.</span>
+
+<span class="sd">        :param member_acct_email: GDrive service acct email address.</span>
+<span class="sd">        :param token_path: Path to GDrive authentication token.</span>
+<span class="sd">        :return: Return GDrive authenticated credentials object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">credentials</span> <span class="o">=</span> <span class="n">ServiceAccountCredentials</span><span class="o">.</span><span class="n">from_json_keyfile_name</span><span class="p">(</span>
             <span class="n">filename</span><span class="o">=</span><span class="n">token_path</span><span class="p">,</span>
@@ -502,16 +555,16 @@
         <span class="p">)</span>
 
         <span class="n">service</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="s1">&#39;drive&#39;</span><span class="p">,</span> <span class="s1">&#39;v3&#39;</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">service</span>
+        <span class="k">return</span> <span class="n">service</span><span class="p">,</span> <span class="n">credentials</span></div>
 
 <div class="viewcode-block" id="GDrive.authorize_credentials"><a class="viewcode-back" href="../../_autosummary/fusetools.gsuite_tools.GDrive.html#fusetools.gsuite_tools.GDrive.authorize_credentials">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">authorize_credentials</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cred_path</span><span class="p">,</span> <span class="n">token_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates an authorized credentials object for Google Drive.</span>
 
-<span class="sd">        :param cred_path: Local path to GSuite credentials object</span>
-<span class="sd">        :param token_path: Local path to GSuite authorization token</span>
-<span class="sd">        :return: Authorized credentials object for GSuite</span>
+<span class="sd">        :param cred_path: Local path to GSuite credentials object.</span>
+<span class="sd">        :param token_path: Local path to GSuite authorization token.</span>
+<span class="sd">        :return: Authorized credentials object for GSuite.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">creds</span> <span class="o">=</span> <span class="kc">None</span>
@@ -536,9 +589,9 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Downloads a file from a Google Drive account.</span>
 
-<span class="sd">        :param file_id: ID for Google Drive file</span>
+<span class="sd">        :param file_id: ID for Google Drive file.</span>
 <span class="sd">        :param credentials: GSuite credentials object.</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :return: Downloaded file from Google Drive.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">drive_service</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="s1">&#39;drive&#39;</span><span class="p">,</span> <span class="s1">&#39;v3&#39;</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">)</span>
         <span class="n">request</span> <span class="o">=</span> <span class="n">drive_service</span><span class="o">.</span><span class="n">files</span><span class="p">()</span><span class="o">.</span><span class="n">get_media</span><span class="p">(</span>
@@ -789,8 +842,15 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="GMail.create_service_serv_acct"><a class="viewcode-back" href="../../_autosummary/fusetools.gsuite_tools.GMail.html#fusetools.gsuite_tools.GMail.create_service_serv_acct">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_service_serv_acct</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">member_acct_email</span><span class="p">,</span> <span class="n">token_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a GMail authenticated credentials object.</span>
+
+<span class="sd">        :param member_acct_email: GSuite service acct email address.</span>
+<span class="sd">        :param token_path: Path to GSuite authentication token.</span>
+<span class="sd">        :return: Return GMail authenticated credentials object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">credentials</span> <span class="o">=</span> <span class="n">ServiceAccountCredentials</span><span class="o">.</span><span class="n">from_json_keyfile_name</span><span class="p">(</span>
             <span class="n">filename</span><span class="o">=</span><span class="n">token_path</span><span class="p">,</span>
@@ -802,7 +862,7 @@
         <span class="p">)</span>
 
         <span class="n">service</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="s1">&#39;gmail&#39;</span><span class="p">,</span> <span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">service</span>
+        <span class="k">return</span> <span class="n">service</span><span class="p">,</span> <span class="n">credentials</span></div>
 
 <div class="viewcode-block" id="GMail.create_service"><a class="viewcode-back" href="../../_autosummary/fusetools.gsuite_tools.GMail.html#fusetools.gsuite_tools.GMail.create_service">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_service</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cred_path</span><span class="p">,</span> <span class="n">token_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">working_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -951,13 +1011,14 @@
         <span class="k">return</span> <span class="n">message</span></div>
 
 <div class="viewcode-block" id="GMail.get_emails"><a class="viewcode-back" href="../../_autosummary/fusetools.gsuite_tools.GMail.html#fusetools.gsuite_tools.GMail.get_emails">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_emails</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">service</span><span class="p">,</span> <span class="n">label_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;me&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_emails</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">service</span><span class="p">,</span> <span class="n">label_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">custom_tree_branch_list</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;me&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a Pandas DataFrame of received email details.</span>
 
 <span class="sd">        :param service: Authenticated service object for GMail.</span>
 <span class="sd">        :param user_id: User ID to pull emails for, default=&quot;me&quot;</span>
 <span class="sd">        :param label_ids: GMail label IDs to pull messages for, default=&quot;INBOX&quot;</span>
+<span class="sd">        :param custom_tree_branch_list: List of branch elements to navigate HTML body data (ex: [0,1,0])</span>
 <span class="sd">        :return: Pandas DataFrame of received email details.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># get mailbox items</span>
@@ -992,12 +1053,25 @@
 
             <span class="c1"># if there are multiple parts of the message get the message body from first part</span>
             <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;payload&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parts&quot;</span><span class="p">):</span>
-                <span class="c1"># message text</span>
-                <span class="n">text</span> <span class="o">=</span> <span class="p">(</span><span class="n">msg</span>
-                        <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;payload&quot;</span><span class="p">)</span>
-                        <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parts&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;body&quot;</span><span class="p">)</span>
-                        <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">))</span>
+                <span class="c1"># if we passed a custom list of branches to follow to get the data</span>
+                <span class="k">if</span> <span class="n">custom_tree_branch_list</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">tree_trunk</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;payload&quot;</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">idxx</span><span class="p">,</span> <span class="n">branch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">custom_tree_branch_list</span><span class="p">):</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span>
+                            <span class="n">tree_trunk</span> <span class="o">=</span> <span class="n">tree_trunk</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parts&quot;</span><span class="p">)[</span><span class="n">branch</span><span class="p">]</span>
+                        <span class="n">text</span> <span class="o">=</span> <span class="n">tree_trunk</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                        <span class="n">text</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># message text</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="p">(</span><span class="n">msg</span>
+                            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;payload&quot;</span><span class="p">)</span>
+                            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parts&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;body&quot;</span><span class="p">)</span>
+                            <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">))</span>
                 <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
                     <span class="n">text</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64decode</span><span class="p">(</span>

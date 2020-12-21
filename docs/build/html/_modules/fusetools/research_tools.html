@@ -175,13 +175,13 @@
 <div class="viewcode-block" id="Economics.bls_query"><a class="viewcode-back" href="../../_autosummary/fusetools.research_tools.Economics.html#fusetools.research_tools.Economics.bls_query">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">bls_query</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">series_id</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">api_key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieves Consumer Price Index figures from the Bureau of Labor Statistics API</span>
+<span class="sd">        Retrieves Consumer Price Index figures from the Bureau of Labor Statistics API.</span>
 
-<span class="sd">        :param series_id: Unique ID for a geography and an economic measure</span>
-<span class="sd">        :param start_year:</span>
-<span class="sd">        :param end_year:</span>
-<span class="sd">        :param api_key:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param series_id: Unique ID for a geography and an economic measure.</span>
+<span class="sd">        :param start_year: Starting year for query.</span>
+<span class="sd">        :param end_year: Ending year for query.</span>
+<span class="sd">        :param api_key: API key for BLS.</span>
+<span class="sd">        :return: JSON response for API call.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">}</span>
 
@@ -200,13 +200,14 @@
 <div class="viewcode-block" id="Economics.bls_query_lookup"><a class="viewcode-back" href="../../_autosummary/fusetools.research_tools.Economics.html#fusetools.research_tools.Economics.bls_query_lookup">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">bls_query_lookup</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lookup_df</span><span class="p">,</span> <span class="n">lookup_area_type</span><span class="p">,</span> <span class="n">start_year</span><span class="p">,</span> <span class="n">end_year</span><span class="p">,</span> <span class="n">api_keys</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Executes a series of queries against the BLS database using a DataFrame of lookups.</span>
 
-<span class="sd">        :param lookup_df:</span>
-<span class="sd">        :param lookup_area_type:</span>
-<span class="sd">        :param start_year:</span>
-<span class="sd">        :param end_year:</span>
-<span class="sd">        :param api_keys:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param lookup_df: Pandas DataFrame of BLS lookup codes.</span>
+<span class="sd">        :param lookup_area_type: Type of area to lookup data for.</span>
+<span class="sd">        :param start_year: Starting year for query.</span>
+<span class="sd">        :param end_year: Ending year for query.</span>
+<span class="sd">        :param api_keys: API key for BLS.</span>
+<span class="sd">        :return: Pandas DataFrame of responses for all queried lookup codes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">}</span>
@@ -305,10 +306,11 @@
 <div class="viewcode-block" id="Economics.bea_gdp"><a class="viewcode-back" href="../../_autosummary/fusetools.research_tools.Economics.html#fusetools.research_tools.Economics.bea_gdp">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">bea_gdp</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">tbl_name</span><span class="o">=</span><span class="s2">&quot;SQGDP1&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs a query against the BEA API.</span>
 
-<span class="sd">        :param api_key:</span>
-<span class="sd">        :param tbl_name:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param api_key: BEA API.</span>
+<span class="sd">        :param tbl_name: Name of data table to query from BEA database.</span>
+<span class="sd">        :return: Pandas DataFrame of responses.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span>
@@ -348,9 +350,10 @@
 <div class="viewcode-block" id="Geography.get_city_lat_lon"><a class="viewcode-back" href="../../_autosummary/fusetools.research_tools.Geography.html#fusetools.research_tools.Geography.get_city_lat_lon">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_city_lat_lon</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">city</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the latitude and longitude for a city.</span>
 
-<span class="sd">        :param city:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param city: Name of city.</span>
+<span class="sd">        :return: Location (latitude and longitude).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">geolocator</span> <span class="o">=</span> <span class="n">Nominatim</span><span class="p">()</span>
         <span class="n">loc</span> <span class="o">=</span> <span class="n">geolocator</span><span class="o">.</span><span class="n">geocode</span><span class="p">(</span><span class="n">city</span><span class="p">)</span>
@@ -359,12 +362,13 @@
 <div class="viewcode-block" id="Geography.calculate_distance"><a class="viewcode-back" href="../../_autosummary/fusetools.research_tools.Geography.html#fusetools.research_tools.Geography.calculate_distance">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">calculate_distance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lat_from</span><span class="p">,</span> <span class="n">lon_from</span><span class="p">,</span> <span class="n">lat_to</span><span class="p">,</span> <span class="n">lon_to</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the distance between two latitude/longitude coordinate pairs.</span>
 
-<span class="sd">        :param lat_from:</span>
-<span class="sd">        :param lon_from:</span>
-<span class="sd">        :param lat_to:</span>
-<span class="sd">        :param lon_to:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param lat_from: Latitude of the point being compared from.</span>
+<span class="sd">        :param lon_from: Longitude of the point being compared from.</span>
+<span class="sd">        :param lat_to: Latitude of the point being compared to.</span>
+<span class="sd">        :param lon_to: Longitude of the point being compared to.</span>
+<span class="sd">        :return: Calculated distance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">coords_from</span> <span class="o">=</span> <span class="p">(</span><span class="n">lat_from</span><span class="p">,</span> <span class="n">lon_from</span><span class="p">)</span>
         <span class="n">coords_to</span> <span class="o">=</span> <span class="p">(</span><span class="n">lat_to</span><span class="p">,</span> <span class="n">lon_to</span><span class="p">)</span>

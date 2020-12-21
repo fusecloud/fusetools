@@ -166,6 +166,8 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">Filter</span>
@@ -256,9 +258,13 @@
                    <span class="n">thread_type</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span>
                    <span class="n">main_log</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Logs all specified data on a &#39;main&#39; thread or a &#39;sub&#39; thread. Main thread excluded logging from other threads. Sub thread logs data for only that threadId.</span>
 
-<span class="sd">    :param filename:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    :param filename: Filename to log the thread contents to.</span>
+<span class="sd">    :param level: Level of logging for the thread (ie: INFO, DEBUG, WARNING, etc)</span>
+<span class="sd">    :param thread_type: &#39;Main&#39; thread or &#39;Sub&#39; thread.</span>
+<span class="sd">    :param main_log: Main log to specify if using a sub thread.</span>
+<span class="sd">    :return: A logfile with thread&#39;s output.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">thread_type</span> <span class="o">==</span> <span class="s2">&quot;main&quot;</span><span class="p">:</span>
@@ -313,18 +319,44 @@
         <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">dt_str</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="log_tbl_dict"><a class="viewcode-back" href="../../_autosummary/fusetools.logging_tools.log_tbl_dict.html#fusetools.logging_tools.log_tbl_dict">[docs]</a><span class="k">def</span> <span class="nf">log_tbl_dict</span><span class="p">(</span><span class="n">proc_owner</span><span class="p">,</span> <span class="n">proc_cat</span><span class="p">,</span> <span class="n">proc_name</span><span class="p">,</span> <span class="n">rundate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">proc_runtime</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">max_completed_step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outcome</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">notes1_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes1_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes1_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">notes2_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes2_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes2_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">notes3_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes3_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes3_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">notes4_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes4_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes4_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">notes5_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes5_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes5_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">notes6_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes6_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes6_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">notes7_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes7_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes7_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">notes8_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes8_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes8_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">notes9_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes9_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes9_val</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">notes10_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes10_note</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">notes10_val</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="log_tbl_df"><a class="viewcode-back" href="../../_autosummary/fusetools.logging_tools.log_tbl_df.html#fusetools.logging_tools.log_tbl_df">[docs]</a><span class="k">def</span> <span class="nf">log_tbl_df</span><span class="p">(</span>
+        <span class="n">proc_owner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">proc_cat</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">proc_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">run_datetime</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">elapsed_run_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_completed_step</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">outcome</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes1_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes1_note</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes1_val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes2_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes2_note</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes2_val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes3_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes3_note</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes3_val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes4_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes4_note</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes4_val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes5_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes5_note</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes5_val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes6_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes6_note</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes6_val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes7_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes7_note</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes7_val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes8_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes8_note</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes8_val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes9_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes9_note</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes9_val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes10_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes10_note</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">notes10_val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a Pandas DataFrame of logging details.</span>
 
@@ -410,12 +442,12 @@
     <span class="c1"># )</span>
     <span class="c1"># &#39;&#39;&#39;</span>
 
-    <span class="n">dat</span> <span class="o">=</span> <span class="p">({</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
         <span class="s2">&quot;proc_owner&quot;</span><span class="p">:</span> <span class="n">proc_owner</span><span class="p">,</span>
         <span class="s2">&quot;proc_cat&quot;</span><span class="p">:</span> <span class="n">proc_cat</span><span class="p">,</span>
         <span class="s2">&quot;proc_name&quot;</span><span class="p">:</span> <span class="n">proc_name</span><span class="p">,</span>
-        <span class="s2">&quot;rundate&quot;</span><span class="p">:</span> <span class="n">rundate</span><span class="p">,</span>
-        <span class="s2">&quot;proc_runtime&quot;</span><span class="p">:</span> <span class="n">proc_runtime</span><span class="p">,</span>
+        <span class="s2">&quot;run_datetime&quot;</span><span class="p">:</span> <span class="n">run_datetime</span><span class="p">,</span>
+        <span class="s2">&quot;elapsed_run_time&quot;</span><span class="p">:</span> <span class="n">elapsed_run_time</span><span class="p">,</span>
         <span class="s2">&quot;max_completed_step&quot;</span><span class="p">:</span> <span class="n">max_completed_step</span><span class="p">,</span>
         <span class="s2">&quot;outcome&quot;</span><span class="p">:</span> <span class="n">outcome</span><span class="p">,</span>
         <span class="s2">&quot;notes1_key&quot;</span><span class="p">:</span> <span class="n">notes1_key</span><span class="p">,</span>
@@ -449,11 +481,6 @@
         <span class="s2">&quot;notes10_note&quot;</span><span class="p">:</span> <span class="n">notes10_note</span><span class="p">,</span>
         <span class="s2">&quot;notes10_val&quot;</span><span class="p">:</span> <span class="n">notes10_val</span>
     <span class="p">})</span>
-
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dat</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="o">.</span><span class="n">T</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df</span></div>
 </pre></div>

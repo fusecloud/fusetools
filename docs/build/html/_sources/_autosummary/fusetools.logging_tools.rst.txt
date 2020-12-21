@@ -18,7 +18,7 @@ fusetools.logging\_tools
       log_all
       log_all_thread
       log_setup
-      log_tbl_dict
+      log_tbl_df
       make_script_function
    
    

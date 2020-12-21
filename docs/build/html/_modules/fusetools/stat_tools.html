@@ -165,7 +165,6 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-
 <span class="kn">from</span> <span class="nn">fusetools.text_tools</span> <span class="kn">import</span> <span class="n">Blob</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -243,11 +242,12 @@
 <div class="viewcode-block" id="Desc.group_stats"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Desc.html#fusetools.stat_tools.Desc.group_stats">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">group_stats</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">dim_cols</span><span class="p">,</span> <span class="n">agg_dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a Pandas DataFrame with the following aggregations over a dimension: Count, Percentage of Occurrence, Median.</span>
+<span class="sd">        Creates a Pandas DataFrame with specified aggregations over specified dimensions.</span>
 
-<span class="sd">        :param df: Pandas DataFrame of</span>
-<span class="sd">        :param col:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param df: Pandas DataFrame.</span>
+<span class="sd">        :param dim_cols: List of columns to group by.</span>
+<span class="sd">        :param agg_dict: Dictionary of columns and calculations to perform.</span>
+<span class="sd">        :return: Pandas DataFrame of calculated results.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">df1</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span>
                <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">dim_cols</span><span class="p">)</span>
@@ -255,42 +255,6 @@
                <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                <span class="p">)</span>
 
-        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="s1">&#39;bins&#39;</span><span class="p">,</span> <span class="s1">&#39;Page_Link&#39;</span><span class="p">:</span> <span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="s1">&#39;End_Price&#39;</span><span class="p">:</span> <span class="s1">&#39;median&#39;</span><span class="p">}</span>
-        <span class="n">df1</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
-
-        <span class="n">df1</span><span class="p">[</span><span class="s1">&#39;pct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">df1</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">df1</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])),</span> <span class="mi">3</span><span class="p">)</span>
-        <span class="n">df1</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df1</span><span class="p">[</span><span class="s1">&#39;bins&#39;</span><span class="p">]</span>
-        <span class="k">del</span> <span class="n">df1</span><span class="p">[</span><span class="s1">&#39;bins&#39;</span><span class="p">]</span>
-        <span class="n">df1</span> <span class="o">=</span> <span class="n">df1</span><span class="p">[[</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;pct&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="n">df1</span></div>
-
-<div class="viewcode-block" id="Desc.group_stats_bins"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Desc.html#fusetools.stat_tools.Desc.group_stats_bins">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">group_stats_bins</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">bin_st</span><span class="p">,</span> <span class="n">bin_end</span><span class="p">,</span> <span class="n">bin_n</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a Pandas DataFrame with the following aggregations over a dimension binned by specified intervals: Count, Percentage of Occurrence, Median.</span>
-
-<span class="sd">        :param df:</span>
-<span class="sd">        :param col:</span>
-<span class="sd">        :param bin_st:</span>
-<span class="sd">        :param bin_end:</span>
-<span class="sd">        :param bin_n:</span>
-<span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">bin_st</span><span class="p">,</span> <span class="n">bin_end</span><span class="p">,</span> <span class="n">bin_n</span><span class="p">)</span>
-        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;bins&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">bins</span><span class="p">,</span> <span class="n">include_lowest</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;bins&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span>
-            <span class="s2">&quot;End_Price&quot;</span><span class="p">:</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Page_Link&quot;</span><span class="p">:</span> <span class="s2">&quot;size&quot;</span>
-        <span class="p">}))</span>
-        <span class="n">df1</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bins&#39;</span><span class="p">:</span> <span class="s1">&#39;bins&#39;</span><span class="p">,</span> <span class="s1">&#39;Page_Link&#39;</span><span class="p">:</span> <span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="s1">&#39;End_Price&#39;</span><span class="p">:</span> <span class="s1">&#39;median&#39;</span><span class="p">}</span>
-        <span class="n">df1</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
-
-        <span class="n">df1</span><span class="p">[</span><span class="s1">&#39;pct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">df1</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">df1</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]),</span> <span class="mi">3</span><span class="p">)</span>
-        <span class="n">df1</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">df1</span><span class="p">[</span><span class="s1">&#39;bins&#39;</span><span class="p">]</span>
-        <span class="k">del</span> <span class="n">df1</span><span class="p">[</span><span class="s1">&#39;bins&#39;</span><span class="p">]</span>
-        <span class="n">df1</span> <span class="o">=</span> <span class="n">df1</span><span class="p">[[</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;pct&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">]]</span>
         <span class="k">return</span> <span class="n">df1</span></div></div>
 
 
@@ -301,18 +265,21 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Test.ttest"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.ttest">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">ttest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">ttest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">grp_col</span><span class="p">,</span> <span class="n">grp_1_flag</span><span class="p">,</span> <span class="n">grp_2_flag</span><span class="p">,</span> <span class="n">target_kpi</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Performs a t-test</span>
+<span class="sd">        Performs a t-test between two groups split by a flag.</span>
 
-<span class="sd">        :param df:</span>
-<span class="sd">        :param col:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param df: Pandas DataFrame containing data.</span>
+<span class="sd">        :param grp_col: Column used to group the data.</span>
+<span class="sd">        :param grp_1_flag: Value used to distinguish group 1.</span>
+<span class="sd">        :param grp_2_flag: Value used to distinguish group 2.</span>
+<span class="sd">        :param target_kpi: Column for the target metric to compare test across groups.</span>
+<span class="sd">        :return: T-Test p-value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">[[</span><span class="s1">&#39;End_Price&#39;</span><span class="p">]]</span>
-        <span class="n">b</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
-        <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">[[</span><span class="s1">&#39;End_Price&#39;</span><span class="p">]]</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">grp_col</span><span class="p">]</span> <span class="o">==</span> <span class="n">grp_1_flag</span><span class="p">]</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">[[</span><span class="n">target_kpi</span><span class="p">]]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">grp_col</span><span class="p">]</span> <span class="o">==</span> <span class="n">grp_2_flag</span><span class="p">]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">[[</span><span class="n">target_kpi</span><span class="p">]]</span>
         <span class="n">t</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">ttest_ind</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">equal_var</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">p</span></div>
 
@@ -322,10 +289,11 @@
             <span class="n">sample1_dat_ttest</span><span class="p">,</span>
             <span class="n">sample2_dat_ttest</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs a T-Test between two groups of data.</span>
 
-<span class="sd">        :param sample1_dat_ttest:</span>
-<span class="sd">        :param sample2_dat_ttest:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param sample1_dat_ttest: Sample 1 dataset.</span>
+<span class="sd">        :param sample2_dat_ttest: Sample 2 dataset.</span>
+<span class="sd">        :return: T-Test p-value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">Blob</span><span class="o">.</span><span class="n">text_parse</span><span class="p">(</span><span class="n">sample1_dat_ttest</span><span class="p">,</span> <span class="n">sample2_dat_ttest</span><span class="p">)</span>
         <span class="n">t</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">ttest_ind</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">equal_var</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -335,11 +303,11 @@
 <div class="viewcode-block" id="Test.cramers_corrected_stat"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.cramers_corrected_stat">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">cramers_corrected_stat</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">cat_col1</span><span class="p">,</span> <span class="n">cat_col2</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates correlation between 2 categorical variables using Cramer&#39;s method</span>
+<span class="sd">        Calculates correlation between 2 categorical variables using Cramer&#39;s method.</span>
 
-<span class="sd">        :param cat_col1:</span>
-<span class="sd">        :param cat_col2:</span>
-<span class="sd">        :return: Correlation between 2 categorical variables using Cramer&#39;s method</span>
+<span class="sd">        :param cat_col1: Categorical column 1.</span>
+<span class="sd">        :param cat_col2: Categorical column 2.</span>
+<span class="sd">        :return: Correlation between 2 categorical variables using Cramer&#39;s method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># https://stackoverflow.com/questions/20892799/using-pandas-calculate-cram%C3%A9rs-coefficient-matrix</span>
@@ -362,13 +330,13 @@
                      <span class="n">significance_level_input</span><span class="p">,</span>
                      <span class="n">statistical_power_input</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates</span>
+<span class="sd">        Calculates sample size needed for desired measuring effect size.</span>
 
-<span class="sd">        :param baseline_input:</span>
-<span class="sd">        :param effect_size_input:</span>
-<span class="sd">        :param significance_level_input:</span>
-<span class="sd">        :param statistical_power_input:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param baseline_input: Baseline rate to measure effect against against.</span>
+<span class="sd">        :param effect_size_input: Desired effect size to measure.</span>
+<span class="sd">        :param significance_level_input: Desired level of statistical significance.</span>
+<span class="sd">        :param statistical_power_input: Desired level of statistical power.</span>
+<span class="sd">        :return: Calculated sample size.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">z</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">isf</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">significance_level_input</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])</span>  <span class="c1"># two-sided t test</span>
@@ -388,12 +356,13 @@
                            <span class="n">sample2_successes</span><span class="p">,</span>
                            <span class="n">sample2_trials</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates correlation between 2 proportions using a Chi-Squared test..</span>
 
-<span class="sd">        :param sample1_successes:</span>
-<span class="sd">        :param sample1_trials:</span>
-<span class="sd">        :param sample2_successes:</span>
-<span class="sd">        :param sample2_trials:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param sample1_successes: Sample 1&#39;s successes.</span>
+<span class="sd">        :param sample1_trials: Sample 1&#39;s trials.</span>
+<span class="sd">        :param sample2_successes: Sample 2&#39;s successes.</span>
+<span class="sd">        :param sample2_trials: Sample 2&#39;s successes.</span>
+<span class="sd">        :return: Chi-Squared p-value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">successes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">sample1_successes</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">sample2_successes</span><span class="p">)])</span>

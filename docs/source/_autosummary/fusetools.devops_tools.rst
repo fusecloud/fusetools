@@ -25,7 +25,6 @@ fusetools.devops\_tools
       PyPi
       ReadTheDocs
       Sphinx
-      Terraform
    
    
 

@@ -37,7 +37,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fusetools.devops_tools.Terraform" href="fusetools.devops_tools.Terraform.html" />
+    <link rel="next" title="fusetools.financial_tools" href="fusetools.financial_tools.html" />
     <link rel="prev" title="fusetools.devops_tools.ReadTheDocs" href="fusetools.devops_tools.ReadTheDocs.html" /> 
 </head>
 
@@ -106,7 +106,6 @@
 <li class="toctree-l3"><a class="reference internal" href="fusetools.devops_tools.PyPi.html">fusetools.devops_tools.PyPi</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fusetools.devops_tools.ReadTheDocs.html">fusetools.devops_tools.ReadTheDocs</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">fusetools.devops_tools.Sphinx</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fusetools.devops_tools.Terraform.html">fusetools.devops_tools.Terraform</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.financial_tools.html">fusetools.financial_tools</a></li>
@@ -120,7 +119,6 @@
 <li class="toctree-l2"><a class="reference internal" href="fusetools.pm_tools.html">fusetools.pm_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.research_tools.html">fusetools.research_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.screen_tools.html">fusetools.screen_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fusetools.social_tools.html">fusetools.social_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.stat_tools.html">fusetools.stat_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.text_tools.html">fusetools.text_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.transfer_tools.html">fusetools.transfer_tools</a></li>
@@ -223,7 +221,8 @@
 <dt id="fusetools.devops_tools.Sphinx">
 <em class="property">class </em><code class="sig-prename descclassname">fusetools.devops_tools.</code><code class="sig-name descname">Sphinx</code><a class="reference internal" href="../_modules/fusetools/devops_tools.html#Sphinx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.devops_tools.Sphinx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Functions for building Sphinx documentation</p>
+<p>Functions for building Sphinx documentation.</p>
+<img alt="../_images/sphinx.png" src="../_images/sphinx.png" />
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -231,11 +230,33 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_sphinx_docs</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.devops_tools.Sphinx.build_sphinx_docs" title="fusetools.devops_tools.Sphinx.build_sphinx_docs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_sphinx_docs</span></code></a></p></td>
+<td><p>Creates Sphinx documentation for a Python package.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt id="fusetools.devops_tools.Sphinx.build_sphinx_docs">
+<em class="property">classmethod </em><code class="sig-name descname">build_sphinx_docs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">os_type</span></em>, <em class="sig-param"><span class="n">pkg_name</span></em>, <em class="sig-param"><span class="n">pkg_dir</span></em>, <em class="sig-param"><span class="n">python_alias</span><span class="o">=</span><span class="default_value">'python'</span></em>, <em class="sig-param"><span class="n">docs_folder_name</span><span class="o">=</span><span class="default_value">'docs'</span></em>, <em class="sig-param"><span class="n">compile_pkg</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_html</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/devops_tools.html#Sphinx.build_sphinx_docs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.devops_tools.Sphinx.build_sphinx_docs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates Sphinx documentation for a Python package.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>os_type</strong> – Type of operating system the program is running on.</p></li>
+<li><p><strong>pkg_name</strong> – Name of Python package if being compiled.</p></li>
+<li><p><strong>pkg_dir</strong> – Directory containing Python package.</p></li>
+<li><p><strong>python_alias</strong> – Name of Python alias on machine (ex: python3, python)</p></li>
+<li><p><strong>docs_folder_name</strong> – Folder name containing documents in Python package directory.</p></li>
+<li><p><strong>compile_pkg</strong> – Whether or not to compile the Python package before creating documentation.</p></li>
+<li><p><strong>show_html</strong> – Whether or not to show the Sphinx documentation in the browser after build.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -248,7 +269,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="fusetools.devops_tools.Terraform.html" class="btn btn-neutral float-right" title="fusetools.devops_tools.Terraform" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="fusetools.financial_tools.html" class="btn btn-neutral float-right" title="fusetools.financial_tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="fusetools.devops_tools.ReadTheDocs.html" class="btn btn-neutral float-left" title="fusetools.devops_tools.ReadTheDocs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

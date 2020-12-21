@@ -157,16 +157,16 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Database connections and engines.</span>
 
-<span class="sd">|pic1| |pic2| |pic3| |pic4| |pic5| |pic6|</span>
-<span class="sd">    .. |pic1| image:: ../images_source/db_conn_tools/oracle1.png</span>
+<span class="sd">|pic1| |pic2| |pic3| |pic4| |pic5|</span>
+<span class="sd">    .. |pic1| image:: ../images_source/db_conn_tools/mysql.png</span>
 <span class="sd">        :width: 20%</span>
-<span class="sd">    .. |pic2| image:: ../images_source/db_conn_tools/postgres1.png</span>
+<span class="sd">    .. |pic2| image:: ../images_source/db_conn_tools/oracle1.png</span>
 <span class="sd">        :width: 20%</span>
-<span class="sd">    .. |pic3| image:: ../images_source/db_conn_tools/teradata.png</span>
+<span class="sd">    .. |pic3| image:: ../images_source/db_conn_tools/postgres1.png</span>
 <span class="sd">        :width: 20%</span>
-<span class="sd">    .. |pic5| image:: ../images_source/db_conn_tools/redshift1.png</span>
+<span class="sd">    .. |pic4| image:: ../images_source/db_conn_tools/redshift1.png</span>
 <span class="sd">        :width: 20%</span>
-<span class="sd">    .. |pic6| image:: ../images_source/db_conn_tools/mysql.png</span>
+<span class="sd">    .. |pic5| image:: ../images_source/db_conn_tools/teradata.png</span>
 <span class="sd">        :width: 20%</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -239,6 +239,7 @@
 
         <span class="k">return</span> <span class="n">conn</span></div></div>
 
+
 <div class="viewcode-block" id="Postgres"><a class="viewcode-back" href="../../_autosummary/fusetools.db_conn_tools.Postgres.html#fusetools.db_conn_tools.Postgres">[docs]</a><span class="k">class</span> <span class="nc">Postgres</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Postgres database connections.</span>
@@ -296,7 +297,7 @@
 <div class="viewcode-block" id="TeraData.conn_td"><a class="viewcode-back" href="../../_autosummary/fusetools.db_conn_tools.TeraData.html#fusetools.db_conn_tools.TeraData.conn_td">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">conn_td</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">host</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create a Teradata database connection object via teradata Python package.</span>
+<span class="sd">        Create a Teradata database connection object via Teradata Python package.</span>
 
 <span class="sd">        :param host: Teradata hostname.</span>
 <span class="sd">        :return: Returns a Teradata database connection object.</span>
@@ -392,7 +393,7 @@
 <div class="viewcode-block" id="MySQL.eng_mysql"><a class="viewcode-back" href="../../_autosummary/fusetools.db_conn_tools.MySQL.html#fusetools.db_conn_tools.MySQL.eng_mysql">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">eng_mysql</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">usr</span><span class="p">,</span> <span class="n">pwd</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create a MySQL database engine object via psycopg2 package.</span>
+<span class="sd">        Create a MySQL database engine object via SqlAlchemy.</span>
 
 <span class="sd">        :param usr: MySQL username.</span>
 <span class="sd">        :param pwd: MySQL password.</span>

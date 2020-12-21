@@ -17,7 +17,6 @@ fusetools.stat\_tools.Desc
       :nosignatures:
    
       ~Desc.group_stats
-      ~Desc.group_stats_bins
       ~Desc.make_tbl
    
    

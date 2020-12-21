@@ -106,7 +106,6 @@
 <li class="toctree-l3"><a class="reference internal" href="fusetools.devops_tools.PyPi.html">fusetools.devops_tools.PyPi</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">fusetools.devops_tools.ReadTheDocs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="fusetools.devops_tools.Sphinx.html">fusetools.devops_tools.Sphinx</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fusetools.devops_tools.Terraform.html">fusetools.devops_tools.Terraform</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.financial_tools.html">fusetools.financial_tools</a></li>
@@ -120,7 +119,6 @@
 <li class="toctree-l2"><a class="reference internal" href="fusetools.pm_tools.html">fusetools.pm_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.research_tools.html">fusetools.research_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.screen_tools.html">fusetools.screen_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fusetools.social_tools.html">fusetools.social_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.stat_tools.html">fusetools.stat_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.text_tools.html">fusetools.text_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.transfer_tools.html">fusetools.transfer_tools</a></li>
@@ -223,7 +221,8 @@
 <dt id="fusetools.devops_tools.ReadTheDocs">
 <em class="property">class </em><code class="sig-prename descclassname">fusetools.devops_tools.</code><code class="sig-name descname">ReadTheDocs</code><a class="reference internal" href="../_modules/fusetools/devops_tools.html#ReadTheDocs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.devops_tools.ReadTheDocs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Functions for dealing with software documentation</p>
+<p>Functions for dealing with software documentation.</p>
+<img alt="../_images/rtd.png" src="../_images/rtd.png" />
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -231,17 +230,69 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_project</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.devops_tools.ReadTheDocs.create_project" title="fusetools.devops_tools.ReadTheDocs.create_project"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_project</span></code></a></p></td>
+<td><p>Creates a project on RTD.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_projects</span></code></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.devops_tools.ReadTheDocs.get_projects" title="fusetools.devops_tools.ReadTheDocs.get_projects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_projects</span></code></a></p></td>
+<td><p>Get projects on RTD, pulls a specific project if specified.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_project</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.devops_tools.ReadTheDocs.update_project" title="fusetools.devops_tools.ReadTheDocs.update_project"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_project</span></code></a></p></td>
+<td><p>Updates a project on RTD.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt id="fusetools.devops_tools.ReadTheDocs.create_project">
+<em class="property">classmethod </em><code class="sig-name descname">create_project</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token</span></em>, <em class="sig-param"><span class="n">project_def_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/devops_tools.html#ReadTheDocs.create_project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.devops_tools.ReadTheDocs.create_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a project on RTD.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>token</strong> – RTD API token.</p></li>
+<li><p><strong>project_def_path</strong> – Local path to project files.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON response from API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.devops_tools.ReadTheDocs.get_projects">
+<em class="property">classmethod </em><code class="sig-name descname">get_projects</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token</span></em>, <em class="sig-param"><span class="n">project_name</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/devops_tools.html#ReadTheDocs.get_projects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.devops_tools.ReadTheDocs.get_projects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get projects on RTD, pulls a specific project if specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>token</strong> – RTD API token.</p></li>
+<li><p><strong>project_name</strong> – Project name (optional).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON response from API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.devops_tools.ReadTheDocs.update_project">
+<em class="property">classmethod </em><code class="sig-name descname">update_project</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token</span></em>, <em class="sig-param"><span class="n">project_def_path</span></em>, <em class="sig-param"><span class="n">project_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/devops_tools.html#ReadTheDocs.update_project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.devops_tools.ReadTheDocs.update_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates a project on RTD.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>token</strong> – RTD API token.</p></li>
+<li><p><strong>project_def_path</strong> – Local path to project files.</p></li>
+<li><p><strong>project_name</strong> – Name of project on RTD.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON response from API call.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>

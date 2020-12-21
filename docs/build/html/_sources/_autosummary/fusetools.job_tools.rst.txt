@@ -20,9 +20,7 @@ fusetools.job\_tools
       :template: custom-class-template.rst
       :nosignatures:
    
-      Freelancer
       Indeed
-      Upwork
    
    
 
