@@ -166,7 +166,11 @@
 
 <span class="kn">from</span> <span class="nn">alpha_vantage.timeseries</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">ib_insync</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">ib_insync</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
 <span class="kn">from</span> <span class="nn">tda</span> <span class="kn">import</span> <span class="n">auth</span><span class="p">,</span> <span class="n">client</span>
 
 
@@ -430,13 +434,13 @@
 <span class="sd">        :param end_date: End date of data to pull quotes for (optional).</span>
 <span class="sd">        :return: Stock quotes JSON response object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># https://developer.tdameritrade.com/price-history/apis/get/marketdata/%7Bsymbol%7D/pricehistory</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">authentication_object</span><span class="o">.</span><span class="n">get_price_history</span><span class="p">(</span>
             <span class="n">ticker</span><span class="p">,</span>
             <span class="n">period_type</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">Client</span><span class="o">.</span><span class="n">PriceHistory</span><span class="o">.</span><span class="n">PeriodType</span><span class="o">.</span><span class="n">YEAR</span><span class="p">,</span>
             <span class="n">period</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">Client</span><span class="o">.</span><span class="n">PriceHistory</span><span class="o">.</span><span class="n">Period</span><span class="o">.</span><span class="n">TWENTY_YEARS</span><span class="p">,</span>
             <span class="n">frequency_type</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">Client</span><span class="o">.</span><span class="n">PriceHistory</span><span class="o">.</span><span class="n">FrequencyType</span><span class="o">.</span><span class="n">DAILY</span><span class="p">,</span>
             <span class="n">frequency</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">Client</span><span class="o">.</span><span class="n">PriceHistory</span><span class="o">.</span><span class="n">Frequency</span><span class="o">.</span><span class="n">DAILY</span><span class="p">,</span>
-            <span class="c1"># todo: convert dates to timestamp</span>
             <span class="n">start_datetime</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span>
             <span class="n">end_datetime</span><span class="o">=</span><span class="n">end_date</span>
         <span class="p">)</span>

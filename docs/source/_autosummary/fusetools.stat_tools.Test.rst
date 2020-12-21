@@ -20,11 +20,11 @@ fusetools.stat\_tools.Test
       ~Test.correlation
       ~Test.cramers_corrected_stat
       ~Test.pe
+      ~Test.poisson
       ~Test.sample_size1
       ~Test.survival_result
       ~Test.ttest
       ~Test.ttest_result
-      ~Test.update_poisson
    
    
 

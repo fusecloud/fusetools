@@ -164,7 +164,7 @@
 <span class="sd">        :width: 30%</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-
+<span class="kn">import</span> <span class="nn">six</span>
 <span class="kn">from</span> <span class="nn">fusetools.text_tools</span> <span class="kn">import</span> <span class="n">Blob</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -371,7 +371,6 @@
         <span class="n">p</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">p</span></div>
 
-    <span class="c1"># survival</span>
 <div class="viewcode-block" id="Test.survival_result"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.survival_result">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">survival_result</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
                         <span class="n">data_type</span><span class="p">,</span>
@@ -382,20 +381,19 @@
                         <span class="n">sample1_dat_survival_size</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                         <span class="n">sample2_dat_survival_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                         <span class="n">sample2_dat_survival_size</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                        <span class="n">survival_confidence_level_means</span><span class="o">=</span><span class="kc">False</span>
                         <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs a survival test which tells if statistical difference in times until an outcome between two samples.</span>
 
-<span class="sd">        :param data_type:</span>
-<span class="sd">        :param sample1_dat_survival:</span>
-<span class="sd">        :param sample2_dat_survival:</span>
-<span class="sd">        :param survival_confidence_level:</span>
-<span class="sd">        :param sample1_dat_survival_mean:</span>
-<span class="sd">        :param sample1_dat_survival_size:</span>
-<span class="sd">        :param sample2_dat_survival_mean:</span>
-<span class="sd">        :param sample2_dat_survival_size:</span>
-<span class="sd">        :param survival_confidence_level_means:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param data_type: Classification of whether data is in array/list data format or a scalar format (sample or other).</span>
+<span class="sd">        :param sample1_dat_survival: Sample 1 data if array/list.</span>
+<span class="sd">        :param sample2_dat_survival: Sample 1 data if array/list.</span>
+<span class="sd">        :param survival_confidence_level: Confidence interval to assess measure test.</span>
+<span class="sd">        :param sample1_dat_survival_mean: Sample 1 mean if scalar value.</span>
+<span class="sd">        :param sample1_dat_survival_size: Sample 1 size if scalar value.</span>
+<span class="sd">        :param sample2_dat_survival_mean: Sample 2 mean if scalar value.</span>
+<span class="sd">        :param sample2_dat_survival_size: Sample 2 size if scalar value.</span>
+<span class="sd">        :return: P-value for statistical significance in difference in times until an outcomes between two samples.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
@@ -421,20 +419,20 @@
 
         <span class="k">return</span> <span class="n">p</span></div>
 
-    <span class="c1"># poison</span>
-<div class="viewcode-block" id="Test.update_poisson"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.update_poisson">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">update_poisson</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
-                       <span class="n">sample1_events</span><span class="p">,</span>
-                       <span class="n">sample1_days</span><span class="p">,</span>
-                       <span class="n">sample2_events</span><span class="p">,</span>
-                       <span class="n">sample2_days</span><span class="p">):</span>
+<div class="viewcode-block" id="Test.poisson"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.poisson">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">poisson</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+                <span class="n">sample1_events</span><span class="p">,</span>
+                <span class="n">sample1_days</span><span class="p">,</span>
+                <span class="n">sample2_events</span><span class="p">,</span>
+                <span class="n">sample2_days</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs a Poisson test which tests statistical difference between groups comparing counts over a period of time.</span>
 
-<span class="sd">        :param sample1_events:</span>
-<span class="sd">        :param sample1_days:</span>
-<span class="sd">        :param sample2_events:</span>
-<span class="sd">        :param sample2_days:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param sample1_events: Count of sample 1 events.</span>
+<span class="sd">        :param sample1_days: Count of sample 1 days.</span>
+<span class="sd">        :param sample2_events: Count of sample 2 events.</span>
+<span class="sd">        :param sample2_days: Count of sample 2 days.</span>
+<span class="sd">        :return: P-value for a Poisson statistical test.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">p</span> <span class="o">=</span> <span class="n">binom_test</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">sample1_events</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">sample1_days</span><span class="p">),</span>
@@ -443,7 +441,6 @@
 
         <span class="k">return</span> <span class="n">p</span></div>
 
-    <span class="c1"># price elasticity</span>
 <div class="viewcode-block" id="Test.pe"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.pe">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">pe</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
            <span class="nb">type</span><span class="p">,</span>
@@ -454,15 +451,16 @@
            <span class="n">pe_prices</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
            <span class="n">pe_quantities</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the Price Elasticity of Demand.</span>
 
-<span class="sd">        :param type:</span>
-<span class="sd">        :param original_quantity:</span>
-<span class="sd">        :param new_quantity:</span>
-<span class="sd">        :param original_price:</span>
-<span class="sd">        :param new_price:</span>
-<span class="sd">        :param pe_prices:</span>
-<span class="sd">        :param pe_quantities:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param type: Classification of whether data is in array/list data format or a scalar format (sample or other).</span>
+<span class="sd">        :param original_quantity: Starting quantity demanded if data is scalar values.</span>
+<span class="sd">        :param new_quantity: Ending quantity demanded if data is scalar values.</span>
+<span class="sd">        :param original_price: Starting price if data is scalar values.</span>
+<span class="sd">        :param new_price: Ending price if data is scalar values.</span>
+<span class="sd">        :param pe_prices: Array/list of prices paid for quantities demanded.</span>
+<span class="sd">        :param pe_quantities: Array/lust of quantities demanded.</span>
+<span class="sd">        :return: Price elasticity of demand (float).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;sample&quot;</span><span class="p">:</span>
@@ -478,16 +476,16 @@
 
         <span class="k">return</span> <span class="n">pe</span></div>
 
-    <span class="c1"># correlation</span>
 <div class="viewcode-block" id="Test.correlation"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Test.html#fusetools.stat_tools.Test.correlation">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">correlation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
                     <span class="n">sample1_dat</span><span class="p">,</span>
                     <span class="n">sample2_dat</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs a Pearson test of correlation between two data samples.</span>
 
-<span class="sd">        :param sample1_dat:</span>
-<span class="sd">        :param sample2_dat:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param sample1_dat: Sample 1 data array/list.</span>
+<span class="sd">        :param sample2_dat: Sample 2 data array/list.</span>
+<span class="sd">        :return: Pearson correlation result.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">Blob</span><span class="o">.</span><span class="n">text_parse</span><span class="p">(</span><span class="n">sample1_dat</span><span class="p">,</span> <span class="n">sample2_dat</span><span class="p">)</span>
 
@@ -507,29 +505,30 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Viz.make_plot_tbl"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Viz.html#fusetools.stat_tools.Viz.make_plot_tbl">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">make_plot_tbl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">plot_size</span><span class="p">,</span>
                       <span class="n">tbl_size</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">tgt_col</span><span class="p">,</span>
                       <span class="n">title</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">agg_df</span><span class="p">,</span> <span class="n">plot_type</span><span class="p">,</span> <span class="n">yaxis_fmt</span><span class="p">,</span> <span class="n">xaxis_fmt</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">font_size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a visualization of a data table next to a plot of the data. Intended for use in Jupyter Notebook.</span>
 
-<span class="sd">        :param width:</span>
-<span class="sd">        :param height:</span>
-<span class="sd">        :param plot_size:</span>
-<span class="sd">        :param tbl_size:</span>
-<span class="sd">        :param df:</span>
-<span class="sd">        :param col:</span>
-<span class="sd">        :param tgt_col:</span>
-<span class="sd">        :param title:</span>
-<span class="sd">        :param xlabel:</span>
-<span class="sd">        :param ylabel:</span>
-<span class="sd">        :param agg_df:</span>
-<span class="sd">        :param plot_type:</span>
-<span class="sd">        :param yaxis_fmt:</span>
-<span class="sd">        :param xaxis_fmt:</span>
-<span class="sd">        :param stat:</span>
-<span class="sd">        :param font_size:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param width: Width of plot.</span>
+<span class="sd">        :param height: Height of plot.</span>
+<span class="sd">        :param plot_size: Size of overall plot.</span>
+<span class="sd">        :param tbl_size: Size of data table.</span>
+<span class="sd">        :param df: Pandas DataFrame of Data to plot.</span>
+<span class="sd">        :param col: Dimension column for plot.</span>
+<span class="sd">        :param tgt_col: KPI column for plot.</span>
+<span class="sd">        :param title: Title for plot.</span>
+<span class="sd">        :param xlabel: Xlabel for plot.</span>
+<span class="sd">        :param ylabel: YLabel for plot.</span>
+<span class="sd">        :param agg_df: Pandas DataFrame for data table.</span>
+<span class="sd">        :param plot_type: Type of visualization to plot (box, box_h, scatter, dist, agg_dist)</span>
+<span class="sd">        :param yaxis_fmt: Format for yaxis.</span>
+<span class="sd">        :param xaxis_fmt: Format for xaxis.</span>
+<span class="sd">        :param stat: Type of statistic to add to the plot if box plot (currently only T-Test P-value supported).</span>
+<span class="sd">        :param font_size: Size of font for table.</span>
+<span class="sd">        :return: Visualization of a data table next to a plot of the data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;$</span><span class="si">{x:,.0f}</span><span class="s1">&#39;</span>
@@ -597,7 +596,7 @@
             <span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;agg_dist&quot;</span><span class="p">:</span>
-            <span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df1</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#40466e&#39;</span><span class="p">);</span>
+            <span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#40466e&#39;</span><span class="p">);</span>
             <span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
 
         <span class="c1"># set formatting aesthetics</span>
@@ -649,25 +648,26 @@
                 <span class="n">cell</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">header_color</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">cell</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">row_colors</span><span class="p">[</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_colors</span><span class="p">)])</span>
-        <span class="k">return</span> <span class="n">gs</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">gs</span><span class="p">;</span></div>
 
-<div class="viewcode-block" id="Viz.make_plot_tbl"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Viz.html#fusetools.stat_tools.Viz.make_plot_tbl">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">make_plot_tbl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">plot_size</span><span class="p">,</span> <span class="n">tbl_size</span><span class="p">,</span> <span class="n">df_plot</span><span class="p">,</span> <span class="n">plot_col_x</span><span class="p">,</span> <span class="n">plot_col_y</span><span class="p">,</span> <span class="n">plot_col_hue</span><span class="p">,</span>
-                      <span class="n">plot_title</span><span class="p">,</span> <span class="n">df_tbl</span><span class="p">,</span> <span class="n">font_size</span><span class="p">):</span>
+<div class="viewcode-block" id="Viz.make_plotting_tbl"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Viz.html#fusetools.stat_tools.Viz.make_plotting_tbl">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">make_plotting_tbl</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">plot_size</span><span class="p">,</span> <span class="n">tbl_size</span><span class="p">,</span> <span class="n">df_plot</span><span class="p">,</span> <span class="n">plot_col_x</span><span class="p">,</span> <span class="n">plot_col_y</span><span class="p">,</span> <span class="n">plot_col_hue</span><span class="p">,</span>
+                          <span class="n">plot_title</span><span class="p">,</span> <span class="n">df_tbl</span><span class="p">,</span> <span class="n">font_size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a visualization of a data table + a bar graph.</span>
 
-<span class="sd">        :param width:</span>
-<span class="sd">        :param height:</span>
-<span class="sd">        :param plot_size:</span>
-<span class="sd">        :param tbl_size:</span>
-<span class="sd">        :param df_plot:</span>
-<span class="sd">        :param plot_col_x:</span>
-<span class="sd">        :param plot_col_y:</span>
-<span class="sd">        :param plot_col_hue:</span>
-<span class="sd">        :param plot_title:</span>
-<span class="sd">        :param df_tbl:</span>
-<span class="sd">        :param font_size:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param width: Width of plot.</span>
+<span class="sd">        :param height: Height of plot.</span>
+<span class="sd">        :param plot_size: Size of overall plot.</span>
+<span class="sd">        :param tbl_size: Size of data table.</span>
+<span class="sd">        :param df_plot: Pandas DataFrame of data to plot.</span>
+<span class="sd">        :param plot_col_x: Column name to plot on X axis.</span>
+<span class="sd">        :param plot_col_y: Column name to plot on Y axis (bars).</span>
+<span class="sd">        :param plot_col_hue: Color for column on Y axis (bars).</span>
+<span class="sd">        :param plot_title: Title for plot.</span>
+<span class="sd">        :param df_tbl:  Pandas DataFrame of data to show in datatable.</span>
+<span class="sd">        :param font_size: Font size for data table.</span>
+<span class="sd">        :return: Visualization of a data table next to a bar plot of the data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
         <span class="n">gs</span> <span class="o">=</span> <span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="n">plot_size</span><span class="p">,</span> <span class="n">tbl_size</span><span class="p">])</span>
@@ -706,12 +706,14 @@
         <span class="k">return</span> <span class="n">gs</span><span class="p">;</span></div>
 
 <div class="viewcode-block" id="Viz.dist_plot"><a class="viewcode-back" href="../../_autosummary/fusetools.stat_tools.Viz.html#fusetools.stat_tools.Viz.dist_plot">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">dist_plot</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">dist_plot</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">sav_dir</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a histogram of data.</span>
 
-<span class="sd">        :param df:</span>
-<span class="sd">        :param col:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        :param df: Pandas DataFrame of data to plot.</span>
+<span class="sd">        :param col: Column to plot on y-axis (bars).</span>
+<span class="sd">        :param sav_dir: Directory to save plot in.</span>
+<span class="sd">        :return: Saved plot.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">hist_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">6</span><span class="p">},</span> <span class="n">kde_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;linewidth&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
@@ -722,7 +724,7 @@
 
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;/pix/&quot;</span> <span class="o">+</span> <span class="n">col</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">sav_dir</span> <span class="o">+</span> <span class="n">col</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 </pre></div>
 

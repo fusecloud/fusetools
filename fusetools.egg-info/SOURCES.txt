@@ -10,7 +10,6 @@ fusetools/db_etl_tools.py
 fusetools/devops_tools.py
 fusetools/financial_tools.py
 fusetools/gsuite_tools.py
-fusetools/job_tools.py
 fusetools/logging_tools.py
 fusetools/marketing_tools.py
 fusetools/ml_tools.py

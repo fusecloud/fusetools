@@ -103,7 +103,6 @@
 <li class="toctree-l2"><a class="reference internal" href="fusetools.devops_tools.html">fusetools.devops_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.financial_tools.html">fusetools.financial_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.gsuite_tools.html">fusetools.gsuite_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fusetools.job_tools.html">fusetools.job_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.logging_tools.html">fusetools.logging_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.marketing_tools.html">fusetools.marketing_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.ml_tools.html">fusetools.ml_tools</a></li>
@@ -229,8 +228,8 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_delete_directory</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.transfer_tools.Local.clear_delete_directory" title="fusetools.transfer_tools.Local.clear_delete_directory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_delete_directory</span></code></a></p></td>
+<td><p>Clears and/or deletes a directory and its contents.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#fusetools.transfer_tools.Local.fix_user_path" title="fusetools.transfer_tools.Local.fix_user_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fix_user_path</span></code></a></p></td>
 <td><p>Fixes a local filepath.</p></td>
@@ -245,10 +244,27 @@
 <td><p>Reads and concatenates files in a directory that match a string.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#fusetools.transfer_tools.Local.zip_dir" title="fusetools.transfer_tools.Local.zip_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zip_dir</span></code></a></p></td>
-<td><p>Compress a directory (ZIP file).</p></td>
+<td><p>Compress a directory into a single ZIP file.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt id="fusetools.transfer_tools.Local.clear_delete_directory">
+<em class="property">classmethod </em><code class="sig-name descname">clear_delete_directory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'delete'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/transfer_tools.html#Local.clear_delete_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.transfer_tools.Local.clear_delete_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears and/or deletes a directory and its contents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> – Filepath of directory.</p></li>
+<li><p><strong>method</strong> – Optional delete for the directory folder.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="fusetools.transfer_tools.Local.fix_user_path">
 <em class="property">classmethod </em><code class="sig-name descname">fix_user_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/transfer_tools.html#Local.fix_user_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.transfer_tools.Local.fix_user_path" title="Permalink to this definition">¶</a></dt>
@@ -258,7 +274,7 @@
 <dd class="field-odd"><p><strong>dir</strong> – Directory to patch.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Patches directory.</p>
+<dd class="field-even"><p>Patched directory.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -287,8 +303,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> – String match name of file(s)</p></li>
-<li><p><strong>dir</strong> – Directory for the file search</p></li>
+<li><p><strong>name</strong> – String match name of file(s).</p></li>
+<li><p><strong>dir</strong> – Directory for the file search.</p></li>
 <li><p><strong>exclude</strong> – A string to search for files to exclude.</p></li>
 </ul>
 </dd>
@@ -320,7 +336,18 @@
 <dl class="py method">
 <dt id="fusetools.transfer_tools.Local.zip_dir">
 <em class="property">classmethod </em><code class="sig-name descname">zip_dir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory_list</span></em>, <em class="sig-param"><span class="n">zipname</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/transfer_tools.html#Local.zip_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.transfer_tools.Local.zip_dir" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compress a directory (ZIP file).</p>
+<dd><p>Compress a directory into a single ZIP file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory_list</strong> – List of files to compress into zip file.</p></li>
+<li><p><strong>zipname</strong> – Name of zip file to compress files into.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Zip file containing files.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

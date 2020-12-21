@@ -18,6 +18,7 @@ fusetools.stat\_tools.Viz
    
       ~Viz.dist_plot
       ~Viz.make_plot_tbl
+      ~Viz.make_plotting_tbl
    
    
 

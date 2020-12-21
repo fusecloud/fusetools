@@ -103,7 +103,6 @@
 <li class="toctree-l2"><a class="reference internal" href="fusetools.devops_tools.html">fusetools.devops_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.financial_tools.html">fusetools.financial_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.gsuite_tools.html">fusetools.gsuite_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fusetools.job_tools.html">fusetools.job_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.logging_tools.html">fusetools.logging_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.marketing_tools.html">fusetools.marketing_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.ml_tools.html">fusetools.ml_tools</a></li>
@@ -229,11 +228,32 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ssh_transfer_files</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.transfer_tools.SSH.ssh_transfer_files" title="fusetools.transfer_tools.SSH.ssh_transfer_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ssh_transfer_files</span></code></a></p></td>
+<td><p>Transfers a file via SSH.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt id="fusetools.transfer_tools.SSH.ssh_transfer_files">
+<em class="property">classmethod </em><code class="sig-name descname">ssh_transfer_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">local_file_path</span></em>, <em class="sig-param"><span class="n">target_file_path</span></em>, <em class="sig-param"><span class="n">target_user</span></em>, <em class="sig-param"><span class="n">target_ip</span></em>, <em class="sig-param"><span class="n">target_pwd</span></em>, <em class="sig-param"><span class="n">direction</span><span class="o">=</span><span class="default_value">'send'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/transfer_tools.html#SSH.ssh_transfer_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.transfer_tools.SSH.ssh_transfer_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfers a file via SSH.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>local_file_path</strong> – Filepath for the object to transfer on local machine.</p></li>
+<li><p><strong>target_file_path</strong> – Filepath for the object to transferred to on target machine.</p></li>
+<li><p><strong>target_user</strong> – Usename of target machine.</p></li>
+<li><p><strong>target_ip</strong> – IP of target machine.</p></li>
+<li><p><strong>target_pwd</strong> – Password of target machine.</p></li>
+<li><p><strong>direction</strong> – Whether to receive object from target machine or send object to it (send or other).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>

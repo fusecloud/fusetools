@@ -103,7 +103,6 @@
 <li class="toctree-l2"><a class="reference internal" href="fusetools.devops_tools.html">fusetools.devops_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.financial_tools.html">fusetools.financial_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.gsuite_tools.html">fusetools.gsuite_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fusetools.job_tools.html">fusetools.job_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.logging_tools.html">fusetools.logging_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.marketing_tools.html">fusetools.marketing_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.ml_tools.html">fusetools.ml_tools</a></li>
@@ -226,56 +225,86 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">concat_text_files</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.text_tools.Export.concat_text_files" title="fusetools.text_tools.Export.concat_text_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concat_text_files</span></code></a></p></td>
+<td><p>Concatenates contents of specified files into a target file and saves it.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#fusetools.text_tools.Export.dump_json" title="fusetools.text_tools.Export.dump_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump_json</span></code></a></p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">param obj</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
+<td><p>Exports a Python dictionary object to a JSON file.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.text_tools.Export.dump_sql" title="fusetools.text_tools.Export.dump_sql"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump_sql</span></code></a></p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">param obj</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
+<td><p>Exports a Python string object to a SQL file.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_replace_text</span></code></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.text_tools.Export.find_replace_text" title="fusetools.text_tools.Export.find_replace_text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_replace_text</span></code></a></p></td>
+<td><p>Finds and replaces a string in all text files in a target folder.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
-<dt id="fusetools.text_tools.Export.dump_json">
-<em class="property">classmethod </em><code class="sig-name descname">dump_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/text_tools.html#Export.dump_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.text_tools.Export.dump_json" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dt id="fusetools.text_tools.Export.concat_text_files">
+<em class="property">classmethod </em><code class="sig-name descname">concat_text_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_files</span></em>, <em class="sig-param"><span class="n">output_file</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/text_tools.html#Export.concat_text_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.text_tools.Export.concat_text_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenates contents of specified files into a target file and saves it.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>obj</strong> – </p></li>
-<li><p><strong>dir</strong> – </p></li>
+<li><p><strong>input_files</strong> – List of text files to concatenate.</p></li>
+<li><p><strong>output_file</strong> – Target output file.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>Concatenated target output file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.text_tools.Export.dump_json">
+<em class="property">classmethod </em><code class="sig-name descname">dump_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">filepath</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/text_tools.html#Export.dump_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.text_tools.Export.dump_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports a Python dictionary object to a JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – Python dictionary object.</p></li>
+<li><p><strong>filepath</strong> – Filepath to save object to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Exported JSON file.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="fusetools.text_tools.Export.dump_sql">
-<em class="property">classmethod </em><code class="sig-name descname">dump_sql</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/text_tools.html#Export.dump_sql"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.text_tools.Export.dump_sql" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<em class="property">classmethod </em><code class="sig-name descname">dump_sql</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">filepath</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/text_tools.html#Export.dump_sql"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.text_tools.Export.dump_sql" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports a Python string object to a SQL file.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>obj</strong> – </p></li>
-<li><p><strong>dir</strong> – </p></li>
+<li><p><strong>obj</strong> – Python string object.</p></li>
+<li><p><strong>filepath</strong> – Filepath to save object to.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>Exported SQL file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.text_tools.Export.find_replace_text">
+<em class="property">classmethod </em><code class="sig-name descname">find_replace_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory</span></em>, <em class="sig-param"><span class="n">find</span></em>, <em class="sig-param"><span class="n">replace</span></em>, <em class="sig-param"><span class="n">file_pattern</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/text_tools.html#Export.find_replace_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.text_tools.Export.find_replace_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds and replaces a string in all text files in a target folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> – Target folder containing files.</p></li>
+<li><p><strong>find</strong> – String to search for.</p></li>
+<li><p><strong>replace</strong> – New string to replace with.</p></li>
+<li><p><strong>file_pattern</strong> – Pattern of text files to scan.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Saved files with replaced text.</p>
 </dd>
 </dl>
 </dd></dl>

@@ -103,7 +103,6 @@
 <li class="toctree-l2"><a class="reference internal" href="fusetools.devops_tools.html">fusetools.devops_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.financial_tools.html">fusetools.financial_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.gsuite_tools.html">fusetools.gsuite_tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fusetools.job_tools.html">fusetools.job_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.logging_tools.html">fusetools.logging_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.marketing_tools.html">fusetools.marketing_tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusetools.ml_tools.html">fusetools.ml_tools</a></li>
@@ -231,44 +230,28 @@
 <td><p>Calculates correlation between 2 proportions using a Chi-Squared test..</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.correlation" title="fusetools.stat_tools.Test.correlation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">correlation</span></code></a></p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">param sample1_dat</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
+<td><p>Performs a Pearson test of correlation between two data samples.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.cramers_corrected_stat" title="fusetools.stat_tools.Test.cramers_corrected_stat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cramers_corrected_stat</span></code></a></p></td>
 <td><p>Calculates correlation between 2 categorical variables using Cramer’s method.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.pe" title="fusetools.stat_tools.Test.pe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pe</span></code></a></p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">param type</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
+<td><p>Calculates the Price Elasticity of Demand.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.sample_size1" title="fusetools.stat_tools.Test.sample_size1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size1</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.poisson" title="fusetools.stat_tools.Test.poisson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">poisson</span></code></a></p></td>
+<td><p>Performs a Poisson test which tests statistical difference between groups comparing counts over a period of time.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.sample_size1" title="fusetools.stat_tools.Test.sample_size1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size1</span></code></a></p></td>
 <td><p>Calculates sample size needed for desired measuring effect size.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.survival_result" title="fusetools.stat_tools.Test.survival_result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">survival_result</span></code></a></p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">param data_type</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.survival_result" title="fusetools.stat_tools.Test.survival_result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">survival_result</span></code></a></p></td>
+<td><p>Performs a survival test which tells if statistical difference in times until an outcome between two samples.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.ttest" title="fusetools.stat_tools.Test.ttest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ttest</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.ttest" title="fusetools.stat_tools.Test.ttest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ttest</span></code></a></p></td>
 <td><p>Performs a t-test between two groups split by a flag.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.ttest_result" title="fusetools.stat_tools.Test.ttest_result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ttest_result</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.ttest_result" title="fusetools.stat_tools.Test.ttest_result"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ttest_result</span></code></a></p></td>
 <td><p>Performs a T-Test between two groups of data.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#fusetools.stat_tools.Test.update_poisson" title="fusetools.stat_tools.Test.update_poisson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_poisson</span></code></a></p></td>
-<td><p><dl class="field-list simple">
-<dt class="field-odd">param sample1_events</dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
-</p></td>
 </tr>
 </tbody>
 </table>
@@ -294,15 +277,16 @@
 <dl class="py method">
 <dt id="fusetools.stat_tools.Test.correlation">
 <em class="property">classmethod </em><code class="sig-name descname">correlation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample1_dat</span></em>, <em class="sig-param"><span class="n">sample2_dat</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.correlation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.correlation" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Performs a Pearson test of correlation between two data samples.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sample1_dat</strong> – </p></li>
-<li><p><strong>sample2_dat</strong> – </p></li>
+<li><p><strong>sample1_dat</strong> – Sample 1 data array/list.</p></li>
+<li><p><strong>sample2_dat</strong> – Sample 2 data array/list.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>Pearson correlation result.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -327,20 +311,40 @@
 <dl class="py method">
 <dt id="fusetools.stat_tools.Test.pe">
 <em class="property">classmethod </em><code class="sig-name descname">pe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type</span></em>, <em class="sig-param"><span class="n">original_quantity</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">new_quantity</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">original_price</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">new_price</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">pe_prices</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">pe_quantities</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.pe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.pe" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Calculates the Price Elasticity of Demand.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>type</strong> – </p></li>
-<li><p><strong>original_quantity</strong> – </p></li>
-<li><p><strong>new_quantity</strong> – </p></li>
-<li><p><strong>original_price</strong> – </p></li>
-<li><p><strong>new_price</strong> – </p></li>
-<li><p><strong>pe_prices</strong> – </p></li>
-<li><p><strong>pe_quantities</strong> – </p></li>
+<li><p><strong>type</strong> – Classification of whether data is in array/list data format or a scalar format (sample or other).</p></li>
+<li><p><strong>original_quantity</strong> – Starting quantity demanded if data is scalar values.</p></li>
+<li><p><strong>new_quantity</strong> – Ending quantity demanded if data is scalar values.</p></li>
+<li><p><strong>original_price</strong> – Starting price if data is scalar values.</p></li>
+<li><p><strong>new_price</strong> – Ending price if data is scalar values.</p></li>
+<li><p><strong>pe_prices</strong> – Array/list of prices paid for quantities demanded.</p></li>
+<li><p><strong>pe_quantities</strong> – Array/lust of quantities demanded.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>Price elasticity of demand (float).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="fusetools.stat_tools.Test.poisson">
+<em class="property">classmethod </em><code class="sig-name descname">poisson</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample1_events</span></em>, <em class="sig-param"><span class="n">sample1_days</span></em>, <em class="sig-param"><span class="n">sample2_events</span></em>, <em class="sig-param"><span class="n">sample2_days</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.poisson"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.poisson" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs a Poisson test which tests statistical difference between groups comparing counts over a period of time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample1_events</strong> – Count of sample 1 events.</p></li>
+<li><p><strong>sample1_days</strong> – Count of sample 1 days.</p></li>
+<li><p><strong>sample2_events</strong> – Count of sample 2 events.</p></li>
+<li><p><strong>sample2_days</strong> – Count of sample 2 days.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>P-value for a Poisson statistical test.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -366,23 +370,23 @@
 
 <dl class="py method">
 <dt id="fusetools.stat_tools.Test.survival_result">
-<em class="property">classmethod </em><code class="sig-name descname">survival_result</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_type</span></em>, <em class="sig-param"><span class="n">sample1_dat_survival</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample2_dat_survival</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">survival_confidence_level</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample1_dat_survival_mean</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample1_dat_survival_size</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample2_dat_survival_mean</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample2_dat_survival_size</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">survival_confidence_level_means</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.survival_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.survival_result" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<em class="property">classmethod </em><code class="sig-name descname">survival_result</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_type</span></em>, <em class="sig-param"><span class="n">sample1_dat_survival</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample2_dat_survival</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">survival_confidence_level</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample1_dat_survival_mean</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample1_dat_survival_size</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample2_dat_survival_mean</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sample2_dat_survival_size</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.survival_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.survival_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs a survival test which tells if statistical difference in times until an outcome between two samples.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data_type</strong> – </p></li>
-<li><p><strong>sample1_dat_survival</strong> – </p></li>
-<li><p><strong>sample2_dat_survival</strong> – </p></li>
-<li><p><strong>survival_confidence_level</strong> – </p></li>
-<li><p><strong>sample1_dat_survival_mean</strong> – </p></li>
-<li><p><strong>sample1_dat_survival_size</strong> – </p></li>
-<li><p><strong>sample2_dat_survival_mean</strong> – </p></li>
-<li><p><strong>sample2_dat_survival_size</strong> – </p></li>
-<li><p><strong>survival_confidence_level_means</strong> – </p></li>
+<li><p><strong>data_type</strong> – Classification of whether data is in array/list data format or a scalar format (sample or other).</p></li>
+<li><p><strong>sample1_dat_survival</strong> – Sample 1 data if array/list.</p></li>
+<li><p><strong>sample2_dat_survival</strong> – Sample 1 data if array/list.</p></li>
+<li><p><strong>survival_confidence_level</strong> – Confidence interval to assess measure test.</p></li>
+<li><p><strong>sample1_dat_survival_mean</strong> – Sample 1 mean if scalar value.</p></li>
+<li><p><strong>sample1_dat_survival_size</strong> – Sample 1 size if scalar value.</p></li>
+<li><p><strong>sample2_dat_survival_mean</strong> – Sample 2 mean if scalar value.</p></li>
+<li><p><strong>sample2_dat_survival_size</strong> – Sample 2 size if scalar value.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>P-value for statistical significance in difference in times until an outcomes between two samples.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -420,24 +424,6 @@
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>T-Test p-value.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="fusetools.stat_tools.Test.update_poisson">
-<em class="property">classmethod </em><code class="sig-name descname">update_poisson</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sample1_events</span></em>, <em class="sig-param"><span class="n">sample1_days</span></em>, <em class="sig-param"><span class="n">sample2_events</span></em>, <em class="sig-param"><span class="n">sample2_days</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fusetools/stat_tools.html#Test.update_poisson"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fusetools.stat_tools.Test.update_poisson" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sample1_events</strong> – </p></li>
-<li><p><strong>sample1_days</strong> – </p></li>
-<li><p><strong>sample2_events</strong> – </p></li>
-<li><p><strong>sample2_days</strong> – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
 </dd>
 </dl>
 </dd></dl>

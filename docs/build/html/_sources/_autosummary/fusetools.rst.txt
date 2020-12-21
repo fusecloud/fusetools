@@ -37,7 +37,6 @@ fusetools
    fusetools.devops_tools
    fusetools.financial_tools
    fusetools.gsuite_tools
-   fusetools.job_tools
    fusetools.logging_tools
    fusetools.marketing_tools
    fusetools.ml_tools
