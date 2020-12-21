@@ -8,7 +8,7 @@ Functions for interacting with Machine Learning Tools.
         :width: 30%
 
 """
-
+import six
 from fusetools.text_tools import Blob
 import numpy as np
 import pandas as pd
@@ -215,7 +215,6 @@ class Test:
         p = result[1]
         return p
 
-    # survival
     @classmethod
     def survival_result(cls,
                         data_type,
@@ -226,20 +225,19 @@ class Test:
                         sample1_dat_survival_size=False,
                         sample2_dat_survival_mean=False,
                         sample2_dat_survival_size=False,
-                        survival_confidence_level_means=False
                         ):
         """
+        Performs a survival test which tells if statistical difference in times until an outcome between two samples.
 
-        :param data_type:
-        :param sample1_dat_survival:
-        :param sample2_dat_survival:
-        :param survival_confidence_level:
-        :param sample1_dat_survival_mean:
-        :param sample1_dat_survival_size:
-        :param sample2_dat_survival_mean:
-        :param sample2_dat_survival_size:
-        :param survival_confidence_level_means:
-        :return:
+        :param data_type: Classification of whether data is in array/list data format or a scalar format (sample or other).
+        :param sample1_dat_survival: Sample 1 data if array/list.
+        :param sample2_dat_survival: Sample 1 data if array/list.
+        :param survival_confidence_level: Confidence interval to assess measure test.
+        :param sample1_dat_survival_mean: Sample 1 mean if scalar value.
+        :param sample1_dat_survival_size: Sample 1 size if scalar value.
+        :param sample2_dat_survival_mean: Sample 2 mean if scalar value.
+        :param sample2_dat_survival_size: Sample 2 size if scalar value.
+        :return: P-value for statistical significance in difference in times until an outcomes between two samples.
         """
 
         if data_type == "sample":
@@ -265,20 +263,20 @@ class Test:
 
         return p
 
-    # poison
     @classmethod
-    def update_poisson(cls,
-                       sample1_events,
-                       sample1_days,
-                       sample2_events,
-                       sample2_days):
+    def poisson(cls,
+                sample1_events,
+                sample1_days,
+                sample2_events,
+                sample2_days):
         """
+        Performs a Poisson test which tests statistical difference between groups comparing counts over a period of time.
 
-        :param sample1_events:
-        :param sample1_days:
-        :param sample2_events:
-        :param sample2_days:
-        :return:
+        :param sample1_events: Count of sample 1 events.
+        :param sample1_days: Count of sample 1 days.
+        :param sample2_events: Count of sample 2 events.
+        :param sample2_days: Count of sample 2 days.
+        :return: P-value for a Poisson statistical test.
         """
 
         p = binom_test(np.array([float(sample1_events) / float(sample1_days),
@@ -287,7 +285,6 @@ class Test:
 
         return p
 
-    # price elasticity
     @classmethod
     def pe(cls,
            type,
@@ -298,15 +295,16 @@ class Test:
            pe_prices=False,
            pe_quantities=False):
         """
+        Calculates the Price Elasticity of Demand.
 
-        :param type:
-        :param original_quantity:
-        :param new_quantity:
-        :param original_price:
-        :param new_price:
-        :param pe_prices:
-        :param pe_quantities:
-        :return:
+        :param type: Classification of whether data is in array/list data format or a scalar format (sample or other).
+        :param original_quantity: Starting quantity demanded if data is scalar values.
+        :param new_quantity: Ending quantity demanded if data is scalar values.
+        :param original_price: Starting price if data is scalar values.
+        :param new_price: Ending price if data is scalar values.
+        :param pe_prices: Array/list of prices paid for quantities demanded.
+        :param pe_quantities: Array/lust of quantities demanded.
+        :return: Price elasticity of demand (float).
         """
 
         if type == "sample":
@@ -322,16 +320,16 @@ class Test:
 
         return pe
 
-    # correlation
     @classmethod
     def correlation(cls,
                     sample1_dat,
                     sample2_dat):
         """
+        Performs a Pearson test of correlation between two data samples.
 
-        :param sample1_dat:
-        :param sample2_dat:
-        :return:
+        :param sample1_dat: Sample 1 data array/list.
+        :param sample2_dat: Sample 2 data array/list.
+        :return: Pearson correlation result.
         """
         p1, p2 = Blob.text_parse(sample1_dat, sample2_dat)
 
@@ -356,24 +354,25 @@ class Viz:
                       tbl_size, df, col, tgt_col,
                       title, xlabel, ylabel, agg_df, plot_type, yaxis_fmt, xaxis_fmt, stat, font_size):
         """
+        Creates a visualization of a data table next to a plot of the data. Intended for use in Jupyter Notebook.
 
-        :param width:
-        :param height:
-        :param plot_size:
-        :param tbl_size:
-        :param df:
-        :param col:
-        :param tgt_col:
-        :param title:
-        :param xlabel:
-        :param ylabel:
-        :param agg_df:
-        :param plot_type:
-        :param yaxis_fmt:
-        :param xaxis_fmt:
-        :param stat:
-        :param font_size:
-        :return:
+        :param width: Width of plot.
+        :param height: Height of plot.
+        :param plot_size: Size of overall plot.
+        :param tbl_size: Size of data table.
+        :param df: Pandas DataFrame of Data to plot.
+        :param col: Dimension column for plot.
+        :param tgt_col: KPI column for plot.
+        :param title: Title for plot.
+        :param xlabel: Xlabel for plot.
+        :param ylabel: YLabel for plot.
+        :param agg_df: Pandas DataFrame for data table.
+        :param plot_type: Type of visualization to plot (box, box_h, scatter, dist, agg_dist)
+        :param yaxis_fmt: Format for yaxis.
+        :param xaxis_fmt: Format for xaxis.
+        :param stat: Type of statistic to add to the plot if box plot (currently only T-Test P-value supported).
+        :param font_size: Size of font for table.
+        :return: Visualization of a data table next to a plot of the data.
         """
 
         fmt = '${x:,.0f}'
@@ -441,7 +440,7 @@ class Viz:
             ax1.grid(linestyle='--', linewidth=1, axis="y")
 
         elif plot_type == "agg_dist":
-            sns.barplot(x=df1.index, y='count', data=df1, ax=ax1, linewidth=2.5, color='#40466e');
+            sns.barplot(x=df.index, y='count', data=df, ax=ax1, linewidth=2.5, color='#40466e');
             ax1.grid(linestyle='--', linewidth=1, axis="y")
 
         # set formatting aesthetics
@@ -496,22 +495,23 @@ class Viz:
         return gs;
 
     @classmethod
-    def make_plot_tbl(cls, width, height, plot_size, tbl_size, df_plot, plot_col_x, plot_col_y, plot_col_hue,
-                      plot_title, df_tbl, font_size):
+    def make_plotting_tbl(cls, width, height, plot_size, tbl_size, df_plot, plot_col_x, plot_col_y, plot_col_hue,
+                          plot_title, df_tbl, font_size):
         """
+        Create a visualization of a data table + a bar graph.
 
-        :param width:
-        :param height:
-        :param plot_size:
-        :param tbl_size:
-        :param df_plot:
-        :param plot_col_x:
-        :param plot_col_y:
-        :param plot_col_hue:
-        :param plot_title:
-        :param df_tbl:
-        :param font_size:
-        :return:
+        :param width: Width of plot.
+        :param height: Height of plot.
+        :param plot_size: Size of overall plot.
+        :param tbl_size: Size of data table.
+        :param df_plot: Pandas DataFrame of data to plot.
+        :param plot_col_x: Column name to plot on X axis.
+        :param plot_col_y: Column name to plot on Y axis (bars).
+        :param plot_col_hue: Color for column on Y axis (bars).
+        :param plot_title: Title for plot.
+        :param df_tbl:  Pandas DataFrame of data to show in datatable.
+        :param font_size: Font size for data table.
+        :return: Visualization of a data table next to a bar plot of the data.
         """
         fig = plt.figure(figsize=(width, height))
         gs = gridspec.GridSpec(1, 2, width_ratios=[plot_size, tbl_size])
@@ -550,12 +550,14 @@ class Viz:
         return gs;
 
     @classmethod
-    def dist_plot(cls, df, col):
+    def dist_plot(cls, df, col, sav_dir=""):
         """
+        Creates a histogram of data.
 
-        :param df:
-        :param col:
-        :return:
+        :param df: Pandas DataFrame of data to plot.
+        :param col: Column to plot on y-axis (bars).
+        :param sav_dir: Directory to save plot in.
+        :return: Saved plot.
         """
         kwargs = dict(hist_kws={'alpha': .6}, kde_kws={'linewidth': 0})
         plt.figure(figsize=(10, 7), dpi=80)
@@ -566,5 +568,5 @@ class Viz:
 
         plt.legend()
         plt.title(col)
-        plt.savefig(str(os.getcwd()) + "/pix/" + col + ".png")
+        plt.savefig(sav_dir + col + ".png")
         plt.close()

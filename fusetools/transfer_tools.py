@@ -56,7 +56,11 @@ class Local:
     @classmethod
     def zip_dir(cls, directory_list, zipname):
         """
-        Compress a directory (ZIP file).
+        Compress a directory into a single ZIP file.
+
+        :param directory_list: List of files to compress into zip file.
+        :param zipname: Name of zip file to compress files into.
+        :return: Zip file containing files.
         """
         outZipFile = zipfile.ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
 
@@ -89,6 +93,13 @@ class Local:
 
     @classmethod
     def clear_delete_directory(cls, directory, method="delete"):
+        """
+        Clears and/or deletes a directory and its contents.
+
+        :param directory: Filepath of directory.
+        :param method: Optional delete for the directory folder.
+        :return: Nothing.
+        """
         directory = Path(directory)
         for item in directory.iterdir():
             if item.is_dir():
@@ -105,7 +116,7 @@ class Local:
         Fixes a local filepath.
 
         :param dir: Directory to patch.
-        :return: Patches directory.
+        :return: Patched directory.
         """
 
         dir_components = dir.split("/")
@@ -143,8 +154,8 @@ class Local:
         """
         Get the latest file in a directory.
 
-        :param name: String match name of file(s)
-        :param dir: Directory for the file search
+        :param name: String match name of file(s).
+        :param dir: Directory for the file search.
         :param exclude: A string to search for files to exclude.
         :return: Name of most recent file.
         """
@@ -216,6 +227,17 @@ class SSH:
                            target_pwd,
                            direction="send"
                            ):
+        """
+        Transfers a file via SSH.
+
+        :param local_file_path: Filepath for the object to transfer on local machine.
+        :param target_file_path: Filepath for the object to transferred to on target machine.
+        :param target_user: Usename of target machine.
+        :param target_ip: IP of target machine.
+        :param target_pwd: Password of target machine.
+        :param direction: Whether to receive object from target machine or send object to it (send or other).
+        :return:
+        """
 
         if direction == "send":
             cmd = f"scp -rp {local_file_path} {target_user}@{target_ip}:{target_file_path}"
