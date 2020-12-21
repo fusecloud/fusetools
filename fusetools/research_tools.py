@@ -1,3 +1,8 @@
+"""
+Functions for conduction various Research tasks.
+
+"""
+
 from urllib.request import urlopen
 
 import requests
