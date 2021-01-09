@@ -7,7 +7,6 @@ Marketing, Advertising, Campaign & Analytics Tools.
 
 """
 
-# https://ga-dev-tools.appspot.com/dimensions-metrics-explorer/
 import json
 import os
 
@@ -47,6 +46,7 @@ class GoogleAnalytics:
 
         return creds
 
+    # https://ga-dev-tools.appspot.com/dimensions-metrics-explorer/
     @classmethod
     def ga_pull_metrics(cls, creds, view_id,
                         start_date, end_date,

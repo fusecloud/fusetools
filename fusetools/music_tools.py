@@ -1,8 +1,8 @@
 """
-Functions for interacting with Project Management Tools.
+Functions for interacting with Music Tools.
 
 |pic1|
-    .. |pic1| image:: ../images/spotify1.png
+    .. |pic1| image:: ../images_source/music_tools/spotify1.png
         :width: 45%
 
 """
@@ -15,7 +15,7 @@ class Spotify:
     """
     Functions for interacting with Spotify.
 
-    .. image:: ../images/spotify1.png
+    .. image:: ../images_source/music_tools/spotify1.png
     """
 
     @classmethod

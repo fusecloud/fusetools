@@ -882,6 +882,7 @@ class GMail:
         from_all = []
         dates_all = []
         subject_all = []
+        labels_all = []
 
         # for each message, pull data elements
         for idx, message in enumerate(messages):
@@ -959,6 +960,7 @@ class GMail:
             subject_all.append(data_dict.get("Subject"))
             from_all.append(data_dict.get("From"))
             to_all.append(data_dict.get("To"))
+            labels_all.append(msg['labelIds'])
 
         # combine all messages to export
         msg_df = \
@@ -969,7 +971,8 @@ class GMail:
                 "to": to_all,
                 "from": from_all,
                 "dates": dates_all,
-                "subject": subject_all
+                "subject": subject_all,
+                "labels": labels_all
             })
 
         return msg_df

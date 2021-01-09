@@ -2,9 +2,9 @@
 Functions for interacting with Project Management Tools.
 
 |pic1| |pic2|
-    .. |pic1| image:: ../images/asana2.png
+    .. |pic1| image:: ../images_source/pm_tools/asana2.png
         :width: 25%
-    .. |pic2| image:: ../images/workfront2.png
+    .. |pic2| image:: ../images_source/pm_tools/workfront2.png
         :width: 40%
 """
 
@@ -21,7 +21,7 @@ class Workfront:
     """
     Functions for interacting with Workfront.
 
-    .. image:: ../images/workfront2.png
+    .. image:: ../images_source/pm_tools/workfront2.png
     """
 
     @classmethod
@@ -223,7 +223,7 @@ class Asana:
     """
     Functions for interacting with Asana.
 
-    .. image:: ../images/asana2.png
+    .. image:: ../images_source/pm_tools/asana2.png
 
     """
 
