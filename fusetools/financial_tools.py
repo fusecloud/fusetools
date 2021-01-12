@@ -268,7 +268,7 @@ class ThinkOrSwim:
         return c
 
     @classmethod
-    def pull_quote_history(cls, authentication_object, ticker, start_date=None, end_date=None):
+    def pull_quote_history(cls, authentication_object, ticker, frequency_type="daily", start_date=None, end_date=None):
         """
         Pulls price history for a stock ticker.
 
@@ -278,14 +278,22 @@ class ThinkOrSwim:
         :param end_date: End date of data to pull quotes for (optional).
         :return: Stock quotes JSON response object.
         """
-        # https://developer.tdameritrade.com/price-history/apis/get/marketdata/%7Bsymbol%7D/pricehistory
         r = authentication_object.get_price_history(
             ticker,
             period_type=client.Client.PriceHistory.PeriodType.YEAR,
             period=client.Client.PriceHistory.Period.TWENTY_YEARS,
-            frequency_type=client.Client.PriceHistory.FrequencyType.DAILY,
-            frequency=client.Client.PriceHistory.Frequency.DAILY,
+            frequency_type= \
+                client.Client.PriceHistory.FrequencyType.DAILY if frequency_type == "daily" else
+                client.Client.PriceHistory.FrequencyType.WEEKLY if frequency_type == "weekly" else
+                client.Client.PriceHistory.FrequencyType.MONTHLY
+            ,
+            frequency= \
+                client.Client.PriceHistory.Frequency.DAILY if frequency_type == "daily" else
+                client.Client.PriceHistory.Frequency.WEEKLY if frequency_type == "weekly" else
+                client.Client.PriceHistory.Frequency.MONTHLY
+            ,
             start_datetime=start_date,
             end_datetime=end_date
         )
+        # https://developer.tdameritrade.com/price-history/apis/get/marketdata/%7Bsymbol%7D/pricehistory
         return r
