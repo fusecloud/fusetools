@@ -892,8 +892,25 @@ class GMail:
                    .list(userId=user_id,
                          labelIds=['INBOX'] if not label_ids else label_ids).execute()
                    )
+
+        results_list = []
+        results_list.append(results)
+        while results.get("nextPageToken"):
+            results = (service.users()
+                       .messages()
+                       .list(userId=user_id,
+                             labelIds=['INBOX'] if not label_ids else label_ids,
+                             pageToken=results.get("nextPageToken")
+                             ).execute()
+                       )
+            results_list.append(results)
+
         # get messages
-        messages = results.get('messages', [])
+        messages_all = []
+        for ix, row in enumerate(results_list):
+            messages_all += row.get('messages', [])
+
+        # messages = results.get('messages', [])
 
         # create result data element lists
         mime_types_all = []
@@ -906,7 +923,7 @@ class GMail:
         labels_all = []
 
         # for each message, pull data elements
-        for idx, message in enumerate(messages):
+        for idx, message in enumerate(messages_all):
             msg = (service
                    .users()
                    .messages()
