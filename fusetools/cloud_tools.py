@@ -15,7 +15,8 @@ import os
 import boto3
 import pandas as pd
 from io import StringIO
-from datetime import datetime
+import time
+from datetime import datetime, timedelta
 import boto3
 import firebase_admin
 from botocore.exceptions import ClientError
@@ -275,6 +276,46 @@ class AWS:
         :width: 45%
 
     """
+
+    @classmethod
+    def query_cloudwatch_logs(cls, pub, sec, region_name, log_group_name, start_datetime, end_datetime, query):
+        client = boto3.client(
+            'logs',
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec,
+            region_name=region_name,
+        )
+
+        start_query_response = client.start_query(
+            logGroupName=log_group_name,
+            startTime=start_datetime,
+            endTime=end_datetime,
+            queryString=query,
+        )
+
+        query_id = start_query_response['queryId']
+
+        response = None
+
+        while response == None or response['status'] == 'Running':
+            print('Waiting for query to complete ...')
+            time.sleep(1)
+            response = client.get_query_results(
+                queryId=query_id
+            )
+
+            for idx, row in enumerate(response.get("results")):
+
+                df = pd.DataFrame(row).T.reset_index()
+                df.columns = list(df.iloc[0].values)
+                df = df.iloc[1:].reset_index(drop=True)
+
+                if idx == 0:
+                    df_all = df.copy()
+                else:
+                    df_all = pd.concat([df_all, df])
+
+        return df_all.reset_index(drop=True)
 
     @classmethod
     def create_s3_bucket(cls, pub, sec, bucket_name):
