@@ -5,12 +5,34 @@ import tweepy
 class Twitter:
 
     @classmethod
+    def pull_user_likes(cls, screen_name, twtr_api_key, twtr_api_secret, count=100):
+        # TWITTER AUTH
+        print("Authenticating to Twitter")
+        screen_name = screen_name
+        auth = tweepy.AppAuthHandler(twtr_api_key, twtr_api_secret)
+        api = tweepy.API(auth)
+        alltweets = api.favorites(screen_name=screen_name, count=count)
+
+        tweet_df = \
+            pd.DataFrame({
+                "id": [x._json.get('id') for x in alltweets],
+                "datetime": [x._json.get('created_at') for x in alltweets],
+                "text": [x._json.get('text') for x in alltweets],
+                "tweet_source": [x._json.get('source') for x in alltweets],
+                "symbols": [x._json.get('entities').get('symbols')
+                            for x in alltweets],
+                "rt_count": [x._json.get('retweet_count') for x in alltweets],
+                "fav_count": [x._json.get('favorite_count') for x in alltweets]
+            })
+
+        return tweet_df
+
+    @classmethod
     def pull_user_tweets(cls, screen_name, twtr_api_key, twtr_api_secret):
         # TWITTER AUTH
         print("Authenticating to Twitter")
         screen_name = screen_name
         auth = tweepy.AppAuthHandler(twtr_api_key, twtr_api_secret)
-
         api = tweepy.API(auth)
 
         # initialize a list to hold all the tweepy Tweets
