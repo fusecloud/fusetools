@@ -304,16 +304,19 @@ class AWS:
                 queryId=query_id
             )
 
-            for idx, row in enumerate(response.get("results")):
+        if len(response.get("results")) == 0:
+            return
 
-                df = pd.DataFrame(row).T.reset_index()
-                df.columns = list(df.iloc[0].values)
-                df = df.iloc[1:].reset_index(drop=True)
+        for idx, row in enumerate(response.get("results")):
 
-                if idx == 0:
-                    df_all = df.copy()
-                else:
-                    df_all = pd.concat([df_all, df])
+            df = pd.DataFrame(row).T.reset_index()
+            df.columns = list(df.iloc[0].values)
+            df = df.iloc[1:].reset_index(drop=True)
+
+            if idx == 0:
+                df_all = df.copy()
+            else:
+                df_all = pd.concat([df_all, df])
 
         return df_all.reset_index(drop=True)
 
