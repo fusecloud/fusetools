@@ -10,6 +10,7 @@ Financial tasks and calculations.
 
 from alpha_vantage.timeseries import TimeSeries
 import pandas as pd
+import json
 
 try:
     from ib_insync import *
@@ -297,3 +298,24 @@ class ThinkOrSwim:
         )
         # https://developer.tdameritrade.com/price-history/apis/get/marketdata/%7Bsymbol%7D/pricehistory
         return r
+
+    @classmethod
+    def pull_account_watchlists(cls, authentication_object, account_id):
+        r = authentication_object.get_watchlists_for_single_account(
+            account_id=account_id
+        )
+
+        watchlists_json = json.loads(r.content)
+        df_list = []
+        for idx, row in enumerate(watchlists_json):
+            watchlist_names = [x.get("instrument").get("symbol") for x in row.get("watchlistItems")]
+            df = \
+                pd.DataFrame({
+                    "ticker": list(set(watchlist_names)),
+                    "name": [row.get("name")] * len(list(set(watchlist_names)))
+                })
+            df_list.append(df)
+
+        df_all = pd.concat(df_list).reset_index(drop=True)
+        df_all = df_all.reset_index(drop=True)
+        return df_all

@@ -278,6 +278,26 @@ class AWS:
     """
 
     @classmethod
+    def list_lambda_functions(cls, pub, sec):
+
+        client = boto3.client(
+            'lambda',
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec,
+            # region_name=region_name,
+        )
+
+        function_list = \
+            client.list_functions(
+                # MasterRegion='string',
+                FunctionVersion='ALL',
+                # Marker='string',
+                MaxItems=123
+            )
+
+        return function_list
+
+    @classmethod
     def query_cloudwatch_logs(cls, pub, sec, region_name, log_group_name, start_datetime, end_datetime, query):
         client = boto3.client(
             'logs',
