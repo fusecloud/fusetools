@@ -293,10 +293,21 @@ class AWS:
 
         # find targets for rules
         for idx, rule in enumerate(rule_names):
-            ret = client.list_targets_by_rule(Rule=rule)
-            # todo: update the rule_names object with the ret json
+            try:
+                ret = client.list_targets_by_rule(Rule=rule)
+            except Exception as e:
+                print(str(e))
+                time.sleep(3)
+                print("Trying again...")
+                try:
+                    ret = client.list_targets_by_rule(Rule=rule)
+                except Exception as e:
+                    print(str(e))
+                    pass
+            # update the rule_names object with the ret json
+            rules.get('Rules')[idx].update(ret)
 
-        return client.list_rules()
+        return rules
 
     @classmethod
     def list_lambda_functions(cls, pub, sec, region_name):
@@ -316,14 +327,26 @@ class AWS:
                 MaxItems=123
             )
 
-        return function_list
+        # extract rule names
+        function_names = [x.get("FunctionName") for x in function_list.get("Functions")]
 
-    @classmethod
-    def get_lambda_function_dtl(cls, client, function_name):
-        response = client.get_function(
-            FunctionName=function_name
-        )
-        return response
+        # find targets for rules
+        for idx, function in enumerate(function_names):
+            try:
+                ret = client.get_function(FunctionName=function)
+            except Exception as e:
+                print(str(e))
+                time.sleep(3)
+                print("Trying again...")
+                try:
+                    ret = client.get_function(FunctionName=function)
+                except Exception as e:
+                    print(str(e))
+                    pass
+            # update the rule_names object with the ret json
+            function_list.get('Functions')[idx].update(ret)
+
+        return function_list
 
     @classmethod
     def query_cloudwatch_logs(cls, pub, sec, region_name, log_group_name, start_datetime, end_datetime, query):

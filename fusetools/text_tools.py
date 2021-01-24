@@ -75,7 +75,7 @@ class Export:
                     outfile.write(infile.read())
 
     @classmethod
-    def find_replace_text(cls, directory, find, replace, file_pattern):
+    def find_replace_text(cls, directory, find, replace, file_pattern, specific_file=False):
         """
         Finds and replaces a string in all text files in a target folder.
 
@@ -85,14 +85,21 @@ class Export:
         :param file_pattern: Pattern of text files to scan.
         :return: Saved files with replaced text.
         """
-        for path, dirs, files in os.walk(os.path.abspath(directory)):
-            for filename in fnmatch.filter(files, file_pattern):
-                filepath = os.path.join(path, filename)
-                with open(filepath) as f:
-                    s = f.read()
-                s = s.replace(find, replace)
-                with open(filepath, "w") as f:
-                    f.write(s)
+        if not specific_file:
+            for path, dirs, files in os.walk(os.path.abspath(directory)):
+                for filename in fnmatch.filter(files, file_pattern):
+                    filepath = os.path.join(path, filename)
+                    with open(filepath) as f:
+                        s = f.read()
+                    s = s.replace(find, replace)
+                    with open(filepath, "w") as f:
+                        f.write(s)
+        else:
+            with open(directory + specific_file) as f:
+                s = f.read()
+            s = s.replace(find, replace)
+            with open(directory + specific_file, "w") as f:
+                f.write(s)
 
     @classmethod
     def dump_json(cls, obj, filepath):
