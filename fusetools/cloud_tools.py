@@ -278,13 +278,34 @@ class AWS:
     """
 
     @classmethod
-    def list_lambda_functions(cls, pub, sec):
+    def list_cloudwatch_rules(cls, pub, sec, region_name):
+        client = boto3.client(
+            'events',
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec,
+            region_name=region_name
+        )
+
+        rules = client.list_rules()
+
+        # extract rule names
+        rule_names = [x.get("Name") for x in rules.get("Rules")]
+
+        # find targets for rules
+        for idx, rule in enumerate(rule_names):
+            ret = client.list_targets_by_rule(Rule=rule)
+            # todo: update the rule_names object with the ret json
+
+        return client.list_rules()
+
+    @classmethod
+    def list_lambda_functions(cls, pub, sec, region_name):
 
         client = boto3.client(
             'lambda',
             aws_access_key_id=pub,
             aws_secret_access_key=sec,
-            # region_name=region_name,
+            region_name=region_name,
         )
 
         function_list = \
@@ -296,6 +317,13 @@ class AWS:
             )
 
         return function_list
+
+    @classmethod
+    def get_lambda_function_dtl(cls, client, function_name):
+        response = client.get_function(
+            FunctionName=function_name
+        )
+        return response
 
     @classmethod
     def query_cloudwatch_logs(cls, pub, sec, region_name, log_group_name, start_datetime, end_datetime, query):
