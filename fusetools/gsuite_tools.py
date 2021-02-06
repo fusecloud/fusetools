@@ -332,7 +332,6 @@ class GSheets:
 
         return res
 
-
     @classmethod
     def delete_google_sheet_data(cls, spreadsheet_id, sheet_id, idx_start, idx_end, credentials, dimension="ROWS"):
         """
@@ -370,7 +369,6 @@ class GSheets:
         )
 
         return res
-
 
     @classmethod
     def get_google_sheet_tabs(cls, spreadsheet_id, credentials):
@@ -697,6 +695,17 @@ class GDrive:
                     continue
 
         return files
+
+    @classmethod
+    def get_file_revisions(cls, file_id, credentials):
+        drive_service = build('drive', 'v3', credentials=credentials)
+
+        r = drive_service.revisions().list(
+            fileId=file_id,
+            fields='*'
+        ).execute()
+
+        return r
 
 
 class GMail:
