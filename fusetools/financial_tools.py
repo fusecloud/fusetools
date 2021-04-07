@@ -8,11 +8,20 @@ Financial tasks and calculations.
         :width: 50%
 """
 
-import pandas as pd
-import json
-from ib_insync import *
-from tda import auth, client
+import requests
+import fix_yahoo_finance as yf
+from yahoo_finance_async import OHLC, Interval, History
 from alpha_vantage.timeseries import TimeSeries
+import pandas as pd
+import numpy as np
+import json
+
+try:
+    from ib_insync import *
+except:
+    pass
+from tda import auth, client
+
 
 class Misc:
     """
@@ -52,8 +61,6 @@ class Quotes:
         :return: Quote data from Alphavantage API
         """
 
-
-
         ts = TimeSeries(key=api_key, output_format='pandas')
         if freq == "D":
             data, meta_data = ts.get_daily_adjusted(symbol=ticker, outputsize=size)
@@ -83,7 +90,6 @@ class InteractiveBrokers:
         :param host: TWS host.
         :return: IB connection object for account.
         """
-
         ib = IB()
         try:
             ib.connect(host, port, clientId=client_id)
@@ -114,8 +120,6 @@ class InteractiveBrokers:
         :param profit_taker_d: Dictionary of {size:price} for upside limit prices.
         :return: JSON response of trades placed.
         """
-
-
 
         # create contract object on ticker
         contract = Stock(ticker, 'SMART', 'USD')
@@ -270,6 +274,28 @@ class ThinkOrSwim:
 
     @classmethod
     def pull_quote_history(cls, authentication_object, ticker, frequency_type="daily", start_date=None, end_date=None):
+        r = authentication_object.get_price_history(
+            ticker,
+            period_type=client.Client.PriceHistory.PeriodType.DAY if frequency_type == "5min" else
+            client.Client.PriceHistory.PeriodType.YEAR,
+            period=client.Client.PriceHistory.Period.ONE_YEAR if frequency_type == "5min" else
+            client.Client.PriceHistory.Period.TWENTY_YEARS
+            ,
+            frequency_type= \
+                client.Client.PriceHistory.FrequencyType.MINUTE if frequency_type == "5min" else
+                client.Client.PriceHistory.FrequencyType.DAILY if frequency_type == "daily" else
+                client.Client.PriceHistory.FrequencyType.WEEKLY if frequency_type == "weekly" else
+                client.Client.PriceHistory.FrequencyType.MONTHLY
+            ,
+            frequency= \
+                client.Client.PriceHistory.Frequency.EVERY_FIVE_MINUTES if frequency_type == "5min" else
+                client.Client.PriceHistory.Frequency.DAILY if frequency_type == "daily" else
+                client.Client.PriceHistory.Frequency.WEEKLY if frequency_type == "weekly" else
+                client.Client.PriceHistory.Frequency.MONTHLY
+            ,
+            start_datetime=start_date,
+            end_datetime=end_date
+        )
         """
         Pulls price history for a stock ticker.
 
@@ -279,23 +305,6 @@ class ThinkOrSwim:
         :param end_date: End date of data to pull quotes for (optional).
         :return: Stock quotes JSON response object.
         """
-        r = authentication_object.get_price_history(
-            ticker,
-            period_type=client.Client.PriceHistory.PeriodType.YEAR,
-            period=client.Client.PriceHistory.Period.TWENTY_YEARS,
-            frequency_type= \
-                client.Client.PriceHistory.FrequencyType.DAILY if frequency_type == "daily" else
-                client.Client.PriceHistory.FrequencyType.WEEKLY if frequency_type == "weekly" else
-                client.Client.PriceHistory.FrequencyType.MONTHLY
-            ,
-            frequency= \
-                client.Client.PriceHistory.Frequency.DAILY if frequency_type == "daily" else
-                client.Client.PriceHistory.Frequency.WEEKLY if frequency_type == "weekly" else
-                client.Client.PriceHistory.Frequency.MONTHLY
-            ,
-            start_datetime=start_date,
-            end_datetime=end_date
-        )
         # https://developer.tdameritrade.com/price-history/apis/get/marketdata/%7Bsymbol%7D/pricehistory
         return r
 
@@ -319,3 +328,101 @@ class ThinkOrSwim:
         df_all = pd.concat(df_list).reset_index(drop=True)
         df_all = df_all.reset_index(drop=True)
         return df_all
+
+
+class YahooFinance:
+    """
+
+    """
+
+    @classmethod
+    async def yf_quotes_async(
+            cls,
+            ticker: str,
+            history: str,
+            interval: str) -> Quotes:
+        param_history = {
+            "ten_years": History.TEN_YEARS,
+            "two_years": History.TWO_YEARS,
+            "one_year": History.YEAR,
+        }
+
+        param_interval = {
+            "day": Interval.DAY,
+            "week": Interval.WEEK
+        }
+
+        result = await \
+            OHLC.fetch(
+                symbol=ticker,
+                history=param_history.get(history),
+                interval=param_interval.get(interval)
+            )
+
+        return result
+
+    @classmethod
+    def yf_quotes(cls, ticker: str, from_date: str, to_date: str, time_frame: str = 'd') -> pd.DataFrame:
+        '''
+
+        :param ticker:
+        :param from_date:
+        :param to_date:
+        :param time_frame:
+        :return: quotes from yahoo finance wrapper
+        '''
+        data = yf.download(ticker, from_date, to_date)
+        data.reset_index(inplace=True)
+
+        d = {
+            "Date": 'datetime2',
+            'Open': 'o',
+            'High': 'h',
+            "Low": "l",
+            "Close": 'c',
+            "Adj Close": "ac",
+            "Volume": "v"
+        }
+
+        data.columns = data.columns.map(lambda col: d[col])
+        data['datetime2'] = pd.to_datetime(data['datetime2'])
+        data['ticker'] = ticker
+
+        if time_frame == 'd':
+            return data
+
+        elif time_frame == 'w':
+            data['week_number'] = \
+                data['datetime2'].dt.year.astype(str) + \
+                data['datetime2'].dt.week.astype(str).str.zfill(2)
+
+            data = (data
+                .groupby("week_number")
+                .agg(
+                ticker=("ticker", "first"),
+                date_start=("datetime2", np.min),
+                date_end=("datetime2", np.max),
+                o=("o", "first"),
+                c=("c", "last"),
+                ac=("ac", "last"),
+                h=("h", np.max),
+                l=("l", np.min),
+                v=("v", np.sum)
+            )
+            ).reset_index(drop=True)
+
+            data['datetime2'] = data['date_end']
+
+            return data
+
+
+class Finnhub:
+    """
+
+    """
+
+    @classmethod
+    def get_quotes_fh(self, ticker: str, start: int, end: int, token: str, freq=1):
+        r = requests.get(
+            f'https://finnhub.io/api/v1/stock/candle?symbol={ticker}&resolution={freq}&from={start}&to={end}&token={token}')
+        return r.json()
