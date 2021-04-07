@@ -8,16 +8,11 @@ Financial tasks and calculations.
         :width: 50%
 """
 
-from alpha_vantage.timeseries import TimeSeries
 import pandas as pd
 import json
-
-try:
-    from ib_insync import *
-except:
-    pass
+from ib_insync import *
 from tda import auth, client
-
+from alpha_vantage.timeseries import TimeSeries
 
 class Misc:
     """
@@ -57,6 +52,8 @@ class Quotes:
         :return: Quote data from Alphavantage API
         """
 
+
+
         ts = TimeSeries(key=api_key, output_format='pandas')
         if freq == "D":
             data, meta_data = ts.get_daily_adjusted(symbol=ticker, outputsize=size)
@@ -86,6 +83,7 @@ class InteractiveBrokers:
         :param host: TWS host.
         :return: IB connection object for account.
         """
+
         ib = IB()
         try:
             ib.connect(host, port, clientId=client_id)
@@ -116,6 +114,8 @@ class InteractiveBrokers:
         :param profit_taker_d: Dictionary of {size:price} for upside limit prices.
         :return: JSON response of trades placed.
         """
+
+
 
         # create contract object on ticker
         contract = Stock(ticker, 'SMART', 'USD')

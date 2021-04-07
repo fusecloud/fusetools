@@ -130,6 +130,9 @@ class Firebase:
 
                 return ret
 
+        elif method == "merge":
+            obj.update(d)
+
         elif method == "delete":
 
             if delete_object_type == "document":
@@ -194,7 +197,7 @@ class Firebase:
                         # parent_sub_collection_name=parent_sub_collection_name,
                         # parent_document_name=parent_document_name,
                         delete_object_type=False,
-                        upsert=upsert,
+                        upsert_doc_name=upsert_doc_name,
                         document_delete_batch_size=document_delete_batch_size
                     )
 
