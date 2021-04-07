@@ -288,7 +288,7 @@ class ThinkOrSwim:
                 client.Client.PriceHistory.FrequencyType.MONTHLY
             ,
             frequency= \
-                client.Client.PriceHistory.Frequency.EVERY_THIRTY_MINUTES if frequency_type == "5min" else
+                client.Client.PriceHistory.Frequency.EVERY_FIVE_MINUTES if frequency_type == "5min" else
                 client.Client.PriceHistory.Frequency.DAILY if frequency_type == "daily" else
                 client.Client.PriceHistory.Frequency.WEEKLY if frequency_type == "weekly" else
                 client.Client.PriceHistory.Frequency.MONTHLY
