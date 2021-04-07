@@ -8,6 +8,7 @@ class Twitter:
     def pull_user_likes(cls, screen_name, twtr_api_key, twtr_api_secret, count=100):
         # TWITTER AUTH
         print("Authenticating to Twitter")
+
         screen_name = screen_name
         auth = tweepy.AppAuthHandler(twtr_api_key, twtr_api_secret)
         api = tweepy.API(auth)
@@ -31,6 +32,7 @@ class Twitter:
     def pull_user_tweets(cls, screen_name, twtr_api_key, twtr_api_secret):
         # TWITTER AUTH
         print("Authenticating to Twitter")
+
         screen_name = screen_name
         auth = tweepy.AppAuthHandler(twtr_api_key, twtr_api_secret)
         api = tweepy.API(auth)

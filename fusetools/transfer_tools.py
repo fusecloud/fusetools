@@ -16,6 +16,9 @@ import pexpect
 import requests
 import zipfile
 from selenium.webdriver.chrome import webdriver
+import urllib3
+import pdfplumber
+import io
 
 
 class Access:
@@ -351,7 +354,7 @@ class Web:
         browser.get(download_url)
 
     @classmethod
-    def download_file(cls, sav_dir, url):
+    def download_file(cls, sav_dir, url, headers=False):
         """
         Downloads a file from a given Url endpoint.
 
@@ -361,6 +364,14 @@ class Web:
         """
 
         print(f"Downloading file at: {url}")
-        response = requests.get(url)
+        response = requests.get(url, headers)
         with open(f"{sav_dir}", 'wb') as f:
             f.write(response.content)
+
+    @classmethod
+    def get_onine_pdf_memory(cls, url, headers):
+        http = urllib3.PoolManager()
+        temp = io.BytesIO()
+        temp.write(http.request("GET", url, headers).data)
+        with pdfplumber.load(temp) as pdf:
+            return pdf.pages
