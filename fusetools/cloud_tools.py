@@ -9,7 +9,15 @@ Cloud services.
 
 """
 
+<<<<<<< HEAD
 import json
+=======
+import io
+import os
+import sys
+
+import boto3
+>>>>>>> 99630c497dd8a6b1cf6dfd05927e748d6dfe6a63
 import pandas as pd
 from io import StringIO
 import time
@@ -919,6 +927,7 @@ class AWS:
         cursor.execute(sql_exec)
         cursor.execute("commit")
 
+<<<<<<< HEAD
     @classmethod
     def create_iam_role_for_lambda(cls, iam_resource, iam_role_name):
         """
@@ -1192,3 +1201,55 @@ class GCP:
         """
         for obj in obj_list:
             obj.delete()
+=======
+
+class GCP:
+    pass
+
+    @classmethod
+    def publish_app(cls, app_config_file, project_id):
+        # cmd = f'''gcloud app deploy app.yaml --project [project-id]'''
+        cmd = f'''gcloud app deploy {app_config_file} --project {project_id}'''
+        sys.command(cmd)
+
+    # todo: create cloud function
+    @classmethod
+    def create_cloud_function(cls, function_name, topic_name, python_runtime, timeout_seconds):
+        cmd = f'''gcloud functions deploy {function_name}
+        --entry-point main 
+        --runtime {python_runtime} 
+        --trigger-resource {topic_name} 
+        --trigger-event google.pubsub.topic.publish 
+        --timeout {timeout_seconds}s'''.replace("\n", "")
+
+        return cmd
+
+    # todo: create scheduled job
+    @classmethod
+    def create_scheduled_job(cls):
+        cmd = f'''gcloud scheduler jobs create pubsub [JOB_NAME] 
+        --schedule [SCHEDULE] 
+        --topic [TOPIC_NAME] 
+        --message-body [MESSAGE_BODY]
+        '''
+
+        from google.cloud import scheduler
+
+        project_id = XXXX
+        client = scheduler_v1.CloudSchedulerClient.from_service_account_json(
+            r"./xxxx.json")
+
+        parent = client.location_path(project_id, 'us-central1')
+
+        job = {"name": "projects/your-project/locations/app-engine-location/jobs/traing_for_model",
+               "description": "this is for testing training model",
+               "http_target": {
+                   "uri": "https://us-central1-gerald-automl-test.cloudfunctions.net/automl-trainmodel-1-test-for-cron-job"},
+               "schedule": "0 10 * * *",
+               "time_zone": "Australia/Perth",
+               }
+
+        training_job = client.create_job(parent, job)
+
+        return cmd
+>>>>>>> 99630c497dd8a6b1cf6dfd05927e748d6dfe6a63
