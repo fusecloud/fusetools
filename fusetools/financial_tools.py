@@ -11,10 +11,14 @@ Financial tasks and calculations.
 import requests
 import fix_yahoo_finance as yf
 from yahoo_finance_async import OHLC, Interval, History
-from alpha_vantage.timeseries import TimeSeries
 import pandas as pd
 import numpy as np
 import json
+
+try:
+    from alpha_vantage.timeseries import TimeSeries
+except:
+    pass
 
 try:
     from ib_insync import *

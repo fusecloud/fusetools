@@ -9,15 +9,12 @@ Cloud services.
 
 """
 
-<<<<<<< HEAD
 import json
-=======
 import io
 import os
 import sys
 
 import boto3
->>>>>>> 99630c497dd8a6b1cf6dfd05927e748d6dfe6a63
 import pandas as pd
 from io import StringIO
 import time
@@ -927,7 +924,7 @@ class AWS:
         cursor.execute(sql_exec)
         cursor.execute("commit")
 
-<<<<<<< HEAD
+
     @classmethod
     def create_iam_role_for_lambda(cls, iam_resource, iam_role_name):
         """
@@ -1201,7 +1198,7 @@ class GCP:
         """
         for obj in obj_list:
             obj.delete()
-=======
+
 
 class GCP:
     pass
@@ -1235,7 +1232,7 @@ class GCP:
 
         from google.cloud import scheduler
 
-        project_id = XXXX
+        project_id = "XXXX"
         client = scheduler_v1.CloudSchedulerClient.from_service_account_json(
             r"./xxxx.json")
 
@@ -1252,4 +1249,4 @@ class GCP:
         training_job = client.create_job(parent, job)
 
         return cmd
->>>>>>> 99630c497dd8a6b1cf6dfd05927e748d6dfe6a63
+
