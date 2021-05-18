@@ -924,7 +924,6 @@ class AWS:
         cursor.execute(sql_exec)
         cursor.execute("commit")
 
-
     @classmethod
     def create_iam_role_for_lambda(cls, iam_resource, iam_role_name):
         """
@@ -1199,10 +1198,6 @@ class GCP:
         for obj in obj_list:
             obj.delete()
 
-
-class GCP:
-    pass
-
     @classmethod
     def publish_app(cls, app_config_file, project_id):
         # cmd = f'''gcloud app deploy app.yaml --project [project-id]'''
@@ -1249,4 +1244,3 @@ class GCP:
         training_job = client.create_job(parent, job)
 
         return cmd
-

@@ -4,7 +4,7 @@ With Fusetools you can access a wide variety of applications and APIs for differ
 Roadmap
 ---------------------
 
-Fusetools currently has functionality for the following.
+Fusetools currently has functionality for the following tools and applications, plus way more!
 
 ![alt text](https://github.com/fusecloud/fusetools/blob/master/docs/source/CC_ROADMAP.png)
 
