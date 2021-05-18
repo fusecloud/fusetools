@@ -9,15 +9,13 @@ Cloud services.
 
 """
 
-<<<<<<< HEAD
 import json
-=======
 import io
 import os
 import sys
 
 import boto3
->>>>>>> 99630c497dd8a6b1cf6dfd05927e748d6dfe6a63
+
 import pandas as pd
 from io import StringIO
 import time
@@ -721,12 +719,13 @@ class AWS:
         return table
 
     @classmethod
-    def make_dynamo_tbl(cls, pub, sec, region_name, tbl_name,
+    def make_dynamo_tbl(cls, pub: str, sec: str, region_name: str, tbl_name: str,
                         key_schema, attribute_definitions,
-                        provisioned_throughput):
+                        provisioned_throughput, endpoint_url=None):
         """
         Creates a Dynamo table.
 
+        :param endpoint_url: Endpoint if not on AWS (defaults to None)
         :param pub: AWS account public key.
         :param sec: AWS account secret key.
         :param region_name: Region name where the Dynamo table is.
@@ -741,7 +740,8 @@ class AWS:
             'dynamodb',
             aws_access_key_id=pub,
             aws_secret_access_key=sec,
-            region_name=region_name
+            region_name=region_name,
+            endpoint_url=endpoint_url
         )
 
         table = dynamodb.create_table(
@@ -754,10 +754,11 @@ class AWS:
         return table
 
     @classmethod
-    def load_dynamo(cls, pub, sec, region_name, tbl_name, d):
+    def load_dynamo(cls, pub, sec, region_name, tbl_name, d, endpoint_url=None):
         """
         Inserts either a Dictionary or Pandas DataFrame into DynamoDB.
 
+        :param endpoint_url: Endpoint if not on AWS (defaults to None)
         :param pub: AWS account public key.
         :param sec: AWS account secret key.
         :param region_name: Region name for DynamoDB table.
@@ -772,7 +773,8 @@ class AWS:
             "dynamodb",
             region_name=region_name,
             aws_access_key_id=pub,
-            aws_secret_access_key=sec
+            aws_secret_access_key=sec,
+            endpoint_url=endpoint_url
         )
 
         if isinstance(d, dict):
@@ -818,7 +820,7 @@ class AWS:
         return response
 
     @classmethod
-    def get_dynamo_fields(cls, tbl_name, pub, sec, region_name):
+    def get_dynamo_fields(cls, tbl_name, pub, sec, region_name, endpoint_url=None):
         """
         Retrieves a list of fields for a given DynamoDB table.
 
@@ -833,7 +835,8 @@ class AWS:
             'dynamodb',
             aws_access_key_id=pub,
             aws_secret_access_key=sec,
-            region_name=region_name
+            region_name=region_name,
+            endpoint_url=endpoint_url
         )
 
         table = dynamodb.Table(tbl_name)
@@ -845,7 +848,7 @@ class AWS:
         return fields_all
 
     @classmethod
-    def query_dynamo(cls, pub, sec, region_name, tbl_name, data_format="list", fields=False):
+    def query_dynamo(cls, pub, sec, region_name, tbl_name, data_format="list", fields=False, endpoint_url=None):
         """
         Downloads data from a DynamoDB table into a Pandas DataFrame.
 
@@ -861,7 +864,8 @@ class AWS:
             'dynamodb',
             aws_access_key_id=pub,
             aws_secret_access_key=sec,
-            region_name=region_name
+            region_name=region_name,
+            endpoint_url=endpoint_url
         )
 
         table = dynamodb.Table(tbl_name)
@@ -927,7 +931,6 @@ class AWS:
         cursor.execute(sql_exec)
         cursor.execute("commit")
 
-<<<<<<< HEAD
     @classmethod
     def create_iam_role_for_lambda(cls, iam_resource, iam_role_name):
         """
@@ -1201,7 +1204,7 @@ class GCP:
         """
         for obj in obj_list:
             obj.delete()
-=======
+
 
 class GCP:
     pass
@@ -1252,4 +1255,3 @@ class GCP:
         training_job = client.create_job(parent, job)
 
         return cmd
->>>>>>> 99630c497dd8a6b1cf6dfd05927e748d6dfe6a63
