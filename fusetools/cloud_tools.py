@@ -15,10 +15,7 @@ import os
 import sys
 
 import boto3
-<<<<<<< HEAD
 
-=======
->>>>>>> f698b386e8223e18ba284d1862efdd090d01eaec
 import pandas as pd
 from io import StringIO
 import time
@@ -1207,7 +1204,6 @@ class GCP:
         """
         for obj in obj_list:
             obj.delete()
-
 
     @classmethod
     def publish_app(cls, app_config_file, project_id):
