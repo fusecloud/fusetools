@@ -11,10 +11,14 @@ Financial tasks and calculations.
 import requests
 import fix_yahoo_finance as yf
 from yahoo_finance_async import OHLC, Interval, History
-from alpha_vantage.timeseries import TimeSeries
 import pandas as pd
 import numpy as np
 import json
+
+try:
+    from alpha_vantage.timeseries import TimeSeries
+except:
+    pass
 
 try:
     from ib_insync import *
@@ -276,18 +280,24 @@ class ThinkOrSwim:
     def pull_quote_history(cls, authentication_object, ticker, frequency_type="daily", start_date=None, end_date=None):
         r = authentication_object.get_price_history(
             ticker,
-            period_type=client.Client.PriceHistory.PeriodType.DAY if frequency_type == "5min" else
-            client.Client.PriceHistory.PeriodType.YEAR,
-            period=client.Client.PriceHistory.Period.ONE_YEAR if frequency_type == "5min" else
-            client.Client.PriceHistory.Period.TWENTY_YEARS
+            period_type= \
+                client.Client.PriceHistory.PeriodType.DAY if frequency_type == "1min" else
+                client.Client.PriceHistory.PeriodType.DAY if frequency_type == "5min" else
+                client.Client.PriceHistory.PeriodType.YEAR,
+            period= \
+                client.Client.PriceHistory.Period.ONE_YEAR if frequency_type == "1min" else
+                client.Client.PriceHistory.Period.ONE_YEAR if frequency_type == "5min" else
+                client.Client.PriceHistory.Period.TWENTY_YEARS
             ,
             frequency_type= \
+                client.Client.PriceHistory.FrequencyType.MINUTE if frequency_type == "1min" else
                 client.Client.PriceHistory.FrequencyType.MINUTE if frequency_type == "5min" else
                 client.Client.PriceHistory.FrequencyType.DAILY if frequency_type == "daily" else
                 client.Client.PriceHistory.FrequencyType.WEEKLY if frequency_type == "weekly" else
                 client.Client.PriceHistory.FrequencyType.MONTHLY
             ,
             frequency= \
+                client.Client.PriceHistory.Frequency.EVERY_MINUTE if frequency_type == "1min" else
                 client.Client.PriceHistory.Frequency.EVERY_FIVE_MINUTES if frequency_type == "5min" else
                 client.Client.PriceHistory.Frequency.DAILY if frequency_type == "daily" else
                 client.Client.PriceHistory.Frequency.WEEKLY if frequency_type == "weekly" else

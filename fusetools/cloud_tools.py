@@ -15,7 +15,10 @@ import os
 import sys
 
 import boto3
+<<<<<<< HEAD
 
+=======
+>>>>>>> f698b386e8223e18ba284d1862efdd090d01eaec
 import pandas as pd
 from io import StringIO
 import time
@@ -1206,9 +1209,6 @@ class GCP:
             obj.delete()
 
 
-class GCP:
-    pass
-
     @classmethod
     def publish_app(cls, app_config_file, project_id):
         # cmd = f'''gcloud app deploy app.yaml --project [project-id]'''
@@ -1238,7 +1238,7 @@ class GCP:
 
         from google.cloud import scheduler
 
-        project_id = XXXX
+        project_id = "XXXX"
         client = scheduler_v1.CloudSchedulerClient.from_service_account_json(
             r"./xxxx.json")
 
