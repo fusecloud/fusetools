@@ -696,7 +696,7 @@ class AWS:
         return df
 
     @classmethod
-    def delete_dynamo_tbl(cls, pub, sec, region_name, tbl_name):
+    def delete_dynamo_tbl(cls, pub, sec, region_name, tbl_name, endpoint_url=None):
         """
         Deletes a DynamoDB table.
 
@@ -711,7 +711,8 @@ class AWS:
             'dynamodb',
             aws_access_key_id=pub,
             aws_secret_access_key=sec,
-            region_name=region_name
+            region_name=region_name,
+            endpoint_url=endpoint_url
         )
 
         table = dynamodb.delete_table(TableName=tbl_name)
@@ -816,6 +817,25 @@ class AWS:
                     TableName=tbl_name,
                     Item=item_d
                 )
+
+        return response
+
+    @classmethod
+    def update_dynamo(cls, pub, sec, region_name, tbl_name, attr_definitions=None, add_index=None, endpoint_url=None):
+
+        dynamodb = boto3.client(
+            "dynamodb",
+            region_name=region_name,
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec,
+            endpoint_url=endpoint_url
+        )
+
+        response = dynamodb.update_table(
+            TableName=tbl_name,
+            AttributeDefinitions=attr_definitions if attr_definitions else None,
+            GlobalSecondaryIndexUpdates=add_index if add_index else None,
+        )
 
         return response
 
