@@ -755,7 +755,7 @@ class AWS:
         return table
 
     @classmethod
-    def load_dynamo(cls, pub, sec, region_name, tbl_name, d, endpoint_url=None):
+    def load_dynamo(cls, pub, sec, region_name, tbl_name, d, load_type=False, endpoint_url=None):
         """
         Inserts either a Dictionary or Pandas DataFrame into DynamoDB.
 
@@ -791,32 +791,40 @@ class AWS:
 
         elif isinstance(d, pd.DataFrame):
 
-            for col in d:
-                print(str(d[col].dtypes))
-                if str(d[col].dtypes) != "object":
-                    d[col] = d[col].astype(str)
-
-            for idx, row in d.iterrows():
-                print(f'''Loading df record: {idx}''')
-                record = pd.DataFrame(row).reset_index()
-                record.columns = ["index", "val"]
-                record = record.query("index != 'name'").reset_index(drop=True)
-                item_d = {}
-
-                for idxxx, roww in record.iterrows():
-                    field = roww['index'].split("(")[0].strip()
-                    type = roww['index'].split("(")[1].replace(")", "").strip()
-
-                    val = roww["val"]
-
-                    item_d.update({
-                        field: {type: val}
-                    })
-
-                response = dynamodb.put_item(
-                    TableName=tbl_name,
-                    Item=item_d
+            request_items = False
+            if load_type == "bulk":
+                response = dynamodb.batch_write_item(
+                    RequestItems=request_items
                 )
+
+            else:
+
+                for col in d:
+                    print(str(d[col].dtypes))
+                    if str(d[col].dtypes) != "object":
+                        d[col] = d[col].astype(str)
+
+                for idx, row in d.iterrows():
+                    print(f'''Loading df record: {idx}''')
+                    record = pd.DataFrame(row).reset_index()
+                    record.columns = ["index", "val"]
+                    record = record.query("index != 'name'").reset_index(drop=True)
+                    item_d = {}
+
+                    for idxxx, roww in record.iterrows():
+                        field = roww['index'].split("(")[0].strip()
+                        type = roww['index'].split("(")[1].replace(")", "").strip()
+
+                        val = roww["val"]
+
+                        item_d.update({
+                            field: {type: val}
+                        })
+
+                    response = dynamodb.put_item(
+                        TableName=tbl_name,
+                        Item=item_d
+                    )
 
         return response
 
