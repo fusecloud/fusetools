@@ -13,7 +13,10 @@ import json
 import io
 import os
 import sys
+from typing import List
 
+import aiobotocore
+import asyncio
 import boto3
 
 import pandas as pd
@@ -884,6 +887,127 @@ class AWS:
         return response
 
     @classmethod
+    def bulk_load_dynamo(cls, pub, sec, region_name,
+                                     tbl_name,
+                                     request_items: List,
+                                     endpoint_url=None):
+        client = boto3.client(
+            service_name='dynamodb',
+            region_name=region_name,
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec,
+            endpoint_url=endpoint_url
+        )
+
+        print(f"Writing {len(request_items)} to dynamodb")
+
+        start = 0
+        while True:
+            # Loop adding 25 items to dynamo at a time
+            # request_items = create_batch_write_structure(tbl_name, start, 25)
+            print(f"Load size: {len(request_items[start:start + 25])}")
+
+            if len(request_items[start:start + 25]) == 0:
+                print(f"Nothing to insert, stopping")
+                break
+
+            response = client.batch_write_item(
+                RequestItems={tbl_name: request_items[start:start + 25]}
+            )
+            if len(response['UnprocessedItems']) == 0:
+                print(f'Wrote {len(request_items[start:start + 25])} items to dynamo')
+            else:
+                # Hit the provisioned write limit
+                print('Hit write limit, backing off then retrying')
+                time.sleep(5)
+
+                # Items left over that haven't been inserted
+                unprocessed_items = response['UnprocessedItems']
+                print('Resubmitting items')
+                # Loop until unprocessed items are written
+                while len(unprocessed_items) > 0:
+                    response = client.batch_write_item(
+                        RequestItems=unprocessed_items
+                    )
+                    # If any items are still left over, add them to the
+                    # list to be written
+                    unprocessed_items = response['UnprocessedItems']
+
+                    # If there are items left over, we could do with
+                    # sleeping some more
+                    if len(unprocessed_items) > 0:
+                        print('Backing off for 5 seconds')
+                        time.sleep(5)
+
+                # Inserted all the unprocessed items, exit loop
+                print('Unprocessed items successfully inserted')
+                break
+
+            start += 25
+            print(f"Curr position: {start}")
+
+    @classmethod
+    async def async_bulk_load_dynamo(cls, pub, sec, region_name,
+                                     tbl_name,
+                                     request_items: List,
+                                     endpoint_url=None):
+        session = aiobotocore.get_session()
+        async with session.create_client(
+                service_name='dynamodb',
+                region_name=region_name,
+                aws_access_key_id=pub,
+                aws_secret_access_key=sec,
+                endpoint_url=endpoint_url
+        ) as client:
+
+            print(f"Writing {len(request_items)} to dynamodb")
+
+            start = 0
+            while True:
+                # Loop adding 25 items to dynamo at a time
+                # request_items = create_batch_write_structure(tbl_name, start, 25)
+                print(f"Load size: {len(request_items[start:start + 25])}")
+
+                if len(request_items[start:start + 25]) == 0:
+                    print(f"Nothing to insert, stopping")
+                    break
+
+                response = await client.batch_write_item(
+                    RequestItems={tbl_name: request_items[start:start + 25]}
+                )
+                if len(response['UnprocessedItems']) == 0:
+                    print(f'Wrote {len(request_items[start:start + 25])} items to dynamo')
+                else:
+                    # Hit the provisioned write limit
+                    print('Hit write limit, backing off then retrying')
+                    await asyncio.sleep(5)
+
+                    # Items left over that haven't been inserted
+                    unprocessed_items = response['UnprocessedItems']
+                    print('Resubmitting items')
+                    # Loop until unprocessed items are written
+                    while len(unprocessed_items) > 0:
+                        response = await client.batch_write_item(
+                            RequestItems=unprocessed_items
+                        )
+                        # If any items are still left over, add them to the
+                        # list to be written
+                        unprocessed_items = response['UnprocessedItems']
+
+                        # If there are items left over, we could do with
+                        # sleeping some more
+                        if len(unprocessed_items) > 0:
+                            print('Backing off for 5 seconds')
+                            await asyncio.sleep(5)
+
+                    # Inserted all the unprocessed items, exit loop
+                    print('Unprocessed items successfully inserted')
+                    break
+
+                start += 25
+                print(f"Curr position: {start}")
+
+    @classmethod
     def update_dynamo(cls, pub, sec, region_name, tbl_name, attr_definitions=None, add_index=None, endpoint_url=None):
 
         dynamodb = boto3.client(
@@ -931,10 +1055,24 @@ class AWS:
         return fields_all
 
     @classmethod
-    def query_dynamo(cls, pub, sec, region_name, tbl_name, data_format="list", fields=False, endpoint_url=None):
+    def query_dynamo(cls, pub, sec, region_name, tbl_name,
+                     data_format="list",
+                     query_type='scan',
+                     query_search_obj=False,
+                     filter_expression=False,
+                     expression_attr=False,
+                     fields=False,
+                     endpoint_url=None,
+                     query_sub_type=None):
         """
         Downloads data from a DynamoDB table into a Pandas DataFrame.
 
+        :param filter_expression:
+        :param expression_attr:
+        :param endpoint_url:
+        :param query_sub_type:
+        :param query_search_obj:
+        :param query_type: The type of query to perform.
         :param pub: AWS account public key.
         :param sec: AWS account secret key.
         :param region_name: Region name for DynamoDB table.
@@ -943,48 +1081,158 @@ class AWS:
         :param fields: DynamoDB table fields to pull data from.
         :return: Pandas DataFrame of DynamoDB data.
         """
-        dynamodb = boto3.resource(
-            'dynamodb',
+
+        client = boto3.client(
+            service_name='dynamodb',
+            region_name=region_name,
             aws_access_key_id=pub,
             aws_secret_access_key=sec,
-            region_name=region_name,
             endpoint_url=endpoint_url
         )
 
-        table = dynamodb.Table(tbl_name)
-        response = table.scan()
-        data = response['Items']
+        if query_type == "scan":
 
-        while 'LastEvaluatedKey' in response:
-            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-            data.extend(response['Items'])
+            results = []
+            last_evaluated_key = None
+            while True:
+                if last_evaluated_key:
+                    response = client.scan(
+                        TableName=tbl_name,
+                        ExclusiveStartKey=last_evaluated_key
+                    )
+                else:
+                    response = client.scan(TableName=tbl_name)
+                last_evaluated_key = response.get('LastEvaluatedKey')
 
-        df_ = pd.DataFrame()
+                results.extend(response['Items'])
 
-        if not fields:
-            fields = \
-                AWS.get_dynamo_fields(
-                    tbl_name=tbl_name,
-                    pub=pub,
-                    sec=sec,
-                    region_name=region_name,
-                    endpoint_url=endpoint_url
+                if not last_evaluated_key:
+                    break
+            return results
+
+        elif query_type == "get_item":
+            response = client.get_item(
+                TableName=tbl_name,
+                Key=query_search_obj
+            )
+
+            return response
+
+        elif query_type == "query":
+            results = []
+            last_evaluated_key = None
+            while True:
+                if last_evaluated_key:
+                    response = client.scan(
+                        TableName=tbl_name,
+                        ExclusiveStartKey=last_evaluated_key,
+                        FilterExpression=filter_expression,
+                        ExpressionAttributeValues=expression_attr
+                    )
+                else:
+                    response = client.scan(
+                        TableName=tbl_name,
+                        FilterExpression=filter_expression,
+                        ExpressionAttributeValues=expression_attr
+                    )
+                last_evaluated_key = response.get('LastEvaluatedKey')
+
+                results.extend(response['Items'])
+
+                if not last_evaluated_key:
+                    break
+            return results
+
+    @classmethod
+    async def async_query_dynamo(cls, pub, sec, region_name, tbl_name,
+                                 data_format="list",
+                                 query_type='scan',
+                                 query_search_obj=False,
+                                 filter_expression=False,
+                                 expression_attr=False,
+                                 fields=False,
+                                 endpoint_url=None,
+                                 query_sub_type=None):
+        """
+        Downloads data from a DynamoDB table into a Pandas DataFrame.
+
+        :param filter_expression:
+        :param expression_attr:
+        :param endpoint_url:
+        :param query_sub_type:
+        :param query_search_obj:
+        :param query_type: The type of query to perform.
+        :param pub: AWS account public key.
+        :param sec: AWS account secret key.
+        :param region_name: Region name for DynamoDB table.
+        :param tbl_name: Name of DynamoDB table.
+        :param data_format: Specifies type of data structure to return, it not 'list' returns a Pandas DataFrame.
+        :param fields: DynamoDB table fields to pull data from.
+        :return: Pandas DataFrame of DynamoDB data.
+        """
+
+        session = aiobotocore.get_session()
+
+        async with session.create_client(
+                service_name='dynamodb',
+                region_name=region_name,
+                aws_access_key_id=pub,
+                aws_secret_access_key=sec,
+                endpoint_url=endpoint_url
+        ) as client:
+
+            if query_type == "scan":
+
+                results = []
+                last_evaluated_key = None
+                while True:
+                    if last_evaluated_key:
+                        response = await client.scan(
+                            TableName=tbl_name,
+                            ExclusiveStartKey=last_evaluated_key
+                        )
+                    else:
+                        response = await client.scan(TableName=tbl_name)
+                    last_evaluated_key = response.get('LastEvaluatedKey')
+
+                    results.extend(response['Items'])
+
+                    if not last_evaluated_key:
+                        break
+                return results
+
+            elif query_type == "get_item":
+                response = await client.get_item(
+                    TableName=tbl_name,
+                    Key=query_search_obj
                 )
 
-        f_dat_all = []
-        for idx, f in enumerate(fields):
-            f_dat = []
-            for idxx, doc in enumerate(data):
-                f_dat.append(doc.get(f))
+                return response
 
-            df_[f] = pd.Series(f_dat)
-            f_dat_all.append({f: f_dat})
+            elif query_type == "query":
+                results = []
+                last_evaluated_key = None
+                while True:
+                    if last_evaluated_key:
+                        response = await client.scan(
+                            TableName=tbl_name,
+                            ExclusiveStartKey=last_evaluated_key,
+                            FilterExpression=filter_expression,
+                            ExpressionAttributeValues=expression_attr
+                        )
+                    else:
+                        response = await client.scan(
+                            TableName=tbl_name,
+                            FilterExpression=filter_expression,
+                            ExpressionAttributeValues=expression_attr
+                        )
+                    last_evaluated_key = response.get('LastEvaluatedKey')
 
-        if data_format == "list":
-            return f_dat_all
+                    results.extend(response['Items'])
 
-        elif data_format.lower() in ["df", "dataframe"]:
-            return df_
+                    if not last_evaluated_key:
+                        break
+                return results
 
     @classmethod
     def dynamo_to_redshift(cls, cursor, pub, sec, tbl_name_rs, tbl_name_dynamo, readratio=50, fields=False):
