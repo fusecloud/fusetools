@@ -649,6 +649,61 @@ class AWS:
         print(f'''loaded data to {object_name} from: {folder_file}''')
 
     @classmethod
+    def bytes_to_s32(cls, binary_data, bucket, object_name, pub, sec, metadata_d=False, public_file=False):
+        session = boto3.Session(
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec
+        )
+
+        s3 = session.resource('s3')
+        object = s3.Object(bucket, object_name)
+        object.put(Body=binary_data)
+
+    @classmethod
+    def bytes_to_s3(cls, binary_data, bucket, object_name, pub, sec, metadata_d=False, public_file=False):
+        """
+        Uploads a local file to an S3 bucket.
+
+        :param folder_file: Filepath of local file.
+        :param bucket: Name of S3 bucket.
+        :param object_name: Bucket path of S3 object to upload to.
+        :param pub: AWS account public key.
+        :param sec: AWS account secret key.
+        :param metadata_d: Dictionary of metadata to add to uploaded S3 bucket object.
+        :param public_file: Switch to make S3 bucket object open to public access.
+        :return: Log of data object transfer (from filepath to bucket object).
+        """
+        session = boto3.Session(
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec
+        )
+
+        s3 = session.resource('s3')
+        if metadata_d:
+            if public_file:
+                s3.Bucket(bucket).upload_fileobj(
+                    io.BytesIO(binary_data), object_name,
+                    ExtraArgs={"Metadata": metadata_d,
+                               'ACL': 'public-read'})
+            else:
+                s3.Bucket(bucket).upload_fileobj(
+                    io.BytesIO(binary_data), object_name,
+                    ExtraArgs={"Metadata": metadata_d})
+
+        else:
+            if public_file:
+                s3.Bucket(bucket).upload_fileobj(
+                    io.BytesIO(binary_data),
+                    object_name, ExtraArgs={'ACL': 'public-read'})
+            else:
+                s3.Bucket(bucket).upload_fileobj(
+                    io.BytesIO(binary_data),
+                    object_name
+                )
+
+        print(f'''loaded data to {object_name} from bytes in memory''')
+
+    @classmethod
     def s3_list_files(cls, bucket, pub, sec, search_str=False):
         """
         Returns a list of objects in an S3 bucket.
@@ -912,7 +967,8 @@ class AWS:
                     tbl_name=tbl_name,
                     pub=pub,
                     sec=sec,
-                    region_name=region_name
+                    region_name=region_name,
+                    endpoint_url=endpoint_url
                 )
 
         f_dat_all = []

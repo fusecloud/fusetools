@@ -452,6 +452,8 @@ class GDrive:
         """
         Downloads a file from a Google Drive account.
 
+        :param file_name: Name of file to download from Google Drive.
+        :param save_local: whether to return file in bytes or save locally (default is bytes).
         :param file_id: ID for Google Drive file.
         :param credentials: GSuite credentials object.
         :return: Downloaded file from Google Drive.
