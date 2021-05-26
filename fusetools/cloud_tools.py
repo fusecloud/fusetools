@@ -13,7 +13,7 @@ import json
 import io
 import os
 import sys
-from typing import List
+from typing import List, Optional
 
 import aiobotocore
 import asyncio
@@ -888,9 +888,9 @@ class AWS:
 
     @classmethod
     def bulk_load_dynamo(cls, pub, sec, region_name,
-                                     tbl_name,
-                                     request_items: List,
-                                     endpoint_url=None):
+                         tbl_name,
+                         request_items: List,
+                         endpoint_url=None):
         client = boto3.client(
             service_name='dynamodb',
             region_name=region_name,
@@ -1056,14 +1056,11 @@ class AWS:
 
     @classmethod
     def query_dynamo(cls, pub, sec, region_name, tbl_name,
-                     data_format="list",
                      query_type='scan',
                      query_search_obj=False,
                      filter_expression=False,
                      expression_attr=False,
-                     fields=False,
-                     endpoint_url=None,
-                     query_sub_type=None):
+                     endpoint_url=None):
         """
         Downloads data from a DynamoDB table into a Pandas DataFrame.
 
@@ -1145,14 +1142,11 @@ class AWS:
 
     @classmethod
     async def async_query_dynamo(cls, pub, sec, region_name, tbl_name,
-                                 data_format="list",
                                  query_type='scan',
                                  query_search_obj=False,
                                  filter_expression=False,
                                  expression_attr=False,
-                                 fields=False,
-                                 endpoint_url=None,
-                                 query_sub_type=None):
+                                 endpoint_url=None):
         """
         Downloads data from a DynamoDB table into a Pandas DataFrame.
 
@@ -1233,6 +1227,32 @@ class AWS:
                     if not last_evaluated_key:
                         break
                 return results
+
+    @classmethod
+    def dynamo_results_to_df(cls, data: List, fields: List):
+        """
+        Converts the results of a Dynamo query into a Pandas DatFrame
+        :param data: Results of a Dynamo query (List)
+        :param fields: Fields to bring in from results
+        :return: Pandas DatFrame
+        """
+        df = pd.DataFrame()
+        f_dat_all = []
+        for idx, f in enumerate(fields):
+            f_dat = []
+            for idxx, doc in enumerate(data):
+                if doc.get(f):
+                    f_dat.append(
+                        # doc.get(f)
+                        list(doc.get(f).values())[0]
+                    )
+                else:
+                    f_dat.append(doc.get(f))
+
+            df[f] = pd.Series(f_dat)
+            f_dat_all.append({f: f_dat})
+
+        return df
 
     @classmethod
     def dynamo_to_redshift(cls, cursor, pub, sec, tbl_name_rs, tbl_name_dynamo, readratio=50, fields=False):
