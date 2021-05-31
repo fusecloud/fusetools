@@ -1008,7 +1008,8 @@ class AWS:
                 print(f"Curr position: {start}")
 
     @classmethod
-    def update_dynamo(cls, pub, sec, region_name, tbl_name, attr_definitions=None, add_index=None, endpoint_url=None):
+    def update_dynamo_tbl(cls, pub, sec, region_name, tbl_name, attr_definitions=None, add_index=None,
+                          endpoint_url=None):
 
         dynamodb = boto3.client(
             "dynamodb",
@@ -1027,10 +1028,76 @@ class AWS:
         return response
 
     @classmethod
+    def update_dynamo_item(cls, pub, sec, region_name, tbl_name, endpoint_url,
+                           update_obj, update_expression,
+                           update_attr_names, update_attr_vals
+                           ):
+        """
+
+        :param pub:
+        :param sec:
+        :param region_name:
+        :param tbl_name:
+        :param endpoint_url:
+        :param update_obj:
+        :param update_expression:
+        :param update_attr_names:
+        :param update_attr_vals:
+        :return:
+        """
+
+        client = boto3.client(
+            "dynamodb",
+            region_name=region_name,
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec,
+            endpoint_url=endpoint_url
+        )
+
+        response = client.update_item(
+            Key=update_obj,
+            TableName=tbl_name,
+            UpdateExpression=update_expression,
+            ExpressionAttributeNames=update_attr_names,
+            ExpressionAttributeValues=update_attr_vals
+        )
+
+        return response
+
+    @classmethod
+    def bulk_update_dynamo(cls, pub, sec, region_name,
+                           update_obj_list,
+                           endpoint_url=None):
+        """
+
+        :param pub:
+        :param sec:
+        :param region_name:
+        :param update_obj_list:
+        :param endpoint_url:
+        :return:
+        """
+
+        client = boto3.client(
+            'dynamodb',
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec,
+            region_name=region_name,
+            endpoint_url=endpoint_url
+        )
+
+        response = client.transact_write_items(
+            TransactItems=update_obj_list
+        )
+
+        return response
+
+    @classmethod
     def get_dynamo_fields(cls, tbl_name, pub, sec, region_name, endpoint_url=None):
         """
         Retrieves a list of fields for a given DynamoDB table.
 
+        :param endpoint_url:
         :param tbl_name: Name of Dynamo table.
         :param pub: AWS account public key.
         :param sec: AWS account secret key.
@@ -1067,7 +1134,6 @@ class AWS:
         :param filter_expression:
         :param expression_attr:
         :param endpoint_url:
-        :param query_sub_type:
         :param query_search_obj:
         :param query_type: The type of query to perform.
         :param pub: AWS account public key.
