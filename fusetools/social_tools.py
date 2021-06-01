@@ -1,5 +1,6 @@
 import pandas as pd
 import tweepy
+import os
 
 
 class Twitter:
@@ -73,6 +74,8 @@ class Twitter:
                 "tweet_source": [x._json.get('source') for x in alltweets],
                 "symbols": [x._json.get('entities').get('symbols')
                             for x in alltweets],
+                "media": [x._json.get('entities').get('media')
+                          for x in alltweets],
                 "rt_count": [x._json.get('retweet_count') for x in alltweets],
                 "fav_count": [x._json.get('favorite_count') for x in alltweets]
             })
@@ -115,3 +118,10 @@ class Twitter:
         tweet_df.drop(["symbols"], axis=1, inplace=True)
         tweet_df.rename(columns={"symbols_flat": "symbols"}, inplace=True)
         return tweet_df
+
+    @classmethod
+    def pull_tweet_details(cls, twtr_api_key, twtr_api_secret, tweet_id):
+        auth = tweepy.AppAuthHandler(twtr_api_key, twtr_api_secret)
+        api = tweepy.API(auth)
+        tweet = api.get_status(tweet_id)
+        return tweet
