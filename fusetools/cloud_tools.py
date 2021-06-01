@@ -636,31 +636,20 @@ class AWS:
         )
 
         s3 = session.resource('s3')
-        if metadata_d:
-            if public_file:
-                s3.Bucket(bucket).upload_file(folder_file, object_name, ExtraArgs={"Metadata": metadata_d,
-                                                                                   'ACL': 'public-read'})
-            else:
-                s3.Bucket(bucket).upload_file(folder_file, object_name, ExtraArgs={"Metadata": metadata_d})
+        (
+            s3.Bucket(bucket)
+                .upload_file(
+                folder_file,
+                object_name,
+                ExtraArgs={"Metadata": metadata_d} if metadata_d else None
+            ))
 
-        else:
-            if public_file:
-                s3.Bucket(bucket).upload_file(folder_file, object_name, ExtraArgs={'ACL': 'public-read'})
-            else:
-                s3.Bucket(bucket).upload_file(folder_file, object_name)
+        if public_file:
+            print("Making object public")
+            object_acl = s3.ObjectAcl(bucket, object_name)
+            object_acl.put(ACL='public-read')
 
         print(f'''loaded data to {object_name} from: {folder_file}''')
-
-    @classmethod
-    def bytes_to_s32(cls, binary_data, bucket, object_name, pub, sec, metadata_d=False, public_file=False):
-        session = boto3.Session(
-            aws_access_key_id=pub,
-            aws_secret_access_key=sec
-        )
-
-        s3 = session.resource('s3')
-        object = s3.Object(bucket, object_name)
-        object.put(Body=binary_data)
 
     @classmethod
     def bytes_to_s3(cls, binary_data, bucket, object_name, pub, sec, metadata_d=False, public_file=False):
@@ -682,27 +671,14 @@ class AWS:
         )
 
         s3 = session.resource('s3')
-        if metadata_d:
-            if public_file:
-                s3.Bucket(bucket).upload_fileobj(
-                    io.BytesIO(binary_data), object_name,
-                    ExtraArgs={"Metadata": metadata_d,
-                               'ACL': 'public-read'})
-            else:
-                s3.Bucket(bucket).upload_fileobj(
-                    io.BytesIO(binary_data), object_name,
-                    ExtraArgs={"Metadata": metadata_d})
+        s3.Bucket(bucket).upload_fileobj(
+            io.BytesIO(binary_data), object_name,
+            ExtraArgs={"Metadata": metadata_d} if metadata_d else None)
 
-        else:
-            if public_file:
-                s3.Bucket(bucket).upload_fileobj(
-                    io.BytesIO(binary_data),
-                    object_name, ExtraArgs={'ACL': 'public-read'})
-            else:
-                s3.Bucket(bucket).upload_fileobj(
-                    io.BytesIO(binary_data),
-                    object_name
-                )
+        if public_file:
+            print("Making object public")
+            object_acl = s3.ObjectAcl(bucket, object_name)
+            object_acl.put(ACL='public-read')
 
         print(f'''loaded data to {object_name} from bytes in memory''')
 
@@ -951,6 +927,16 @@ class AWS:
                                      tbl_name,
                                      request_items: List,
                                      endpoint_url=None):
+        """
+
+        :param pub:
+        :param sec:
+        :param region_name:
+        :param tbl_name:
+        :param request_items:
+        :param endpoint_url:
+        :return:
+        """
         session = aiobotocore.get_session()
         async with session.create_client(
                 service_name='dynamodb',
@@ -1011,7 +997,7 @@ class AWS:
     def update_dynamo_tbl(cls, pub, sec, region_name, tbl_name, attr_definitions=None, add_index=None,
                           endpoint_url=None):
 
-        dynamodb = boto3.client(
+        client = boto3.client(
             "dynamodb",
             region_name=region_name,
             aws_access_key_id=pub,
@@ -1019,7 +1005,7 @@ class AWS:
             endpoint_url=endpoint_url
         )
 
-        response = dynamodb.update_table(
+        response = client.update_table(
             TableName=tbl_name,
             AttributeDefinitions=attr_definitions if attr_definitions else None,
             GlobalSecondaryIndexUpdates=add_index if add_index else None,
@@ -1091,6 +1077,34 @@ class AWS:
         )
 
         return response
+
+    @classmethod
+    async def async_bulk_update_dynamo(cls, pub, sec, region_name,
+                                       update_obj_list,
+                                       endpoint_url=None):
+        """
+
+        :param pub:
+        :param sec:
+        :param region_name:
+        :param update_obj_list:
+        :param endpoint_url:
+        :return:
+        """
+
+        session = aiobotocore.get_session()
+        async with session.create_client(
+                service_name='dynamodb',
+                region_name=region_name,
+                aws_access_key_id=pub,
+                aws_secret_access_key=sec,
+                endpoint_url=endpoint_url
+        ) as client:
+            response = await client.transact_write_items(
+                TransactItems=update_obj_list
+            )
+
+            return response
 
     @classmethod
     def get_dynamo_fields(cls, tbl_name, pub, sec, region_name, endpoint_url=None):
@@ -1205,6 +1219,12 @@ class AWS:
                 if not last_evaluated_key:
                     break
             return results
+
+        # elif query_type == "query2":
+        #     response = client.query(
+        #
+        #     )
+        #     pass
 
     @classmethod
     async def async_query_dynamo(cls, pub, sec, region_name, tbl_name,
