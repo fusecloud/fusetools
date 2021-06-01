@@ -446,10 +446,11 @@ class AWS:
         return response
 
     @classmethod
-    def delete_s3_object(cls, pub, sec, bucket, obj_list):
+    def delete_s3_object(cls, pub, sec, bucket, obj_list=False, delete_all=False):
         """
         Deletes a list of S3 bucket objects.
 
+        :param delete_all:
         :param pub: AWS account public key.
         :param sec: AWS account secret key.
         :param bucket: S3 bucket name.
@@ -463,9 +464,19 @@ class AWS:
         )
 
         s3 = session.resource('s3')
-        my_bucket = s3.Bucket(bucket)
-        response = my_bucket.delete_objects(Delete={'Objects': obj_list})
-        return response
+        bucket = s3.Bucket(bucket)
+        # can only delete 1k objects at a time so do loop
+        if obj_list:
+            print("Deleting objects")
+            min_idx = 0
+            max_idx = 1000
+            while len(obj_list[min_idx:max_idx]) > 0:
+                response = bucket.delete_objects(Delete={'Objects': [{"Key": x} for x in obj_list[min_idx:max_idx]]})
+                print(response)
+                min_idx += 1000
+                max_idx += 1000
+        elif delete_all:
+            bucket.objects.all().delete()
 
     @classmethod
     def df_to_s3(cls, df, object_name, bucket, pub, sec, sep, header=False):
