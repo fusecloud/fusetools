@@ -700,12 +700,45 @@ class GDrive:
 
     @classmethod
     def get_file_revisions(cls, file_id, credentials):
+        """
+
+        :param file_id:
+        :param credentials:
+        :return:
+        """
+
+        # https://developers.google.com/drive/api/v3/reference/revisions/list
         drive_service = build('drive', 'v3', credentials=credentials)
 
-        r = drive_service.revisions().list(
-            fileId=file_id,
-            fields='*'
-        ).execute()
+        r = \
+            (
+                drive_service
+                    .revisions()
+                    .list(
+                    pageSize=1000,
+                    fileId=file_id,
+                    fields='*'
+                )
+                    .execute()
+            )
+
+        r_list = []
+        r_list += r.get("revisions")
+        while r.get('nextPageToken'):
+            print(f"{len(r_list)} total revisions so far...fetching next batch.")
+            r = \
+                (
+                    drive_service
+                        .revisions()
+                        .list(
+                        pageSize=1000,
+                        fileId=file_id,
+                        fields='*',
+                        pageToken=r.get('nextPageToken')
+                    )
+                        .execute()
+                )
+            r_list += r.get("revisions")
 
         return r
 
