@@ -20,5 +20,3 @@ def bitly_url_shortener(long_url, api_token, domain="bit.ly"):
         headers=HEADERS
     )
     return json.loads(r.content)
-
-

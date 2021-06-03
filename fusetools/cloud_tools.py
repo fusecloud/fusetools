@@ -628,10 +628,14 @@ class AWS:
         print(f'''loaded data to {folder_file} from: {object_name}''')
 
     @classmethod
-    def file_to_s3(cls, folder_file, bucket, object_name, pub, sec, metadata_d=False, public_file=False):
+    def file_to_s3(cls, folder_file, bucket, object_name, pub, sec,
+                   metadata_d=None,
+                   public_file=None,
+                   content_type=None):
         """
         Uploads a local file to an S3 bucket.
 
+        :param content_type:
         :param folder_file: Filepath of local file.
         :param bucket: Name of S3 bucket.
         :param object_name: Bucket path of S3 object to upload to.
@@ -647,26 +651,39 @@ class AWS:
         )
 
         s3 = session.resource('s3')
+
+        extra_args_d = {}
+
+        if metadata_d:
+            extra_args_d.update({"Metadata": metadata_d})
+
+        if content_type:
+            extra_args_d.update({"ContentType": content_type})
+
+        if public_file:
+            extra_args_d.update({"ACL": 'public-read'})
+
         (
             s3.Bucket(bucket)
                 .upload_file(
                 folder_file,
                 object_name,
-                ExtraArgs={"Metadata": metadata_d} if metadata_d else None
-            ))
-
-        if public_file:
-            print("Making object public")
-            object_acl = s3.ObjectAcl(bucket, object_name)
-            object_acl.put(ACL='public-read')
+                ExtraArgs=extra_args_d
+            )
+        )
 
         print(f'''loaded data to {object_name} from: {folder_file}''')
 
     @classmethod
-    def bytes_to_s3(cls, binary_data, bucket, object_name, pub, sec, metadata_d=False, public_file=False):
+    def bytes_to_s3(cls, binary_data, bucket, object_name, pub, sec,
+                    metadata_d=None,
+                    public_file=None,
+                    content_type=None):
         """
         Uploads a local file to an S3 bucket.
 
+        :param binary_data:
+        :param content_type:
         :param folder_file: Filepath of local file.
         :param bucket: Name of S3 bucket.
         :param object_name: Bucket path of S3 object to upload to.
@@ -682,14 +699,21 @@ class AWS:
         )
 
         s3 = session.resource('s3')
-        s3.Bucket(bucket).upload_fileobj(
-            io.BytesIO(binary_data), object_name,
-            ExtraArgs={"Metadata": metadata_d} if metadata_d else None)
+
+        extra_args_d = {}
+
+        if metadata_d:
+            extra_args_d.update({"Metadata": metadata_d})
+
+        if content_type:
+            extra_args_d.update({"ContentType": content_type})
 
         if public_file:
-            print("Making object public")
-            object_acl = s3.ObjectAcl(bucket, object_name)
-            object_acl.put(ACL='public-read')
+            extra_args_d.update({"ACL": 'public-read'})
+
+        s3.Bucket(bucket).upload_fileobj(
+            io.BytesIO(binary_data), object_name,
+            ExtraArgs=extra_args_d)
 
         print(f'''loaded data to {object_name} from bytes in memory''')
 

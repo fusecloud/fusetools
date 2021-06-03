@@ -8,16 +8,16 @@ Fusetools currently has functionality for the following tools and applications, 
 
 ![alt text](https://github.com/fusecloud/fusetools/blob/master/docs/source/CC_ROADMAP.png)
 
-Download and install
+Installation
 --------------------
 
 This package is in the [Python Package Index](http://pypi.python.org/pypi/FuseTools) so ``pip install FuseTools`` should
-be enough.  You can also clone it on from here.
+be enough.  You can also clone or fork it from here.
 
 Documentation 
 ---------
 
-[Read the Docs](https://fusetools.readthedocs.io/index.html)
+[Read the Docs](https://fusetools.readthedocs.io/)
 
 Examples 
 ---------
