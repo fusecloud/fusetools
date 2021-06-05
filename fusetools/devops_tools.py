@@ -14,12 +14,19 @@ Tools for automating package deployment tasks.
         :width: 20%
 
 """
+import inspect
 import json
+from typing import List
+
+import numpy as np
+import pandas as pd
 import requests
 import os
 import pexpect
 import sys
 import os
+
+from colorama import Fore
 from fusetools.transfer_tools import Local as TransferLocal
 from fusetools.text_tools import Export
 from distutils import dir_util, file_util
@@ -218,6 +225,69 @@ packages=["{tgt_pkg_name}"]
 
             os.system(install_cmd)
             os.system("pip install -r requirements.txt")
+
+    @classmethod
+    def python_obj_definitions(cls, file_list: List):
+        """
+
+        :param file_list:
+        :return:
+        """
+        list_module_dtl = []
+        for idx, module in enumerate(file_list):
+            # if idx == 0:
+            #     break
+            parent_modules = []
+            classes = []
+            methods = []
+            # module.__file__
+            print(Fore.GREEN + f"inspecting module: {module}")
+            for name, obj in inspect.getmembers(module):
+                # if name == "merge_quotes_events":
+                #     break
+                if inspect.isfunction(obj):
+                    print(Fore.BLUE + f"added module: {name}")
+                    methods.append(name)
+                    parent_modules.append(obj.__module__)
+                    classes.append("module")
+                elif inspect.isclass(obj):
+                    print(Fore.CYAN + f"inspecting class: {name}")
+                    for namee, objj in inspect.getmembers(obj):
+                        if inspect.ismethod(objj):
+                            print(Fore.BLUE + f"added module: {namee}")
+                            methods.append(namee)
+                            classes.append(name)
+                            parent_modules.append(objj.__module__)
+
+            df_module = \
+                pd.DataFrame({
+                    "class": classes,
+                    "methods": methods,
+                    "parent_modules": parent_modules
+                }).assign(module=module.__name__)
+
+            list_module_dtl.append(df_module)
+
+        df_module_ctc = \
+            (
+                pd.concat(list_module_dtl)
+                    .reset_index(drop=True)
+            )
+
+        df_module_ctc = \
+            df_module_ctc[
+                (df_module_ctc['parent_modules'].str.contains("cc_algos"))
+                |
+                (df_module_ctc['parent_modules'] == '')
+                ].reset_index(drop=True)
+
+        df_module_ctc['method_use'] = \
+            np.where(
+                df_module_ctc['module'] != df_module_ctc['parent_modules'],
+                "imported", "defined"
+            )
+
+        return df_module_ctc
 
 
 class ReadTheDocs:
