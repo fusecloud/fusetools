@@ -73,6 +73,7 @@ class Twilio:
         """
         Retrieves a list of message attributes for a given Twilio developer account.
 
+        :param date_sent_after:
         :param to_number:
         :param from_number:
         :param limit:
