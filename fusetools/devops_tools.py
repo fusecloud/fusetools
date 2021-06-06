@@ -16,6 +16,7 @@ Tools for automating package deployment tasks.
 """
 import json
 import requests
+import pandas as pd
 import os
 import pexpect
 import sys
@@ -410,3 +411,44 @@ class GitHub:
             child.expect(f".*{tgt_branch}")
         except:
             child.expect(f".*Everything")
+
+    @classmethod
+    def get_repo_commits(cls, owner, repo, gh_token):
+        """
+
+        :param owner:
+        :param repo:
+        :param gh_token:
+        :return:
+        """
+
+        url = f"https://api.github.com/repos/{owner}/{repo}/commits"
+
+        headers = {'Authorization': f'''token {gh_token}'''}
+        r = requests.get(url, headers=headers)
+
+        encoding = 'utf-8'
+        r_json = json.loads(r.content.decode(encoding))
+        r_list = [x.get("commit") for x in r_json]
+
+        df = pd.DataFrame.from_dict(r_list).reset_index(drop=True)
+        df['sha'] = df.apply(lambda x: x['url'].split("commits/")[-1], axis=1)
+
+        return df
+
+    @classmethod
+    def get_commit_dtl(cls, owner, repo, commit_ref):
+        """
+
+        :param owner:
+        :param repo:
+        :param commit_ref:
+        :return:
+        """
+        headers = {'Authorization': f'''token {os.environ['gh_cli_code']}'''}
+        encoding = 'utf-8'
+        url = f"https://api.github.com/repos/{owner}/{repo}/commits/{commit_ref}"
+        r = requests.get(url, headers=headers)
+        r_json = json.loads(r.content.decode(encoding))
+
+        return r_json

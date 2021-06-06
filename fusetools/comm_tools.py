@@ -63,16 +63,34 @@ class Twilio:
         return message.sid
 
     @classmethod
-    def get_messages(cls, account_sid, auth_token):
+    def get_messages(cls, account_sid, auth_token,
+                     date_sent_before=None,
+                     date_sent_after=None,
+                     date_sent=None,
+                     limit=None,
+                     from_number=None,
+                     to_number=None):
         """
         Retrieves a list of message attributes for a given Twilio developer account.
 
+        :param to_number:
+        :param from_number:
+        :param limit:
+        :param date_sent:
+        :param date_sent_before:
         :param account_sid: Twilio developer account ID.
         :param auth_token: Twilio developer authorization token.
         :return: Pandas DataFrame of message attributes for a given Twilio developer account.
         """
         client = Client(account_sid, auth_token)
-        messages = client.messages.list()
+        messages = client.messages.list(
+            date_sent_before=date_sent_before,
+            date_sent_after=date_sent_after,
+            limit=limit,
+            date_sent=date_sent,
+            from_=from_number,
+            to=to_number
+        )
 
         sent_time_list = []
         sid_list = []
