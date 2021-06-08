@@ -173,7 +173,7 @@ class GSheets:
         return df
 
     @classmethod
-    def freeze_rows_google_sheet(cls, spreadsheet_id, tab_id, freeze_row, credentials):
+    def freeze_rows_cols(cls, spreadsheet_id, tab_id, freeze_idx, credentials, rows=True):
         """
         Freezes the rows of a given Google Sheet.
 
@@ -192,10 +192,43 @@ class GSheets:
                         "properties": {
                             "sheetId": tab_id,
                             "gridProperties": {
-                                "frozenRowCount": freeze_row
+                                "frozenRowCount" if rows else "frozenColumnCount": freeze_idx
                             }
                         },
-                        "fields": "gridProperties.frozenRowCount"
+                        "fields": "gridProperties.frozenRowCount" if rows else "gridProperties.frozenColumnCount"
+                    }
+                }
+            ]
+        }
+
+        try:
+            res = service.spreadsheets().batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body=data,
+            ).execute()
+        except:
+            print("Exception....sleeping")
+            time.sleep(3)
+            res = service.spreadsheets().batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body=data,
+            ).execute()
+
+        return res
+
+    @classmethod
+    def group_sheet_cols_rows(cls, spreadsheet_id, tab_id, start_idx, end_idx, rows_columns="ROWS"):
+        service = build('sheets', 'v4', credentials=credentials)
+        data = {
+            "requests": [
+                {
+                    "addDimensionGroup": {
+                        "range": {
+                            "dimension": rows_columns,
+                            "sheetId": tab_id,
+                            "startIndex": start_idx,
+                            "endIndex": end_idx
+                        }
                     }
                 }
             ]
