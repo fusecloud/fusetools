@@ -515,10 +515,12 @@ class GDrive:
         return file_bytes
 
     @classmethod
-    def get_all_google_items(cls, credentials, folder_id=False):
+    def get_all_google_items(cls, credentials, page_size=None, folder_id=None):
         """
         Get all files in a Google Drive (or folder if specified).
 
+        :param page_size:
+        :param limit:
         :param credentials: GSuite credentials object.
         :param folder_id: GDrive folder to search in (optional)
         :return: Pandas DataFrame of files in a Google Drive.
@@ -526,16 +528,27 @@ class GDrive:
 
         DRIVE = discovery.build('drive', 'v3', credentials=credentials)
 
-        if folder_id:
-            res = DRIVE.files().list(
-                q="'" + folder_id + "' in parents",
-                pageSize=100,
-                fields="nextPageToken, files(id, name)").execute()
-            df = pd.DataFrame(res.get("files"))
+        res_all = []
 
-        else:
-            res = DRIVE.files().list().execute()
-            df = pd.DataFrame(res.get("files"))
+        res = DRIVE.files().list(
+            q="'" + folder_id + "' in parents" if folder_id else None,
+            pageSize=page_size,
+            fields="nextPageToken, files(id, name)"
+        ).execute()
+
+        res_all += res.get("files")
+
+        while res.get('nextPageToken'):
+            res = DRIVE.files().list(
+                q="'" + folder_id + "' in parents" if folder_id else None,
+                pageSize=page_size,
+                fields="nextPageToken, files(id, name)",
+                pageToken=res['nextPageToken']
+            ).execute()
+
+            res_all += res.get("files")
+
+        df = pd.DataFrame.from_dict(res_all)
 
         return df
 
