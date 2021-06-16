@@ -173,10 +173,63 @@ class GSheets:
         return df
 
     @classmethod
+    def add_google_sheet_comment(cls, spreadsheet_id, tab_id, note_contents, start_row_idx, end_row_idx, start_col_idx,
+                                 end_col_idx, credentials):
+        """
+
+        :param spreadsheet_id:
+        :param tab_id:
+        :param credentials:
+        :return:
+        """
+        service = build('sheets', 'v4', credentials=credentials)
+        data = {
+            "requests": [
+                {
+                    "updateCells": {
+                        "range": {
+                            "sheetId": tab_id,
+                            "startRowIndex": start_row_idx,
+                            "endRowIndex": end_row_idx,
+                            "startColumnIndex": start_col_idx,
+                            "endColumnIndex": end_col_idx
+                        },
+                        "rows": [
+                            {
+                                "values": [
+                                    {
+                                        "note": note_contents
+                                    }
+                                ]
+                            }
+                        ],
+                        "fields": "note"
+                    }
+                }
+            ]
+        }
+        try:
+            res = service.spreadsheets().batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body=data,
+            ).execute()
+        except:
+            print("Exception....sleeping")
+            time.sleep(3)
+            res = service.spreadsheets().batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body=data,
+            ).execute()
+
+        return res
+
+    @classmethod
     def freeze_rows_cols(cls, spreadsheet_id, tab_id, freeze_idx, credentials, rows=True):
         """
         Freezes the rows of a given Google Sheet.
 
+        :param rows:
+        :param freeze_idx:
         :param spreadsheet_id: Id of Google Sheet to retrieve.
         :param tab_id: Id of tab to modify.
         :param freeze_row: Spreadsheet row to freeze.
@@ -217,7 +270,17 @@ class GSheets:
         return res
 
     @classmethod
-    def group_sheet_cols_rows(cls, spreadsheet_id, tab_id, start_idx, end_idx, rows_columns="ROWS"):
+    def group_sheet_cols_rows(cls, spreadsheet_id, tab_id, start_idx, end_idx, credentials, rows_columns="ROWS"):
+        """
+
+        :param spreadsheet_id:
+        :param tab_id:
+        :param start_idx:
+        :param end_idx:
+        :param credentials:
+        :param rows_columns:
+        :return:
+        """
         service = build('sheets', 'v4', credentials=credentials)
         data = {
             "requests": [
