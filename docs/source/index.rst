@@ -59,13 +59,14 @@ Fusetools is distributed under the MIT License.
    examples
    changes
    links
+   fusetools
 
 .. autosummary::
    :toctree: _autosummary
    :template: custom-module-template.rst
    :recursive:
 
-   fusetools
+
 
 
 
