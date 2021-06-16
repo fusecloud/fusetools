@@ -40,6 +40,7 @@ extensions = [
     'sphinx.ext.mathjax'
 ]
 
+pygments_style = 'sphinx'
 
 exclude_patterns = ['_build', '**.ipynb_checkpoints']
 
