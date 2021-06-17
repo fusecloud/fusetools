@@ -32,6 +32,16 @@ class Spotify:
         return sp
 
     @classmethod
+    def search_track(cls, sp, artist, track):
+        results = sp.search(q='artist:' + artist + ' track:' + track, type='track')
+        return results
+
+    # this requires OATH2
+    # @classmethod
+    # def add_track_to_playlist(cls, sp, username, playlist_id, tracks, position):
+    #     sp.user_playlist_add_tracks(user=username, playlist_id=playlist_id, tracks=tracks, position=position)
+
+    @classmethod
     def get_playlist_tracks(cls, sp, username, playlist_id):
         """
         Retrieve tracks for a given Spotify playlist.
@@ -47,6 +57,23 @@ class Spotify:
             results = sp.next(results)
             tracks.extend(results['items'])
         return tracks
+
+    @classmethod
+    def get_user_playlists(cls, sp, username):
+        """
+        Retrieve tracks for a given Spotify playlist.
+
+        :param sp: Spotify API authentication object.
+        :param username: Spotify username.
+        :param playlist_id: Spotify playlist Id.
+        :return: List of tracks on a Spotify playlist.
+        """
+        results = sp.user_playlists(user=username)
+        playlists = results['items']
+        while results['next']:
+            results = sp.next(results)
+            playlists.extend(results['items'])
+        return playlists
 
     @classmethod
     def get_track_audio_features(cls, sp, track_id):
