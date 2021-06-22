@@ -1320,6 +1320,7 @@ class AWS:
                         ExclusiveStartKey=last_evaluated_key,
                         IndexName=index_name,
                         ExpressionAttributeValues=expression_attr_vals,
+                        ExpressionAttributeNames=expression_attr_names,
                         KeyConditionExpression=key_condition_expr
                     )
                 else:
@@ -1327,6 +1328,7 @@ class AWS:
                         TableName=tbl_name,
                         IndexName=index_name,
                         ExpressionAttributeValues=expression_attr_vals,
+                        ExpressionAttributeNames=expression_attr_names,
                         KeyConditionExpression=key_condition_expr
                     )
                 last_evaluated_key = response.get('LastEvaluatedKey')

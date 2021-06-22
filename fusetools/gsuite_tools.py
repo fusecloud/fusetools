@@ -467,6 +467,26 @@ class GSheets:
         return res
 
     @classmethod
+    def get_google_sheet_metadata(cls, spreadsheet_id, credentials, include_grid_data=False, ranges=False):
+        """
+
+        :param include_grid_data:
+        :param spreadsheet_id:
+        :param credentials:
+        :param ranges:
+        :return:
+        """
+        service = build('sheets', 'v4', credentials=credentials)
+        request = (
+            service
+                .spreadsheets()
+                .get(spreadsheetId=spreadsheet_id, includeGridData=include_grid_data, ranges=ranges)
+        )
+
+        response = request.execute()
+        return response
+
+    @classmethod
     def get_google_sheet_tabs(cls, spreadsheet_id, credentials):
         """
         Get the names and IDs of tabs for a given Google Sheet.
