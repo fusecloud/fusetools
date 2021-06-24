@@ -1165,6 +1165,62 @@ class AWS:
             return response
 
     @classmethod
+    def wait_dynamo_operation(cls, tbl_name, region, pub, secret, op_type, op_type_val, update_wait_time):
+        """
+
+        :param tbl_name:
+        :param region:
+        :param pub:
+        :param secret:
+        :param op_type:
+        :param op_type_val:
+        :param update_wait_time:
+        :return:
+        """
+        ddb = boto3.resource(
+            "dynamodb",
+            # endpoint_url=endpoint_url,
+            region_name=region,
+            aws_access_key_id=pub,
+            aws_secret_access_key=secret
+        )
+        while True:
+            r = (
+                ddb.
+                    Table(tbl_name).
+                    meta.client.
+                    describe_table(TableName=tbl_name)
+            )
+
+            if op_type == "index_creation":
+                if r.get("Table").get('GlobalSecondaryIndexes'):
+                    index_created = \
+                        [x for x in (
+                            r
+                                .get("Table")
+                                .get('GlobalSecondaryIndexes')
+                        )
+                         if x.get('IndexName') == op_type_val
+                         ]  # [0]
+
+                    if len(index_created) == 0:
+                        print(f"No GSI {op_type_val} exists on the table! Exiting.")
+                        break
+
+                    index_created_status = index_created[0].get("IndexStatus")
+
+                    if index_created_status == 'CREATING':
+                        print(f"GSI {op_type_val} is being created...waiting {update_wait_time} seconds")
+                        time.sleep(update_wait_time)
+
+                    else:
+                        print(f"GSI {op_type_val} is created! Exiting.")
+                        break
+                else:
+                    print(f"No GSIs exist on table. Exiting.")
+                    break
+
+    @classmethod
     def get_dynamo_fields(cls, tbl_name, pub, sec, region_name, endpoint_url=None):
         """
         Retrieves a list of fields for a given DynamoDB table.
