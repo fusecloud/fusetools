@@ -1570,6 +1570,74 @@ class AWS:
         return df
 
     @classmethod
+    def dataframe_prep_dynamo(cls, df: pd.DataFrame):
+        """
+        Preps a dataframe for DynamoDB inserts
+        :return:
+        """
+        res_data_all_comb = []
+        for idx_, res_ in enumerate(df):
+            res_data_str = \
+                [
+                    # dynamo needs everything to be a string
+                    {w: {'S': str(x)}} for w, x
+                    in zip(res_.columns.to_list(), res_.values.tolist()[0])
+                    if type(x) == str
+                ]
+
+            res_data_map = \
+                [
+                    {w: {'M': x}} for w, x
+                    in zip(res_.columns.to_list(), res_.values.tolist()[0])
+                    if type(x) == dict
+                ]
+
+            res_data_map_new = []
+            for i, map_ in enumerate(res_data_map):
+                # declare param types for map elements
+                res_data_map_keys = list(list(res_data_map[i].values())[0].get("M").keys())
+                res_data_map_vals = list(list(res_data_map[i].values())[0].get("M").values())
+
+                res_data_map_vals_str = [{'S': str(x)} for x in res_data_map_vals if type(x) == str]
+                res_data_map_vals_int = [{'N': str(x)} for x in res_data_map_vals if type(x) == int]
+
+                res_data_map_vals_all = res_data_map_vals_str + res_data_map_vals_int
+
+                res_data_map_new.append({
+                    list(map_)[0]: {
+                        "M": dict(
+                            zip(
+                                res_data_map_keys,
+                                res_data_map_vals_all
+                            )
+                        )
+                    }
+                })
+
+            res_data_int = \
+                [
+                    {w: {'N': str(x)}} for w, x
+                    in zip(res_.columns.to_list(), res_.values.tolist()[0])
+                    if type(x) == int
+                ]
+
+            res_data_all = res_data_str + res_data_int + res_data_map_new
+
+            res_data_all_dict = \
+                dict(
+                    zip(
+                        [list(x)[0] for x in res_data_all],
+                        [list(x.values())[0] for x in res_data_all]
+                    )
+                )
+
+            res_data_all_comb.append(res_data_all_dict)
+
+        load_list = [{"PutRequest": {"Item": x}} for x in res_data_all_comb]
+
+        return load_list, res_data_all_comb
+
+    @classmethod
     def dynamo_to_redshift(cls, cursor, pub, sec, tbl_name_rs, tbl_name_dynamo, readratio=50, fields=False):
         """
         Copies contents of a DynamoDB table to a Redshift table.
