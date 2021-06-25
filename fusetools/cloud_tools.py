@@ -1570,13 +1570,14 @@ class AWS:
         return df
 
     @classmethod
-    def dataframe_prep_dynamo(cls, df: pd.DataFrame):
+    def df_list_prep_dynamo(cls, df_list: List):
         """
-        Preps a dataframe for DynamoDB inserts
+
+        :param df_list: List of pandas DataFrames of same format (columns, datatypes)
         :return:
         """
         res_data_all_comb = []
-        for idx_, res_ in enumerate(df):
+        for idx_, res_ in enumerate(df_list):
             res_data_str = \
                 [
                     # dynamo needs everything to be a string
