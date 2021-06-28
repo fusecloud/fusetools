@@ -1542,6 +1542,8 @@ class AWS:
                     if not last_evaluated_key:
                         break
                 return results
+            else:
+                print("query type must be one of: get_item, scan, filtered_scan, query_on_keys, query_on_index")
 
     @classmethod
     def dynamo_results_to_df(cls, data: List, fields: List):
