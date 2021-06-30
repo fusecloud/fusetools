@@ -15,6 +15,8 @@ from intuitlib.enums import Scopes
 from quickbooks.objects import Purchase, Attachable
 
 
+# pip install python-quickbooks
+
 class Quickbooks:
     """
 
