@@ -1192,6 +1192,8 @@ class AWS:
                     describe_table(TableName=tbl_name)
             )
 
+            # todo: add table creation
+
             if op_type == "index_creation":
                 if r.get("Table").get('GlobalSecondaryIndexes'):
                     index_created = \
