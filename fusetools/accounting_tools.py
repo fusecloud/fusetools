@@ -6,11 +6,13 @@ Accounting tasks and applications.
         :width: 50%
 """
 import webbrowser
+from typing import Optional
+
 import pandas as pd
 from intuitlib.client import AuthClient
 from quickbooks import QuickBooks
 from intuitlib.enums import Scopes
-from quickbooks.objects import Purchase
+from quickbooks.objects import Purchase, Attachable
 
 
 class Quickbooks:
@@ -78,3 +80,23 @@ class Quickbooks:
         purchase_df = pd.concat([pd.DataFrame(x.__dict__.values()).T for x in purchases])
         purchase_df.columns = purchases[0].__dict__.keys()
         return purchase_df
+
+    @classmethod
+    def upload_attachment(cls, obj_type: str, obj_id: int, ext_type: str, filepath: str, filename: Optional[str] = None,
+                          client=False):
+        """
+
+        :param obj_type:
+        :param obj_id:
+        :param ext_type:
+        :param filepath:
+        :param filename:
+        :param client:
+        :return:
+        """
+        attachment = Attachable()
+        attachment.AttachableRef = [{'EntityRef': {'type': obj_type, 'value': obj_id}}]
+        attachment.FileName = filename if filename else filepath.split("/")[-1]
+        attachment._FilePath = filepath
+        attachment.ContentType = ext_type
+        attachment.save(qb=client)
