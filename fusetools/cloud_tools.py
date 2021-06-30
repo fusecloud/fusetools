@@ -765,6 +765,29 @@ class AWS:
         return df
 
     @classmethod
+    def describe_dynamo_tbl(cls, pub, sec, region_name, tbl_name, endpoint_url=None):
+        """
+
+        :param pub:
+        :param sec:
+        :param region_name:
+        :param tbl_name:
+        :param endpoint_url:
+        :return:
+        """
+        dynamodb = boto3.client(
+            'dynamodb',
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec,
+            region_name=region_name,
+            endpoint_url=endpoint_url
+        )
+
+        res = dynamodb.describe_table(TableName=tbl_name)
+
+        return res
+
+    @classmethod
     def delete_dynamo_tbl(cls, pub, sec, region_name, tbl_name, endpoint_url=None):
         """
         Deletes a DynamoDB table.
@@ -1142,6 +1165,62 @@ class AWS:
             return response
 
     @classmethod
+    def wait_dynamo_operation(cls, tbl_name, region, pub, secret, op_type, op_type_val, update_wait_time):
+        """
+
+        :param tbl_name:
+        :param region:
+        :param pub:
+        :param secret:
+        :param op_type:
+        :param op_type_val:
+        :param update_wait_time:
+        :return:
+        """
+        ddb = boto3.resource(
+            "dynamodb",
+            # endpoint_url=endpoint_url,
+            region_name=region,
+            aws_access_key_id=pub,
+            aws_secret_access_key=secret
+        )
+        while True:
+            r = (
+                ddb.
+                    Table(tbl_name).
+                    meta.client.
+                    describe_table(TableName=tbl_name)
+            )
+
+            if op_type == "index_creation":
+                if r.get("Table").get('GlobalSecondaryIndexes'):
+                    index_created = \
+                        [x for x in (
+                            r
+                                .get("Table")
+                                .get('GlobalSecondaryIndexes')
+                        )
+                         if x.get('IndexName') == op_type_val
+                         ]  # [0]
+
+                    if len(index_created) == 0:
+                        print(f"No GSI {op_type_val} exists on the table! Exiting.")
+                        break
+
+                    index_created_status = index_created[0].get("IndexStatus")
+
+                    if index_created_status == 'CREATING':
+                        print(f"GSI {op_type_val} is being created...waiting {update_wait_time} seconds")
+                        time.sleep(update_wait_time)
+
+                    else:
+                        print(f"GSI {op_type_val} is created! Exiting.")
+                        break
+                else:
+                    print(f"No GSIs exist on table. Exiting.")
+                    break
+
+    @classmethod
     def get_dynamo_fields(cls, tbl_name, pub, sec, region_name, endpoint_url=None):
         """
         Retrieves a list of fields for a given DynamoDB table.
@@ -1173,15 +1252,21 @@ class AWS:
     @classmethod
     def query_dynamo(cls, pub, sec, region_name, tbl_name,
                      query_type='scan',
-                     query_search_obj=False,
-                     filter_expression=False,
-                     expression_attr=False,
-                     endpoint_url=None):
+                     endpoint_url=None,
+                     query_search_obj=None,
+                     filter_expression=None,
+                     expression_attr_vals=None,
+                     expression_attr_names=None,
+                     key_condition_expr=None,
+                     index_name=None):
         """
         Downloads data from a DynamoDB table into a Pandas DataFrame.
 
+        :param index_name:
+        :param key_condition_expr:
+        :param expression_attr_names:
+        :param expression_attr_vals:
         :param filter_expression:
-        :param expression_attr:
         :param endpoint_url:
         :param query_search_obj:
         :param query_type: The type of query to perform.
@@ -1189,8 +1274,6 @@ class AWS:
         :param sec: AWS account secret key.
         :param region_name: Region name for DynamoDB table.
         :param tbl_name: Name of DynamoDB table.
-        :param data_format: Specifies type of data structure to return, it not 'list' returns a Pandas DataFrame.
-        :param fields: DynamoDB table fields to pull data from.
         :return: Pandas DataFrame of DynamoDB data.
         """
 
@@ -1230,7 +1313,7 @@ class AWS:
 
             return response
 
-        elif query_type == "query":
+        elif query_type == "filtered_scan":
             results = []
             last_evaluated_key = None
             while True:
@@ -1239,13 +1322,13 @@ class AWS:
                         TableName=tbl_name,
                         ExclusiveStartKey=last_evaluated_key,
                         FilterExpression=filter_expression,
-                        ExpressionAttributeValues=expression_attr
+                        ExpressionAttributeValues=expression_attr_vals
                     )
                 else:
                     response = client.scan(
                         TableName=tbl_name,
                         FilterExpression=filter_expression,
-                        ExpressionAttributeValues=expression_attr
+                        ExpressionAttributeValues=expression_attr_vals
                     )
                 last_evaluated_key = response.get('LastEvaluatedKey')
 
@@ -1255,34 +1338,90 @@ class AWS:
                     break
             return results
 
-        # elif query_type == "query2":
-        #     response = client.query(
-        #
-        #     )
-        #     pass
+        elif query_type == "query_on_keys":
+            results = []
+            last_evaluated_key = None
+            while True:
+                if last_evaluated_key:
+                    response = client.query(
+                        TableName=tbl_name,
+                        ExclusiveStartKey=last_evaluated_key,
+                        ExpressionAttributeNames=expression_attr_names,
+                        ExpressionAttributeValues=expression_attr_vals,
+                        KeyConditionExpression=key_condition_expr
+                    )
+                else:
+                    response = client.query(
+                        TableName=tbl_name,
+                        ExpressionAttributeNames=expression_attr_names,
+                        ExpressionAttributeValues=expression_attr_vals,
+                        KeyConditionExpression=key_condition_expr,
+
+                    )
+                last_evaluated_key = response.get('LastEvaluatedKey')
+
+                results.extend(response['Items'])
+
+                if not last_evaluated_key:
+                    break
+            return results
+
+        elif query_type == "query_on_index":
+            results = []
+            last_evaluated_key = None
+            while True:
+                if last_evaluated_key:
+                    response = client.query(
+                        TableName=tbl_name,
+                        ExclusiveStartKey=last_evaluated_key,
+                        IndexName=index_name,
+                        ExpressionAttributeValues=expression_attr_vals,
+                        ExpressionAttributeNames=expression_attr_names,
+                        KeyConditionExpression=key_condition_expr
+                    )
+                else:
+                    response = client.query(
+                        TableName=tbl_name,
+                        IndexName=index_name,
+                        ExpressionAttributeValues=expression_attr_vals,
+                        ExpressionAttributeNames=expression_attr_names,
+                        KeyConditionExpression=key_condition_expr
+                    )
+                last_evaluated_key = response.get('LastEvaluatedKey')
+
+                results.extend(response['Items'])
+
+                if not last_evaluated_key:
+                    break
+            return results
 
     @classmethod
     async def async_query_dynamo(cls, pub, sec, region_name, tbl_name,
                                  query_type='scan',
+                                 endpoint_url=None,
                                  query_search_obj=False,
                                  filter_expression=False,
                                  expression_attr=False,
-                                 endpoint_url=None):
+                                 expression_attr_names=None,
+                                 expression_attr_vals=None,
+                                 key_condition_expr=None,
+                                 index_name=None):
         """
         Downloads data from a DynamoDB table into a Pandas DataFrame.
 
+        :param index_name:
+        :param key_condition_expr:
+        :param expression_attr_vals:
+        :param expression_attr_names:
         :param filter_expression:
         :param expression_attr:
         :param endpoint_url:
-        :param query_sub_type:
         :param query_search_obj:
         :param query_type: The type of query to perform.
         :param pub: AWS account public key.
         :param sec: AWS account secret key.
         :param region_name: Region name for DynamoDB table.
         :param tbl_name: Name of DynamoDB table.
-        :param data_format: Specifies type of data structure to return, it not 'list' returns a Pandas DataFrame.
-        :param fields: DynamoDB table fields to pull data from.
         :return: Pandas DataFrame of DynamoDB data.
         """
 
@@ -1324,7 +1463,7 @@ class AWS:
 
                 return response
 
-            elif query_type == "query":
+            elif query_type == "filtered_scan":
                 results = []
                 last_evaluated_key = None
                 while True:
@@ -1348,6 +1487,63 @@ class AWS:
                     if not last_evaluated_key:
                         break
                 return results
+
+            elif query_type == "query_on_keys":
+                results = []
+                last_evaluated_key = None
+                while True:
+                    if last_evaluated_key:
+                        response = await client.query(
+                            TableName=tbl_name,
+                            ExclusiveStartKey=last_evaluated_key,
+                            ExpressionAttributeNames=expression_attr_names,
+                            ExpressionAttributeValues=expression_attr_vals,
+                            KeyConditionExpression=key_condition_expr
+                        )
+                    else:
+                        response = await client.query(
+                            TableName=tbl_name,
+                            ExpressionAttributeNames=expression_attr_names,
+                            ExpressionAttributeValues=expression_attr_vals,
+                            KeyConditionExpression=key_condition_expr,
+
+                        )
+                    last_evaluated_key = response.get('LastEvaluatedKey')
+
+                    results.extend(response['Items'])
+
+                    if not last_evaluated_key:
+                        break
+                return results
+
+            elif query_type == "query_on_index":
+                results = []
+                last_evaluated_key = None
+                while True:
+                    if last_evaluated_key:
+                        response = await client.query(
+                            TableName=tbl_name,
+                            ExclusiveStartKey=last_evaluated_key,
+                            IndexName=index_name,
+                            ExpressionAttributeValues=expression_attr_vals,
+                            KeyConditionExpression=key_condition_expr
+                        )
+                    else:
+                        response = await client.query(
+                            TableName=tbl_name,
+                            IndexName=index_name,
+                            ExpressionAttributeValues=expression_attr_vals,
+                            KeyConditionExpression=key_condition_expr
+                        )
+                    last_evaluated_key = response.get('LastEvaluatedKey')
+
+                    results.extend(response['Items'])
+
+                    if not last_evaluated_key:
+                        break
+                return results
+            else:
+                print("query type must be one of: get_item, scan, filtered_scan, query_on_keys, query_on_index")
 
     @classmethod
     def dynamo_results_to_df(cls, data: List, fields: List):
@@ -1374,6 +1570,75 @@ class AWS:
             f_dat_all.append({f: f_dat})
 
         return df
+
+    @classmethod
+    def df_list_prep_dynamo(cls, df_list: List):
+        """
+
+        :param df_list: List of pandas DataFrames of same format (columns, datatypes)
+        :return:
+        """
+        res_data_all_comb = []
+        for idx_, res_ in enumerate(df_list):
+            res_data_str = \
+                [
+                    # dynamo needs everything to be a string
+                    {w: {'S': str(x)}} for w, x
+                    in zip(res_.columns.to_list(), res_.values.tolist()[0])
+                    if type(x) == str
+                ]
+
+            res_data_map = \
+                [
+                    {w: {'M': x}} for w, x
+                    in zip(res_.columns.to_list(), res_.values.tolist()[0])
+                    if type(x) == dict
+                ]
+
+            res_data_map_new = []
+            for i, map_ in enumerate(res_data_map):
+                # declare param types for map elements
+                res_data_map_keys = list(list(res_data_map[i].values())[0].get("M").keys())
+                res_data_map_vals = list(list(res_data_map[i].values())[0].get("M").values())
+
+                res_data_map_vals_str = [{'S': str(x)} for x in res_data_map_vals if type(x) == str]
+                res_data_map_vals_int = [{'N': str(x)} for x in res_data_map_vals if type(x) == int]
+
+                res_data_map_vals_all = res_data_map_vals_str + res_data_map_vals_int
+
+                res_data_map_new.append({
+                    list(map_)[0]: {
+                        "M": dict(
+                            zip(
+                                res_data_map_keys,
+                                res_data_map_vals_all
+                            )
+                        )
+                    }
+                })
+
+            res_data_int = \
+                [
+                    {w: {'N': str(x)}} for w, x
+                    in zip(res_.columns.to_list(), res_.values.tolist()[0])
+                    if type(x) == int
+                ]
+
+            res_data_all = res_data_str + res_data_int + res_data_map_new
+
+            res_data_all_dict = \
+                dict(
+                    zip(
+                        [list(x)[0] for x in res_data_all],
+                        [list(x.values())[0] for x in res_data_all]
+                    )
+                )
+
+            res_data_all_comb.append(res_data_all_dict)
+
+        load_list = [{"PutRequest": {"Item": x}} for x in res_data_all_comb]
+
+        return load_list, res_data_all_comb
 
     @classmethod
     def dynamo_to_redshift(cls, cursor, pub, sec, tbl_name_rs, tbl_name_dynamo, readratio=50, fields=False):

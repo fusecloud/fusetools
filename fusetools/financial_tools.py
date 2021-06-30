@@ -425,6 +425,12 @@ class YahooFinance:
 
             return data
 
+    @classmethod
+    def yf_company_description(cls, ticker: str):
+        q_url = f"https://query1.finance.yahoo.com/v10/finance/quoteSummary/{ticker}?lang=en-US&region=US&modules=assetProfile&corsDomain=finance.yahoo.com"
+        r = requests.get(q_url)
+        return r.json().get("quoteSummary").get("result")[0].get("assetProfile").get("longBusinessSummary")
+
 
 class Finnhub:
     """
