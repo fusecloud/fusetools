@@ -32,6 +32,8 @@ from os.path import splitext
 from pathlib import Path
 import email
 from email.policy import default
+from typing import List
+
 import httplib2
 import pandas as pd
 from apiclient import discovery
@@ -504,6 +506,54 @@ class GSheets:
             tab_ids.append(e.get("properties").get("sheetId"))
 
         return tab_names, tab_ids
+
+    @classmethod
+    def sort_google_sheet(cls, spreadsheet_id, credentials, tab_id, start_row_idx, end_row_idx, start_col_idx,
+                          end_col_idx, sort_idx_list: List, sort_order_list: List):
+
+        service = build('sheets', 'v4', credentials=credentials)
+
+        sort_spec_list = \
+            [{
+                "dimensionIndex": x,
+                "sortOrder": y
+            } for x, y in zip(sort_idx_list, sort_order_list)]
+
+        data = {
+            "requests": [
+                {
+                    "sortRange": {
+                        "range": {
+                            "sheetId": tab_id,
+                            "startRowIndex": start_row_idx,
+                            "endRowIndex": end_row_idx,
+                            "startColumnIndex": start_col_idx,
+                            "endColumnIndex": end_col_idx
+                        },
+                        "sortSpecs": sort_spec_list
+                    }
+                }
+            ]
+        }
+
+        try:
+            res = (
+                service
+                    .spreadsheets()
+                    .batchUpdate(spreadsheetId=spreadsheet_id,
+                                 body=data)
+            ).execute()
+        except:
+            print("Exception....sleeping")
+            time.sleep(3)
+            res = (
+                service
+                    .spreadsheets()
+                    .batchUpdate(spreadsheetId=spreadsheet_id,
+                                 body=data)
+            ).execute()
+
+        return res
 
 
 class GDrive:

@@ -1396,16 +1396,17 @@ class AWS:
                 if not last_evaluated_key:
                     break
             return results
+        else:
+            print("query type must be one of: get_item, scan, filtered_scan, query_on_keys, query_on_index")
 
     @classmethod
     async def async_query_dynamo(cls, pub, sec, region_name, tbl_name,
                                  query_type='scan',
                                  endpoint_url=None,
-                                 query_search_obj=False,
-                                 filter_expression=False,
-                                 expression_attr=False,
-                                 expression_attr_names=None,
+                                 query_search_obj=None,
+                                 filter_expression=None,
                                  expression_attr_vals=None,
+                                 expression_attr_names=None,
                                  key_condition_expr=None,
                                  index_name=None):
         """
@@ -1413,10 +1414,9 @@ class AWS:
 
         :param index_name:
         :param key_condition_expr:
-        :param expression_attr_vals:
         :param expression_attr_names:
+        :param expression_attr_vals:
         :param filter_expression:
-        :param expression_attr:
         :param endpoint_url:
         :param query_search_obj:
         :param query_type: The type of query to perform.
@@ -1474,13 +1474,13 @@ class AWS:
                             TableName=tbl_name,
                             ExclusiveStartKey=last_evaluated_key,
                             FilterExpression=filter_expression,
-                            ExpressionAttributeValues=expression_attr
+                            ExpressionAttributeValues=expression_attr_vals
                         )
                     else:
                         response = await client.scan(
                             TableName=tbl_name,
                             FilterExpression=filter_expression,
-                            ExpressionAttributeValues=expression_attr
+                            ExpressionAttributeValues=expression_attr_vals
                         )
                     last_evaluated_key = response.get('LastEvaluatedKey')
 
@@ -1528,6 +1528,7 @@ class AWS:
                             ExclusiveStartKey=last_evaluated_key,
                             IndexName=index_name,
                             ExpressionAttributeValues=expression_attr_vals,
+                            ExpressionAttributeNames=expression_attr_names,
                             KeyConditionExpression=key_condition_expr
                         )
                     else:
@@ -1535,6 +1536,7 @@ class AWS:
                             TableName=tbl_name,
                             IndexName=index_name,
                             ExpressionAttributeValues=expression_attr_vals,
+                            ExpressionAttributeNames=expression_attr_names,
                             KeyConditionExpression=key_condition_expr
                         )
                     last_evaluated_key = response.get('LastEvaluatedKey')
@@ -1597,6 +1599,13 @@ class AWS:
                     if type(x) == dict
                 ]
 
+            res_data_list = \
+                [
+                    {w: {'L': x}} for w, x
+                    in zip(res_.columns.to_list(), res_.values.tolist()[0])
+                    if type(x) == list
+                ]
+
             res_data_map_new = []
             for i, map_ in enumerate(res_data_map):
                 # declare param types for map elements
@@ -1619,6 +1628,18 @@ class AWS:
                     }
                 })
 
+            res_data_list_new = []
+            for i, list_ in enumerate(res_data_list):
+                vals = list(res_data_list[i].values())[0].get("L")
+                val_types = [type(x) for x in list(res_data_list[i].values())[0].get("L")]
+
+                res_data_list_new.append(
+                    {
+                        list(res_data_list[i].keys())[0]: {
+                            'L': [{'N' if x == int else 'S': str(y)} for x, y in zip(val_types, vals)]}
+                    }
+                )
+
             res_data_int = \
                 [
                     {w: {'N': str(x)}} for w, x
@@ -1626,7 +1647,7 @@ class AWS:
                     if type(x) == int
                 ]
 
-            res_data_all = res_data_str + res_data_int + res_data_map_new
+            res_data_all = res_data_str + res_data_int + res_data_map_new + res_data_list_new
 
             res_data_all_dict = \
                 dict(
