@@ -1239,6 +1239,22 @@ class GMail:
         return msg_df
 
     @classmethod
+    def get_mailbox_labels(cls, service, user_id="me"):
+        """
+
+        :param service:
+        :param user_id:
+        :return:
+        """
+        results = \
+            (service.users()
+             .labels()
+             .list(userId=user_id)
+             .execute())
+
+        return results
+
+    @classmethod
     def download_email_attachment(cls, service, msg_id,
                                   sav_dir=False, user_id="me",
                                   save_memory=False
