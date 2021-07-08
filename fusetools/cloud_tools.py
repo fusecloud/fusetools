@@ -1072,9 +1072,10 @@ class AWS:
         return response
 
     @classmethod
-    def update_dynamo_item(cls, pub, sec, region_name, tbl_name, endpoint_url,
+    def update_dynamo_item(cls, pub, sec, region_name, tbl_name,
                            update_obj, update_expression,
-                           update_attr_names, update_attr_vals
+                           update_attr_names, update_attr_vals,
+                           endpoint_url=None,
                            ):
         """
 
@@ -1107,6 +1108,42 @@ class AWS:
         )
 
         return response
+
+    @classmethod
+    async def async_update_dynamo(cls, pub, sec, region_name, tbl_name,
+                                  update_obj, update_expression,
+                                  update_attr_names, update_attr_vals,
+                                  endpoint_url=None):
+        """
+
+        :param pub:
+        :param sec:
+        :param region_name:
+        :param tbl_name:
+        :param update_obj:
+        :param update_expression:
+        :param update_attr_names:
+        :param update_attr_vals:
+        :param endpoint_url:
+        :return:
+        """
+        session = aiobotocore.get_session()
+        async with session.create_client(
+                service_name='dynamodb',
+                region_name=region_name,
+                aws_access_key_id=pub,
+                aws_secret_access_key=sec,
+                endpoint_url=endpoint_url
+        ) as client:
+            response = client.update_item(
+                Key=update_obj,
+                TableName=tbl_name,
+                UpdateExpression=update_expression,
+                ExpressionAttributeNames=update_attr_names,
+                ExpressionAttributeValues=update_attr_vals
+            )
+
+            return response
 
     @classmethod
     def bulk_update_dynamo(cls, pub, sec, region_name,
