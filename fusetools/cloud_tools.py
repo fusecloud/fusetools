@@ -1110,7 +1110,7 @@ class AWS:
         return response
 
     @classmethod
-    async def async_update_dynamo(cls, pub, sec, region_name, tbl_name,
+    async def async_update_dynamo_item(cls, pub, sec, region_name, tbl_name,
                                   update_obj, update_expression,
                                   update_attr_names, update_attr_vals,
                                   endpoint_url=None):
@@ -1135,7 +1135,7 @@ class AWS:
                 aws_secret_access_key=sec,
                 endpoint_url=endpoint_url
         ) as client:
-            response = client.update_item(
+            response = await client.update_item(
                 Key=update_obj,
                 TableName=tbl_name,
                 UpdateExpression=update_expression,
