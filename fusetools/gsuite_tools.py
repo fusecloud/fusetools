@@ -405,6 +405,75 @@ class GSheets:
         return res
 
     @classmethod
+    def drop_duplicates(cls, spreadsheet_id, sheet_id, credentials,
+                        dup_idx_start, dup_idx_end,
+                        row_idx_start, row_idx_end,
+                        col_idx_start, col_idx_end,
+                        rows_columns="COLUMNS"):
+        """
+
+        :param spreadsheet_id:
+        :param sheet_id:
+        :param credentials:
+        :param dup_idx_start:
+        :param dup_idx_end:
+        :param row_idx_start:
+        :param row_idx_end:
+        :param col_idx_start:
+        :param col_idx_end:
+        :param rows_columns:
+        :return:
+        """
+        service = build('sheets', 'v4', credentials=credentials)
+
+        data = {
+            "requests": {
+                "deleteDuplicates": {
+                    # Removes rows within this range that contain values in the specified columns that are duplicates of values in any previous row. Rows with identical values but different letter cases, formatting, or formulas are considered to be duplicates. This request also removes duplicate rows hidden from view (for example, due to a filter). When removing duplicates, the first instance of each duplicate row scanning from the top downwards is kept in the resulting range. Content outside of the specified range isn't removed, and rows considered duplicates do not have to be adjacent to each other in the range. # Removes rows containing duplicate values in specified columns of a cell range.
+                    "comparisonColumns": [
+                        # The columns in the range to analyze for duplicate values. If no columns are selected then all columns are analyzed for duplicates.
+                        {
+                            # A range along a single dimension on a sheet. All indexes are zero-based. Indexes are half open: the start index is inclusive and the end index is exclusive. Missing indexes indicate the range is unbounded on that side.
+                            "dimension": rows_columns,  # The dimension of the span.
+                            "endIndex": dup_idx_end,  # The end (exclusive) of the span, or not set if unbounded.
+                            "sheetId": sheet_id,  # The sheet this span is on.
+                            "startIndex": dup_idx_start,  # The start (inclusive) of the span, or not set if unbounded.
+                        },
+                    ],
+                    "range": {
+                        # A range on a sheet. All indexes are zero-based. Indexes are half open, i.e. the start index is inclusive and the end index is exclusive -- [start_index, end_index). Missing indexes indicate the range is unbounded on that side. For example, if `"Sheet1"` is sheet ID 0, then: `Sheet1!A1:A1 == sheet_id: 0, start_row_index: 0, end_row_index: 1, start_column_index: 0, end_column_index: 1` `Sheet1!A3:B4 == sheet_id: 0, start_row_index: 2, end_row_index: 4, start_column_index: 0, end_column_index: 2` `Sheet1!A:B == sheet_id: 0, start_column_index: 0, end_column_index: 2` `Sheet1!A5:B == sheet_id: 0, start_row_index: 4, start_column_index: 0, end_column_index: 2` `Sheet1 == sheet_id:0` The start index must always be less than or equal to the end index. If the start index equals the end index, then the range is empty. Empty ranges are typically not meaningful and are usually rendered in the UI as `#REF!`. # The range to remove duplicates rows from.
+                        "endColumnIndex": col_idx_end,  # The end column (exclusive) of the range, or not set if unbounded.
+                        "endRowIndex": row_idx_end,  # The end row (exclusive) of the range, or not set if unbounded.
+                        "sheetId": sheet_id,  # The sheet this range is on.
+                        "startColumnIndex": col_idx_start,  # The start column (inclusive) of the range, or not set if unbounded.
+                        "startRowIndex": row_idx_start,  # The start row (inclusive) of the range, or not set if unbounded.
+                    },
+                }
+            }
+        }
+
+        try:
+            res = (
+                service
+                    .spreadsheets()
+                    .batchUpdate(spreadsheetId=spreadsheet_id,
+                                 body=data)
+            ).execute()
+        except:
+            print("Exception....sleeping")
+            time.sleep(3)
+            res = (
+                service
+                    .spreadsheets()
+                    .batchUpdate(spreadsheetId=spreadsheet_id,
+                                 body=data)
+            ).execute()
+
+        return res
+
+        return res
+
+    @classmethod
     def update_google_sheet_val(cls, spreadsheet_id, tab_id, val, row, col, credentials):
         """
         Updates a google spreadsheet cell with a value.
