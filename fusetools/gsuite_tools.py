@@ -315,6 +315,96 @@ class GSheets:
         return res
 
     @classmethod
+    def update_cell_background_color(cls, spreadsheet_id, sheet_id, row_idx_start, row_idx_end, col_idx_start,
+                                     credentials, color_dict, cell_or_row="CELL", col_idx_end=False):
+        """
+
+        :param spreadsheet_id:
+        :param sheet_id:
+        :param row_idx_start:
+        :param row_idx_end:
+        :param col_idx_start:
+        :param col_idx_end:
+        :param credentials:
+        :param dimension:
+        :return:
+        """
+
+        service = build('sheets', 'v4', credentials=credentials)
+
+        if cell_or_row == 'CELL':
+
+            data = {
+                "requests": [
+                    {
+                        "updateCells": {
+                            "range": {
+                                "sheetId": sheet_id,
+                                "startRowIndex": row_idx_start,
+                                "endRowIndex": row_idx_end,
+                                "startColumnIndex": col_idx_start,
+                                "endColumnIndex": col_idx_end
+                            },
+                            "rows": [
+                                {
+                                    "values": [
+                                        {
+                                            "userEnteredFormat": {
+                                                "backgroundColor": color_dict
+                                            }
+                                        }
+                                    ]
+                                }
+                            ],
+                            "fields": "userEnteredFormat.backgroundColor"
+                        }
+                    }
+                ]
+            }
+
+        else:
+
+            data = {
+                "requests": [
+                    {
+                        "repeatCell": {
+                            "range": {
+                                "sheetId": sheet_id,
+                                "startRowIndex": row_idx_start,
+                                "endRowIndex": row_idx_end,
+                                "startColumnIndex": col_idx_start,
+                            },
+                            "cell": {
+                                "userEnteredFormat": {
+                                    "backgroundColor": color_dict
+                                }
+                            },
+                            "fields": "userEnteredFormat.backgroundColor"
+                        }
+                    }
+                ]
+            }
+
+        try:
+            res = (
+                service
+                    .spreadsheets()
+                    .batchUpdate(spreadsheetId=spreadsheet_id,
+                                 body=data)
+            ).execute()
+        except:
+            print("Exception....sleeping")
+            time.sleep(3)
+            res = (
+                service
+                    .spreadsheets()
+                    .batchUpdate(spreadsheetId=spreadsheet_id,
+                                 body=data)
+            ).execute()
+
+        return res
+
+    @classmethod
     def update_google_sheet_val(cls, spreadsheet_id, tab_id, val, row, col, credentials):
         """
         Updates a google spreadsheet cell with a value.
