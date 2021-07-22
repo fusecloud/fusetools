@@ -1893,6 +1893,127 @@ class AWS:
             raise
         return response
 
+    @classmethod
+    def list_sqs_queues(cls, pub: str, sec: str, region_name: str, max_results: Optional[int]):
+        """
+
+        :param pub:
+        :param sec:
+        :param region_name:
+        :param max_results:
+        :return:
+        """
+        # create the queue
+        sqs_client = boto3.client(
+            'sqs',
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec,
+            region_name=region_name,
+        )
+
+        queues = sqs_client.list_queues(MaxResults=max_results)
+
+        return queues
+
+    @classmethod
+    def create_sqs_queue(cls, pub: str, sec: str, region_name: str):
+        """
+
+        :param pub:
+        :param sec:
+        :param region_name:
+        :return:
+        """
+        # create the queue
+        sqs_client = boto3.client(
+            'sqs',
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec,
+            region_name=region_name,
+        )
+
+        try:
+            response = sqs_client.create_queue(QueueName='test')
+        except Exception as e:
+            response = str(e)
+
+        return response
+
+    @classmethod
+    def get_sqs_messages(cls, pub: str, sec: str, region_name: str, queue_name: str, max_messages: int):
+        """
+
+        :param pub:
+        :param sec:
+        :param region_name:
+        :param queue_name:
+        :param max_messages:
+        :return:
+        """
+        sqs_resource = boto3.resource(
+            'sqs',
+            region_name=region_name,
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec,
+        )
+
+        queue = sqs_resource.get_queue_by_name(QueueName=queue_name)
+
+        messages_all = []
+        while True:
+            messages = queue.receive_messages(MaxNumberOfMessages=max_messages)
+            if len(messages) == 0:
+                break
+            for message in messages:
+                messages_all.append(message.body)
+
+        return messages_all
+
+    @classmethod
+    def write_sqs_messages(cls, pub: str, sec: str, region_name: str, messages: List, queue_url: str,
+                           batch_node: Optional[bool] = False):
+        """
+
+        :param pub:
+        :param sec:
+        :param region_name:
+        :param messages:
+        :param queue_url:
+        :param batch_node:
+        :return:
+        """
+        sqs_client = boto3.client(
+            'sqs',
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec,
+            region_name=region_name,
+        )
+
+        response = None
+        msg_list_id = []
+        msg_list_body = []
+        response_list = []
+        for idx, message in enumerate(messages):
+            if batch_node:
+                msg_list_id.append(idx)
+                msg_list_body.append(message)
+            else:
+                response = sqs_client.send_message(
+                    QueueUrl=queue_url,
+                    MessageBody=message,
+                )
+
+                response_list.append(response)
+
+        if batch_node:
+            response = sqs_client.send_message_batch(
+                QueueUrl=queue_url,
+                Entries=[
+                    {"Id": str(x), "MessageBody": str(y)} for x, y in zip(msg_list_id, msg_list_body)
+                ]
+            )
+
+        return response
 
 class GCP:
     """

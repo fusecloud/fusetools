@@ -8,6 +8,7 @@ Financial tasks and calculations.
         :width: 50%
 """
 
+from typing import List
 import requests
 import fix_yahoo_finance as yf
 from yahoo_finance_async import OHLC, Interval, History
@@ -339,6 +340,21 @@ class ThinkOrSwim:
         df_all = df_all.reset_index(drop=True)
         return df_all
 
+    @classmethod
+    def pull_instrument_fundamentals(cls, authentication_object, ticker_list: List[str]):
+        """
+        Pulls fundamentals for a given stock.
+
+        :param ticker_list:
+        :param authentication_object:
+        :return:
+        """
+
+        r = authentication_object.search_instruments(
+            symbols=[ticker.upper() for ticker in ticker_list],
+            projection=client.Client.Instrument.Projection.FUNDAMENTAL
+        )
+        return r
 
 class YahooFinance:
     """
