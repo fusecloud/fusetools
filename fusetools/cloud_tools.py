@@ -1111,9 +1111,9 @@ class AWS:
 
     @classmethod
     async def async_update_dynamo_item(cls, pub, sec, region_name, tbl_name,
-                                  update_obj, update_expression,
-                                  update_attr_names, update_attr_vals,
-                                  endpoint_url=None):
+                                       update_obj, update_expression,
+                                       update_attr_names, update_attr_vals,
+                                       endpoint_url=None):
         """
 
         :param pub:
@@ -1916,7 +1916,7 @@ class AWS:
         return queues
 
     @classmethod
-    def create_sqs_queue(cls, pub: str, sec: str, region_name: str):
+    def create_sqs_queue(cls, pub: str, sec: str, region_name: str, queue_name: str):
         """
 
         :param pub:
@@ -1933,16 +1933,20 @@ class AWS:
         )
 
         try:
-            response = sqs_client.create_queue(QueueName='test')
+            response = sqs_client.create_queue(QueueName=queue_name)
         except Exception as e:
             response = str(e)
 
         return response
 
     @classmethod
-    def get_sqs_messages(cls, pub: str, sec: str, region_name: str, queue_name: str, max_messages: int):
+    def get_sqs_messages(cls, pub: str, sec: str, region_name: str, queue_name: str,
+                         max_messages: Optional[int] = 10,
+                         wait_time_seconds: Optional[int] = 5
+                         ):
         """
 
+        :param wait_time_seconds:
         :param pub:
         :param sec:
         :param region_name:
@@ -1961,7 +1965,10 @@ class AWS:
 
         messages_all = []
         while True:
-            messages = queue.receive_messages(MaxNumberOfMessages=max_messages)
+            messages = queue.receive_messages(
+                MaxNumberOfMessages=max_messages,
+                WaitTimeSeconds=wait_time_seconds
+            )
             if len(messages) == 0:
                 break
             for message in messages:
@@ -1970,8 +1977,38 @@ class AWS:
         return messages_all
 
     @classmethod
-    def write_sqs_messages(cls, pub: str, sec: str, region_name: str, messages: List, queue_url: str,
-                           batch_node: Optional[bool] = False):
+    def get_sqs_messages2(cls, pub: str, sec: str, region_name: str, queue_url: str,
+                         max_messages: Optional[int] = 10,
+                         # wait_time_seconds: Optional[int] = 5
+                         ):
+
+        # sqs_client = boto3.client('sqs')
+        sqs_client = boto3.client(
+            'sqs',
+            region_name=region_name,
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec,
+        )
+
+        messages = []
+
+        while True:
+            resp = sqs_client.receive_message(
+                QueueUrl=queue_url,
+                AttributeNames=['All'],
+                MaxNumberOfMessages=max_messages
+            )
+
+            try:
+                messages.extend(resp['Messages'])
+            except KeyError:
+                break
+
+        return messages
+
+    @classmethod
+    def send_sqs_messages(cls, pub: str, sec: str, region_name: str, messages: List, queue_url: str,
+                           batch_mode: Optional[bool] = False):
         """
 
         :param pub:
@@ -1979,7 +2016,7 @@ class AWS:
         :param region_name:
         :param messages:
         :param queue_url:
-        :param batch_node:
+        :param batch_mode:
         :return:
         """
         sqs_client = boto3.client(
@@ -1994,7 +2031,7 @@ class AWS:
         msg_list_body = []
         response_list = []
         for idx, message in enumerate(messages):
-            if batch_node:
+            if batch_mode:
                 msg_list_id.append(idx)
                 msg_list_body.append(message)
             else:
@@ -2005,7 +2042,7 @@ class AWS:
 
                 response_list.append(response)
 
-        if batch_node:
+        if batch_mode:
             response = sqs_client.send_message_batch(
                 QueueUrl=queue_url,
                 Entries=[
@@ -2014,6 +2051,7 @@ class AWS:
             )
 
         return response
+
 
 class GCP:
     """
