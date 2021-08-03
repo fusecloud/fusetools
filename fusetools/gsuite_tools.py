@@ -442,11 +442,14 @@ class GSheets:
                     ],
                     "range": {
                         # A range on a sheet. All indexes are zero-based. Indexes are half open, i.e. the start index is inclusive and the end index is exclusive -- [start_index, end_index). Missing indexes indicate the range is unbounded on that side. For example, if `"Sheet1"` is sheet ID 0, then: `Sheet1!A1:A1 == sheet_id: 0, start_row_index: 0, end_row_index: 1, start_column_index: 0, end_column_index: 1` `Sheet1!A3:B4 == sheet_id: 0, start_row_index: 2, end_row_index: 4, start_column_index: 0, end_column_index: 2` `Sheet1!A:B == sheet_id: 0, start_column_index: 0, end_column_index: 2` `Sheet1!A5:B == sheet_id: 0, start_row_index: 4, start_column_index: 0, end_column_index: 2` `Sheet1 == sheet_id:0` The start index must always be less than or equal to the end index. If the start index equals the end index, then the range is empty. Empty ranges are typically not meaningful and are usually rendered in the UI as `#REF!`. # The range to remove duplicates rows from.
-                        "endColumnIndex": col_idx_end,  # The end column (exclusive) of the range, or not set if unbounded.
+                        "endColumnIndex": col_idx_end,
+                        # The end column (exclusive) of the range, or not set if unbounded.
                         "endRowIndex": row_idx_end,  # The end row (exclusive) of the range, or not set if unbounded.
                         "sheetId": sheet_id,  # The sheet this range is on.
-                        "startColumnIndex": col_idx_start,  # The start column (inclusive) of the range, or not set if unbounded.
-                        "startRowIndex": row_idx_start,  # The start row (inclusive) of the range, or not set if unbounded.
+                        "startColumnIndex": col_idx_start,
+                        # The start column (inclusive) of the range, or not set if unbounded.
+                        "startRowIndex": row_idx_start,
+                        # The start row (inclusive) of the range, or not set if unbounded.
                     },
                 }
             }
@@ -711,6 +714,39 @@ class GSheets:
                     .batchUpdate(spreadsheetId=spreadsheet_id,
                                  body=data)
             ).execute()
+
+        return res
+
+    #     todo: delete google sheet
+    @classmethod
+    def delete_google_sheet_tab(cls, spreadsheet_id, tab_id, credentials):
+        """
+        Adds a tab to a Google Sheet.
+
+        :param spreadsheet_id: Id of Google Sheet to add tab to.
+        :param tab_name: Name of the tab to be added.
+        :param credentials: GSuite credentials object.
+        :return: Result object for API call.
+        """
+        data = {'requests': {'deleteSheet': {'sheetId': tab_id}}}
+        service = build('sheets', 'v4', credentials=credentials)
+
+        try:
+            res = service.spreadsheets().batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body=data,
+            ).execute()
+
+        except:
+
+            print("Exception...sleeping")
+            time.sleep(3)
+            res = service.spreadsheets().batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body=data,
+            ).execute()
+
+        print(f"Deleted sheet: {tab_id}")
 
         return res
 
@@ -1269,22 +1305,26 @@ class GMail:
         :return: Pandas DataFrame of received email details.
         """
         # get mailbox items
-        results = (service.users()
-                   .messages()
-                   .list(userId=user_id,
-                         labelIds=['INBOX'] if not label_ids else label_ids).execute()
-                   )
+        results = (
+            service
+                .users()
+                .messages()
+                .list(userId=user_id,
+                      labelIds=['INBOX'] if not label_ids else label_ids).execute()
+        )
 
         results_list = []
         results_list.append(results)
         while results.get("nextPageToken"):
-            results = (service.users()
-                       .messages()
-                       .list(userId=user_id,
-                             labelIds=['INBOX'] if not label_ids else label_ids,
-                             pageToken=results.get("nextPageToken")
-                             ).execute()
-                       )
+            results = (
+                service
+                    .users()
+                    .messages()
+                    .list(userId=user_id,
+                          labelIds=['INBOX'] if not label_ids else label_ids,
+                          pageToken=results.get("nextPageToken")
+                          ).execute()
+            )
             results_list.append(results)
 
         # get messages
@@ -1406,10 +1446,13 @@ class GMail:
         :return:
         """
         results = \
-            (service.users()
-             .labels()
-             .list(userId=user_id)
-             .execute())
+            (
+                service
+                    .users()
+                    .labels()
+                    .list(userId=user_id)
+                    .execute()
+            )
 
         return results
 
