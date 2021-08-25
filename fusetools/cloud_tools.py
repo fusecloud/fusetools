@@ -1916,7 +1916,7 @@ class AWS:
         return queues
 
     @classmethod
-    def create_sqs_queue(cls, pub: str, sec: str, region_name: str, queue_name: str):
+    def create_sqs_queue(cls, pub: str, sec: str, region_name: str, queue_name: str, attr_dict: dict):
         """
 
         :param pub:
@@ -1933,7 +1933,10 @@ class AWS:
         )
 
         try:
-            response = sqs_client.create_queue(QueueName=queue_name)
+            response = sqs_client.create_queue(
+                QueueName=queue_name,
+                Attributes=attr_dict
+            )
         except Exception as e:
             response = str(e)
 
@@ -1978,9 +1981,9 @@ class AWS:
 
     @classmethod
     def get_sqs_messages2(cls, pub: str, sec: str, region_name: str, queue_url: str,
-                         max_messages: Optional[int] = 10,
-                         # wait_time_seconds: Optional[int] = 5
-                         ):
+                          max_messages: Optional[int] = 10,
+                          # wait_time_seconds: Optional[int] = 5
+                          ):
 
         # sqs_client = boto3.client('sqs')
         sqs_client = boto3.client(
@@ -2008,7 +2011,7 @@ class AWS:
 
     @classmethod
     def send_sqs_messages(cls, pub: str, sec: str, region_name: str, messages: List, queue_url: str,
-                           batch_mode: Optional[bool] = False):
+                          batch_mode: Optional[bool] = False):
         """
 
         :param pub:

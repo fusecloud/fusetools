@@ -31,7 +31,6 @@ from colorama import Fore
 from fusetools.transfer_tools import Local as TransferLocal
 from fusetools.text_tools import Export
 from distutils import dir_util, file_util
-import nbsphinx
 
 
 class Local:
@@ -361,6 +360,8 @@ class Sphinx:
 
     .. image:: ../images_source/devops_tools/sphinx.png
     """
+    
+    import nbsphinx
 
     @classmethod
     def build_sphinx_docs(cls, os_type,
