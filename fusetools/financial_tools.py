@@ -25,7 +25,11 @@ try:
     from ib_insync import *
 except:
     pass
-from tda import auth, client
+
+try:
+    from tda import auth, client
+except:
+    pass
 
 
 class Misc:
@@ -355,6 +359,7 @@ class ThinkOrSwim:
             projection=client.Client.Instrument.Projection.FUNDAMENTAL
         )
         return r
+
 
 class YahooFinance:
     """
