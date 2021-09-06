@@ -168,7 +168,14 @@ class GSheets:
         header = gsheet.get("values")[0]
         values = gsheet.get('values')[1:]
 
-        df = pd.DataFrame(values)
+        if len(header) > len(values[0]):
+            values_new = []
+            for idx, v in enumerate(values):
+                values_new.append(v + ['' for x in header[len(v):]])
+        else:
+            values_new = values
+
+        df = pd.DataFrame(values_new)
         df = df[df.columns[:len(header)]]
         df.columns = header
 
