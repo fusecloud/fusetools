@@ -6,14 +6,14 @@ import os
 class Twitter:
 
     @classmethod
-    def pull_user_likes(cls, screen_name, twtr_api_key, twtr_api_secret, count=100):
+    def pull_user_likes(cls, screen_name, twtr_api_key, twtr_api_secret, **kwargs):
         # TWITTER AUTH
         print("Authenticating to Twitter")
 
         screen_name = screen_name
         auth = tweepy.AppAuthHandler(twtr_api_key, twtr_api_secret)
         api = tweepy.API(auth)
-        alltweets = api.favorites(screen_name=screen_name, count=count)
+        alltweets = api.favorites(screen_name=screen_name, **kwargs)
 
         tweet_df = \
             pd.DataFrame({
