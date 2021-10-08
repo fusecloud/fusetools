@@ -18,18 +18,18 @@ import json
 
 try:
     from alpha_vantage.timeseries import TimeSeries
-except:
-    pass
+except Exception as e:
+    print(str(e))
 
 try:
     from ib_insync import *
-except:
-    pass
+except Exception as e:
+    print(str(e))
 
 try:
     from tda import auth, client
-except:
-    pass
+except Exception as e:
+    print(str(e))
 
 
 class Misc:
