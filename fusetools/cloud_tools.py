@@ -847,10 +847,12 @@ class AWS:
         return table
 
     @classmethod
-    def load_dynamo(cls, pub, sec, region_name, tbl_name, d, load_type=False, endpoint_url=None):
+    def load_dynamo(cls, pub, sec, region_name, tbl_name, d, load_type=False, endpoint_url=None,
+                    condition_expression=None):
         """
         Inserts either a Dictionary or Pandas DataFrame into DynamoDB.
 
+        :param condition_expression:
         :param endpoint_url: Endpoint if not on AWS (defaults to None)
         :param pub: AWS account public key.
         :param sec: AWS account secret key.
@@ -875,11 +877,19 @@ class AWS:
             # dictionary format should follow this example:
             # {'CountryId': {'S': '2'}, 'Name': {'S': 'Australia'}, 'test': {'S': 'test'}}
             # where countryID is the table partition key
+            if condition_expression:
+                response = dynamodb.put_item(
+                    TableName=tbl_name,
+                    Item=d,
+                    ConditionExpression=condition_expression
+                    # 'attribute_not_exists(foo) AND attribute_not_exists(bar)'
+                )
+            else:
+                response = dynamodb.put_item(
+                    TableName=tbl_name,
+                    Item=d
+                )
 
-            response = dynamodb.put_item(
-                TableName=tbl_name,
-                Item=d
-            )
 
         elif isinstance(d, pd.DataFrame):
 
