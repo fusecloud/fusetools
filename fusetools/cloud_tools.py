@@ -812,6 +812,45 @@ class AWS:
         return table
 
     @classmethod
+    def dynamo_delete_items(cls, pub, sec, region_name, tbl_name, key_name,
+                            delete_field_name: Optional[str] = None,
+                            delete_field_val: Optional[str] = None):
+
+        ddb = boto3.resource(
+            "dynamodb",
+            region_name=region_name,
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec
+        )
+
+        try:
+            flag = False
+            table = ddb.Table(tbl_name)
+            scan = table.scan()
+            while not flag:
+                with table.batch_writer() as batch:
+                    for each in scan['Items']:
+
+                        if delete_field_name and delete_field_val:
+                            if each[delete_field_name] == delete_field_val:
+                                batch.delete_item(
+                                    Key={
+                                        key_name: each[key_name]
+                                    }
+                                )
+
+                        else:
+                            batch.delete_item(
+                                Key={
+                                    key_name: each[key_name]
+                                }
+                            )
+
+                    flag = True
+        except Exception as e:
+            print(e)
+
+    @classmethod
     def make_dynamo_tbl(cls, pub: str, sec: str, region_name: str, tbl_name: str,
                         key_schema, attribute_definitions,
                         provisioned_throughput, endpoint_url=None):

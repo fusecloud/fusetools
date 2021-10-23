@@ -182,6 +182,34 @@ class GSheets:
         return df
 
     @classmethod
+    def bulk_add_google_sheet_comment(cls, spreadsheet_id, request_list, credentials):
+        """
+
+        :param spreadsheet_id:
+        :param tab_id:
+        :param credentials:
+        :return:
+        """
+        service = build('sheets', 'v4', credentials=credentials)
+        data = {
+            "requests": request_list
+        }
+        try:
+            res = service.spreadsheets().batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body=data,
+            ).execute()
+        except:
+            print("Exception....sleeping")
+            time.sleep(3)
+            res = service.spreadsheets().batchUpdate(
+                spreadsheetId=spreadsheet_id,
+                body=data,
+            ).execute()
+
+        return res
+
+    @classmethod
     def add_google_sheet_comment(cls, spreadsheet_id, tab_id, note_contents, start_row_idx, end_row_idx, start_col_idx,
                                  end_col_idx, credentials):
         """
@@ -391,6 +419,50 @@ class GSheets:
                     }
                 ]
             }
+
+        try:
+            res = (
+                service
+                    .spreadsheets()
+                    .batchUpdate(spreadsheetId=spreadsheet_id,
+                                 body=data)
+            ).execute()
+        except:
+            print("Exception....sleeping")
+            time.sleep(3)
+            res = (
+                service
+                    .spreadsheets()
+                    .batchUpdate(spreadsheetId=spreadsheet_id,
+                                 body=data)
+            ).execute()
+
+        return res
+
+    @classmethod
+    def bulk_update_cell_background_color(
+            cls,
+            spreadsheet_id,
+            credentials,
+            request_list):
+        """
+
+        :param spreadsheet_id:
+        :param sheet_id:
+        :param row_idx_start:
+        :param row_idx_end:
+        :param col_idx_start:
+        :param col_idx_end:
+        :param credentials:
+        :param dimension:
+        :return:
+        """
+
+        service = build('sheets', 'v4', credentials=credentials)
+
+        data = {
+            "requests": request_list
+        }
 
         try:
             res = (
