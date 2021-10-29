@@ -92,7 +92,7 @@ class Postgres:
     """
 
     @classmethod
-    def eng_postgres(cls, usr, pwd, port):
+    def eng_postgres(cls, usr, pwd, port, host=None):
         """
         Create a Postgres database engine object.
 
@@ -101,10 +101,12 @@ class Postgres:
         :param port: Port for Postgres database.
         :return: A Postgres database connection.
         """
+        host_name = host if host else "localhost"
+
         engine = create_engine(
             f'postgresql://{usr}:' + \
             f"{pwd}" + \
-            f'@localhost:{port}/{usr}')
+            f'@{host_name}:{port}/{usr}')
 
         return engine
 
