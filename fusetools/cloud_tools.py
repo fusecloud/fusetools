@@ -14,7 +14,7 @@ import io
 import os
 import sys
 from typing import List, Optional
-
+from botocore.config import Config
 import aiobotocore
 import asyncio
 import boto3
@@ -417,6 +417,43 @@ class AWS:
         s3 = session.resource('s3')
         response = s3.create_bucket(Bucket=bucket_name)
         return response
+
+    @classmethod
+    def create_s3_presigned_url(cls, pub, sec, region_name,
+                                bucket_name,
+                                key_name,
+                                client_method="get_object",
+                                expry_seconds=3600
+                                ):
+        """
+        Creates a pre-signed URL for an S3 bucket object.
+
+        :param pub:
+        :param sec:
+        :param region_name:
+        :param bucket_name:
+        :param key_name:
+        :param client_method:
+        :param expry_seconds:
+        :return:
+        """
+        s3_client = boto3.client(
+            's3',
+            region_name=region_name,
+            config=Config(signature_version='s3v4'),
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec
+        )
+
+        url = s3_client.generate_presigned_url(
+            client_method,
+            Params={
+                'Bucket': bucket_name,
+                'Key': key_name
+            },
+            ExpiresIn=expry_seconds)
+
+        return url
 
     @classmethod
     def s3_to_s3(cls, pub, sec, bucket_from, bucket_to, from_key, to_key):
