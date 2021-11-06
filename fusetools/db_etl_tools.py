@@ -557,7 +557,10 @@ class Postgres:
 
         update = ""
         for idx, col in zip(col_list, val_list):
-            update = update + idx + f"='{col}',"
+            if type(col) in [str]:
+                update = update + idx + f"='{col}',"
+            else:
+                update = update + idx + f"={col},"
 
         update = update[:update.rfind(",")]
 
