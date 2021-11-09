@@ -18,11 +18,12 @@ from typing import List, Optional
 import aiobotocore
 import asyncio
 import boto3
+from aiobotocore.session import get_session
 
 import pandas as pd
 from io import StringIO
 import time
-import boto3
+
 import firebase_admin
 from botocore.exceptions import ClientError
 from firebase_admin import credentials, firestore, db, storage
@@ -1044,7 +1045,7 @@ class AWS:
         :param endpoint_url:
         :return:
         """
-        session = aiobotocore.get_session()
+        session = get_session()
         async with session.create_client(
                 service_name='dynamodb',
                 region_name=region_name,
@@ -1176,7 +1177,8 @@ class AWS:
         :param endpoint_url:
         :return:
         """
-        session = aiobotocore.get_session()
+        # session = aiobotocore.get_session()
+        session = get_session()
         async with session.create_client(
                 service_name='dynamodb',
                 region_name=region_name,
@@ -1236,7 +1238,8 @@ class AWS:
         :return:
         """
 
-        session = aiobotocore.get_session()
+        # session = aiobotocore.get_session()
+        session = get_session()
         async with session.create_client(
                 service_name='dynamodb',
                 region_name=region_name,
@@ -1513,7 +1516,8 @@ class AWS:
         :return: Pandas DataFrame of DynamoDB data.
         """
 
-        session = aiobotocore.get_session()
+        # session = aiobotocore.get_session()
+        session = get_session()
 
         async with session.create_client(
                 service_name='dynamodb',
