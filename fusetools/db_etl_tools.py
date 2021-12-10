@@ -777,7 +777,7 @@ class Postgres:
         return sql
 
     @classmethod
-    def insert_df_pg(cls, cursor, conn, df, tbl_name):
+    def insert_df_pg(cls, cursor, conn, df, tbl_name, return_statement=None):
         """
         Executes an INSERT INTO statement for a given Pandas DataFrame into a Postgres table..
 
@@ -794,12 +794,20 @@ class Postgres:
         columns = ",".join(df_columns)
         values = "VALUES({})".format(",".join(["%s" for _ in df_columns]))
         insert_stmt = "INSERT INTO {} ({}) {}".format(tbl_name, columns, values)
+        if return_statement:
+            insert_stmt = insert_stmt + return_statement
         rptg_tstart = datetime.now()
         psycopg2.extras.execute_batch(cursor, insert_stmt, df_load.values)
+
         conn.commit()
         rptg_tend = datetime.now()
         tdelta = rptg_tend - rptg_tstart
         tdelta = tdelta.total_seconds() / 60
+
+        if return_statement:
+            res = cursor.fetchone()
+            return res
+
         print(Fore.RED + f"Runtime: {tdelta}")
 
     @classmethod
@@ -1349,7 +1357,6 @@ class Redshift:
         )
         '''
         return sql
-
 
     @classmethod
     def upsert_tbl_rs(cls, src_tbl, tgt_tbl, src_join_cols, src_insert_cols,

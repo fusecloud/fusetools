@@ -9,7 +9,9 @@ Communication services.
     .. |pic3| image:: ../images_source/comm_tools/sendgrid1.png
         :width: 30%
 """
+from pathlib import Path
 
+import jinja2
 from twilio.rest import Client
 import pandas as pd
 from sendgrid import SendGridAPIClient
@@ -186,3 +188,18 @@ class SendGrid:
         response = sg.send(message)
 
         return response
+
+
+def build_html(template_file: str, data: dict) -> str:
+    """
+    :param template_folder: Folder containing email templates
+    :param template_file: Email template to use
+    :param data: Dictionary of key/value pairs for data to populate in template
+    :return: HTML for email template
+    """
+    loader = jinja2.FileSystemLoader(template_file)
+    env = jinja2.Environment(loader=loader)
+    template: jinja2.Template = loader.load(env, template_file, None)
+    html = template.render(**data)
+
+    return html
