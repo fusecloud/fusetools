@@ -32,7 +32,7 @@ from os.path import splitext
 from pathlib import Path
 import email
 from email.policy import default
-from typing import List
+from typing import List, Optional
 
 import httplib2
 import pandas as pd
@@ -85,7 +85,7 @@ class GSheets:
         return service, credentials
 
     @classmethod
-    def make_google_sheet(cls, ss_name, credentials):
+    def make_google_sheet(cls, ss_name, credentials, req_limit=1):
         """
         Creates a Google Sheet in one's GSuite account.
 
@@ -98,19 +98,20 @@ class GSheets:
             "properties": {"title": ss_name}
         }
 
-        try:
-            sheet = SHEETS.spreadsheets().create(body=data).execute()
-        except:
-            print("Exception...sleeping")
-            time.sleep(3)
-            sheet = SHEETS.spreadsheets().create(body=data).execute()
-
-        sheet_id = sheet.get("spreadsheetId")
-        print(f"Created wb: {ss_name}")
-        return sheet_id
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                sheet = SHEETS.spreadsheets().create(body=data).execute()
+                sheet_id = sheet.get("spreadsheetId")
+                print(f"Created wb: {ss_name}")
+                return sheet_id
+            except:
+                print("Exception...sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
-    def add_google_sheet_tab(cls, spreadsheet_id, tab_name, credentials):
+    def add_google_sheet_tab(cls, spreadsheet_id, tab_name, credentials, req_limit=1):
         """
         Adds a tab to a Google Sheet.
 
@@ -122,27 +123,23 @@ class GSheets:
         data = {'requests': [{'addSheet': {'properties': {'title': tab_name}}}]}
         service = build('sheets', 'v4', credentials=credentials)
 
-        try:
-            res = service.spreadsheets().batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body=data,
-            ).execute()
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = service.spreadsheets().batchUpdate(
+                    spreadsheetId=spreadsheet_id,
+                    body=data,
+                ).execute()
+                print(f"Added sheet: {tab_name}")
+                return res
 
-        except:
-
-            print("Exception...sleeping")
-            time.sleep(3)
-            res = service.spreadsheets().batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body=data,
-            ).execute()
-
-        print(f"Added sheet: {tab_name}")
-
-        return res
+            except:
+                print("Exception...sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
-    def get_google_sheet(cls, spreadsheet_id, range_name, credentials, tab_name=False):
+    def get_google_sheet(cls, spreadsheet_id, range_name, credentials, tab_name=False, req_limit=1):
         """
         Gets data from a Google Sheet.
 
@@ -155,15 +152,23 @@ class GSheets:
 
         service = build('sheets', 'v4', credentials=credentials)
 
-        # Call the Sheets API
-        sheet = service.spreadsheets()
-        if tab_name:
-            gsheet = sheet.values().get(spreadsheetId=spreadsheet_id,
-                                        range=tab_name + "!" + range_name).execute()
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                # Call the Sheets API
+                sheet = service.spreadsheets()
+                if tab_name:
+                    gsheet = sheet.values().get(spreadsheetId=spreadsheet_id,
+                                                range=tab_name + "!" + range_name).execute()
 
-        else:
-            gsheet = sheet.values().get(spreadsheetId=spreadsheet_id,
-                                        range=range_name).execute()
+                else:
+                    gsheet = sheet.values().get(spreadsheetId=spreadsheet_id,
+                                                range=range_name).execute()
+                break
+            except:
+                print("Exception...sleeping")
+                time.sleep(3)
+                req_count += 1
 
         header = gsheet.get("values")[0]
         values = gsheet.get('values')[1:]
@@ -182,7 +187,7 @@ class GSheets:
         return df
 
     @classmethod
-    def bulk_add_google_sheet_comment(cls, spreadsheet_id, request_list, credentials):
+    def bulk_add_google_sheet_comment(cls, spreadsheet_id, request_list, credentials, req_limit=1):
         """
 
         :param spreadsheet_id:
@@ -194,24 +199,23 @@ class GSheets:
         data = {
             "requests": request_list
         }
-        try:
-            res = service.spreadsheets().batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body=data,
-            ).execute()
-        except:
-            print("Exception....sleeping")
-            time.sleep(3)
-            res = service.spreadsheets().batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body=data,
-            ).execute()
 
-        return res
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = service.spreadsheets().batchUpdate(
+                    spreadsheetId=spreadsheet_id,
+                    body=data,
+                ).execute()
+                return res
+            except:
+                print("Exception....sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
     def add_google_sheet_comment(cls, spreadsheet_id, tab_id, note_contents, start_row_idx, end_row_idx, start_col_idx,
-                                 end_col_idx, credentials):
+                                 end_col_idx, credentials, req_limit=1):
         """
 
         :param spreadsheet_id:
@@ -245,23 +249,21 @@ class GSheets:
                 }
             ]
         }
-        try:
-            res = service.spreadsheets().batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body=data,
-            ).execute()
-        except:
-            print("Exception....sleeping")
-            time.sleep(3)
-            res = service.spreadsheets().batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body=data,
-            ).execute()
-
-        return res
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = service.spreadsheets().batchUpdate(
+                    spreadsheetId=spreadsheet_id,
+                    body=data,
+                ).execute()
+                return res
+            except:
+                print("Exception....sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
-    def freeze_rows_cols(cls, spreadsheet_id, tab_id, freeze_idx, credentials, rows=True):
+    def freeze_rows_cols(cls, spreadsheet_id, tab_id, freeze_idx, credentials, rows=True, req_limit=1):
         """
         Freezes the rows of a given Google Sheet.
 
@@ -291,23 +293,22 @@ class GSheets:
             ]
         }
 
-        try:
-            res = service.spreadsheets().batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body=data,
-            ).execute()
-        except:
-            print("Exception....sleeping")
-            time.sleep(3)
-            res = service.spreadsheets().batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body=data,
-            ).execute()
-
-        return res
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = service.spreadsheets().batchUpdate(
+                    spreadsheetId=spreadsheet_id,
+                    body=data,
+                ).execute()
+                return res
+            except:
+                print("Exception....sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
-    def group_sheet_cols_rows(cls, spreadsheet_id, tab_id, start_idx, end_idx, credentials, rows_columns="ROWS"):
+    def group_sheet_cols_rows(cls, spreadsheet_id, tab_id, start_idx, end_idx, credentials, rows_columns="ROWS",
+                              req_limit=1):
         """
 
         :param spreadsheet_id:
@@ -334,24 +335,22 @@ class GSheets:
             ]
         }
 
-        try:
-            res = service.spreadsheets().batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body=data,
-            ).execute()
-        except:
-            print("Exception....sleeping")
-            time.sleep(3)
-            res = service.spreadsheets().batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body=data,
-            ).execute()
-
-        return res
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = service.spreadsheets().batchUpdate(
+                    spreadsheetId=spreadsheet_id,
+                    body=data,
+                ).execute()
+                return res
+            except:
+                print("Exception....sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
     def update_cell_background_color(cls, spreadsheet_id, sheet_id, row_idx_start, row_idx_end, col_idx_start,
-                                     credentials, color_dict, cell_or_row="CELL", col_idx_end=False):
+                                     credentials, color_dict, cell_or_row="CELL", col_idx_end=False, req_limit=1):
         """
 
         :param spreadsheet_id:
@@ -420,31 +419,29 @@ class GSheets:
                 ]
             }
 
-        try:
-            res = (
-                service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-            ).execute()
-        except:
-            print("Exception....sleeping")
-            time.sleep(3)
-            res = (
-                service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-            ).execute()
-
-        return res
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = (
+                    service
+                        .spreadsheets()
+                        .batchUpdate(spreadsheetId=spreadsheet_id,
+                                     body=data)
+                ).execute()
+                return res
+            except:
+                print("Exception....sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
     def bulk_update_cell_background_color(
             cls,
             spreadsheet_id,
             credentials,
-            request_list):
+            request_list,
+            req_limit=1
+    ):
         """
 
         :param spreadsheet_id:
@@ -464,31 +461,29 @@ class GSheets:
             "requests": request_list
         }
 
-        try:
-            res = (
-                service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-            ).execute()
-        except:
-            print("Exception....sleeping")
-            time.sleep(3)
-            res = (
-                service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-            ).execute()
-
-        return res
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = (
+                    service
+                        .spreadsheets()
+                        .batchUpdate(spreadsheetId=spreadsheet_id,
+                                     body=data)
+                ).execute()
+                return res
+            except:
+                print("Exception....sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
     def drop_duplicates(cls, spreadsheet_id, sheet_id, credentials,
                         dup_idx_start, dup_idx_end,
                         row_idx_start, row_idx_end,
                         col_idx_start, col_idx_end,
-                        rows_columns="COLUMNS"):
+                        rows_columns="COLUMNS",
+                        req_limit=1
+                        ):
         """
 
         :param spreadsheet_id:
@@ -534,29 +529,24 @@ class GSheets:
             }
         }
 
-        try:
-            res = (
-                service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-            ).execute()
-        except:
-            print("Exception....sleeping")
-            time.sleep(3)
-            res = (
-                service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-            ).execute()
-
-        return res
-
-        return res
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = (
+                    service
+                        .spreadsheets()
+                        .batchUpdate(spreadsheetId=spreadsheet_id,
+                                     body=data)
+                ).execute()
+                return res
+            except:
+                print("Exception....sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
-    def update_google_sheet_val(cls, spreadsheet_id, tab_id, val, row, col, credentials):
+    def update_google_sheet_val(cls, spreadsheet_id, tab_id, val, row, col, credentials,
+                                req_limit=1):
         """
         Updates a google spreadsheet cell with a value.
 
@@ -591,27 +581,24 @@ class GSheets:
         }
         }
 
-        try:
-            res = (
-                service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-            ).execute()
-        except:
-            print("Exception....sleeping")
-            time.sleep(3)
-            res = (
-                service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-            ).execute()
-
-        return res
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = (
+                    service
+                        .spreadsheets()
+                        .batchUpdate(spreadsheetId=spreadsheet_id,
+                                     body=data)
+                ).execute()
+                return res
+            except:
+                print("Exception....sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
-    def update_google_sheet_df(cls, spreadsheet_id, df, data_range, credentials, header=False):
+    def update_google_sheet_df(cls, spreadsheet_id, df, data_range, credentials, header=False,
+                               req_limit=1):
         """
         Uploads a Pandas DataFrame to a Google Sheet.
 
@@ -635,44 +622,49 @@ class GSheets:
 
         body = dict({"values": write_df})
 
-        try:
-            res = service.spreadsheets().values().append(
-                spreadsheetId=spreadsheet_id, range=data_range,
-                valueInputOption=value_input_option,
-                # insertDataOption=insert_data_option,
-                body=body).execute()
-        except:
-            print("Exception...sleeping")
-            time.sleep(3)
-            res = service.spreadsheets().values().append(
-                spreadsheetId=spreadsheet_id, range=range,
-                valueInputOption=value_input_option,
-                # insertDataOption=insert_data_option,
-                body=body).execute()
-
-        return res
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = service.spreadsheets().values().append(
+                    spreadsheetId=spreadsheet_id, range=data_range,
+                    valueInputOption=value_input_option,
+                    # insertDataOption=insert_data_option,
+                    body=body).execute()
+                return res
+            except:
+                print("Exception...sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
-    def clear_google_sheet_data(cls, spreadsheet_id, range, credentials):
+    def clear_google_sheet_data(cls, spreadsheet_id, range, credentials,
+                                req_limit=1):
         service = build('sheets', 'v4', credentials=credentials)
 
         body = {}
-        res = (
-            service
-                .spreadsheets()
-                .values()
-                .clear(
-                spreadsheetId=spreadsheet_id,
-                range=range,
-                body=body
-            )
-                .execute()
-        )
-
-        return res
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = (
+                    service
+                        .spreadsheets()
+                        .values()
+                        .clear(
+                        spreadsheetId=spreadsheet_id,
+                        range=range,
+                        body=body
+                    )
+                        .execute()
+                )
+                return res
+            except:
+                print("Exception...sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
-    def delete_google_sheet_data(cls, spreadsheet_id, sheet_id, idx_start, idx_end, credentials, dimension="ROWS"):
+    def delete_google_sheet_data(cls, spreadsheet_id, sheet_id, idx_start, idx_end, credentials, dimension="ROWS",
+                                 req_limit=1):
         """
         Deletes data from a Google Sheet.
 
@@ -698,19 +690,26 @@ class GSheets:
         ]
 
         request = {"requests": spreadsheet_data}
-        res = (
-            service
-                .spreadsheets()
-                .batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body=request
-            ).execute()
-        )
-
-        return res
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = (
+                    service
+                        .spreadsheets()
+                        .batchUpdate(
+                        spreadsheetId=spreadsheet_id,
+                        body=request
+                    ).execute()
+                )
+                return res
+            except:
+                print("Exception...sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
-    def get_google_sheet_metadata(cls, spreadsheet_id, credentials, include_grid_data=False, ranges=False):
+    def get_google_sheet_metadata(cls, spreadsheet_id, credentials, include_grid_data=False, ranges=False,
+                                  req_limit=1):
         """
 
         :param include_grid_data:
@@ -720,17 +719,24 @@ class GSheets:
         :return:
         """
         service = build('sheets', 'v4', credentials=credentials)
-        request = (
-            service
-                .spreadsheets()
-                .get(spreadsheetId=spreadsheet_id, includeGridData=include_grid_data, ranges=ranges)
-        )
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                request = (
+                    service
+                        .spreadsheets()
+                        .get(spreadsheetId=spreadsheet_id, includeGridData=include_grid_data, ranges=ranges)
+                )
 
-        response = request.execute()
-        return response
+                response = request.execute()
+                return response
+            except:
+                print("Exception...sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
-    def get_google_sheet_tabs(cls, spreadsheet_id, credentials):
+    def get_google_sheet_tabs(cls, spreadsheet_id, credentials, req_limit=1):
         """
         Get the names and IDs of tabs for a given Google Sheet.
 
@@ -739,7 +745,16 @@ class GSheets:
         :return: Names and IDs of tabs for a given Google Sheet.
         """
         service = build('sheets', 'v4', credentials=credentials)
-        sheet_metadata = service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                sheet_metadata = service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+                break
+            except:
+                print("Exception...sleeping")
+                time.sleep(3)
+                req_count += 1
+
         tab_names = []
         tab_ids = []
         for idx, e in enumerate(sheet_metadata.get("sheets")):
@@ -750,7 +765,7 @@ class GSheets:
 
     @classmethod
     def sort_google_sheet(cls, spreadsheet_id, credentials, tab_id, start_row_idx, end_row_idx, start_col_idx,
-                          end_col_idx, sort_idx_list: List, sort_order_list: List):
+                          end_col_idx, sort_idx_list: List, sort_order_list: List, req_limit=1):
 
         service = build('sheets', 'v4', credentials=credentials)
 
@@ -777,28 +792,24 @@ class GSheets:
             ]
         }
 
-        try:
-            res = (
-                service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-            ).execute()
-        except:
-            print("Exception....sleeping")
-            time.sleep(3)
-            res = (
-                service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-            ).execute()
-
-        return res
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = (
+                    service
+                        .spreadsheets()
+                        .batchUpdate(spreadsheetId=spreadsheet_id,
+                                     body=data)
+                ).execute()
+                return res
+            except:
+                print("Exception....sleeping")
+                time.sleep(3)
+                req_count += 1
 
     #     todo: delete google sheet
     @classmethod
-    def delete_google_sheet_tab(cls, spreadsheet_id, tab_id, credentials):
+    def delete_google_sheet_tab(cls, spreadsheet_id, tab_id, credentials, req_limit=1):
         """
         Adds a tab to a Google Sheet.
 
@@ -810,24 +821,20 @@ class GSheets:
         data = {'requests': {'deleteSheet': {'sheetId': tab_id}}}
         service = build('sheets', 'v4', credentials=credentials)
 
-        try:
-            res = service.spreadsheets().batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body=data,
-            ).execute()
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = service.spreadsheets().batchUpdate(
+                    spreadsheetId=spreadsheet_id,
+                    body=data,
+                ).execute()
+                return res
+            except:
+                print("Exception...sleeping")
+                time.sleep(3)
+                req_count += 1
 
-        except:
-
-            print("Exception...sleeping")
-            time.sleep(3)
-            res = service.spreadsheets().batchUpdate(
-                spreadsheetId=spreadsheet_id,
-                body=data,
-            ).execute()
-
-        print(f"Deleted sheet: {tab_id}")
-
-        return res
+            print(f"Deleted sheet: {tab_id}")
 
 
 class GDrive:
@@ -1262,7 +1269,8 @@ class GMail:
                    attachments_bytes=False,
                    attachment_types=False,
                    attachment_names=False,
-                   message_is_html=False):
+                   message_is_html=False,
+                   req_limit=1):
         """
         Sends an email via GMail.
 
@@ -1362,18 +1370,23 @@ class GMail:
                         .encode())
                     .decode())}
 
-        message = (
-            service
-                .users()
-                .messages()
-                .send(userId="me", body=msg)
-                .execute()
-        )
-
-        return message
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                message = (
+                    service
+                        .users()
+                        .messages()
+                        .send(userId="me", body=msg)
+                        .execute()
+                )
+                return message
+            except:
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
-    def get_emails(cls, service, label_ids=False, custom_tree_branch_list=False, user_id="me"):
+    def get_emails(cls, service, label_ids=False, custom_tree_branch_list=False, user_id="me", req_limit=1):
         """
         Returns a Pandas DataFrame of received email details.
 
@@ -1384,26 +1397,43 @@ class GMail:
         :return: Pandas DataFrame of received email details.
         """
         # get mailbox items
-        results = (
-            service
-                .users()
-                .messages()
-                .list(userId=user_id,
-                      labelIds=['INBOX'] if not label_ids else label_ids).execute()
-        )
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                results = (
+                    service
+                        .users()
+                        .messages()
+                        .list(userId=user_id,
+                              labelIds=['INBOX'] if not label_ids else label_ids).execute()
+                )
+                break
+            except:
+                print("Exception...sleeping")
+                time.sleep(3)
+                req_count += 1
 
         results_list = []
         results_list.append(results)
         while results.get("nextPageToken"):
-            results = (
-                service
-                    .users()
-                    .messages()
-                    .list(userId=user_id,
-                          labelIds=['INBOX'] if not label_ids else label_ids,
-                          pageToken=results.get("nextPageToken")
-                          ).execute()
-            )
+            req_count = 0
+            while req_count < req_limit:
+                try:
+                    results = (
+                        service
+                            .users()
+                            .messages()
+                            .list(userId=user_id,
+                                  labelIds=['INBOX'] if not label_ids else label_ids,
+                                  pageToken=results.get("nextPageToken")
+                                  ).execute()
+                    )
+                    break
+                except:
+                    print("Exception...sleeping")
+                    time.sleep(3)
+                    req_count += 1
+
             results_list.append(results)
 
         # get messages
@@ -1425,15 +1455,23 @@ class GMail:
 
         # for each message, pull data elements
         for idx, message in enumerate(messages_all):
-            msg = (service
-                   .users()
-                   .messages()
-                   .get(userId=user_id,
-                        id=message['id'],
-                        format="full"
-                        )
-                   .execute()
-                   )
+            req_count = 0
+            while req_count < req_limit:
+                try:
+                    msg = (service
+                           .users()
+                           .messages()
+                           .get(userId=user_id,
+                                id=message['id'],
+                                format="full"
+                                )
+                           .execute()
+                           )
+                    break
+                except:
+                    print("Exception...sleeping")
+                    time.sleep(3)
+                    req_count += 1
 
             # if there are multiple parts of the message get the message body from first part
             if msg.get("payload").get("parts"):
@@ -1517,28 +1555,34 @@ class GMail:
         return msg_df
 
     @classmethod
-    def get_mailbox_labels(cls, service, user_id="me"):
+    def get_mailbox_labels(cls, service, user_id="me", req_limit=1):
         """
 
         :param service:
         :param user_id:
         :return:
         """
-        results = \
-            (
-                service
-                    .users()
-                    .labels()
-                    .list(userId=user_id)
-                    .execute()
-            )
-
-        return results
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                results = \
+                    (
+                        service
+                            .users()
+                            .labels()
+                            .list(userId=user_id)
+                            .execute()
+                    )
+                return results
+            except:
+                print("Exception...sleeping")
+                time.sleep(3)
+                req_count += 1
 
     @classmethod
     def download_email_attachment(cls, service, msg_id,
                                   sav_dir=False, user_id="me",
-                                  save_memory=False
+                                  save_memory=False, req_limit=1
                                   ):
         """
         Downloads email attachments for a given emails.
@@ -1551,7 +1595,15 @@ class GMail:
         """
 
         # get message details
-        message = service.users().messages().get(userId=user_id, id=msg_id).execute()
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                message = service.users().messages().get(userId=user_id, id=msg_id).execute()
+                break
+            except:
+                print("Exception...sleeping")
+                time.sleep(3)
+                req_count += 1
 
         file_data_list = []
         # loop through payload sections
@@ -1562,15 +1614,24 @@ class GMail:
                     data = part['body']['data']
                 else:
                     att_id = part['body']['attachmentId']
-                    att = (service
-                           .users()
-                           .messages()
-                           .attachments()
-                           .get(userId=user_id,
-                                messageId=msg_id,
-                                id=att_id
-                                ).execute()
-                           )
+                    req_count = 0
+                    while req_count < req_limit:
+                        try:
+                            att = (service
+                                   .users()
+                                   .messages()
+                                   .attachments()
+                                   .get(userId=user_id,
+                                        messageId=msg_id,
+                                        id=att_id
+                                        ).execute()
+                                   )
+                            break
+                        except:
+                            print("Exception...sleeping")
+                            time.sleep(3)
+                            req_count += 1
+
                     data = att['data']
                 file_data = (base64.urlsafe_b64decode(data.encode('UTF-8')))
                 path = part['filename']
