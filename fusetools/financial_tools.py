@@ -442,7 +442,7 @@ class YahooFinance:
             )
             ).reset_index(drop=True)
 
-            data['datetime2'] = data['date_end']
+            data['datetime2'] = data['date_start']
 
             return data
 
