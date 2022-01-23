@@ -237,7 +237,7 @@ class MySQL:
     """
 
     @classmethod
-    def eng_mysql(cls, usr, pwd):
+    def eng_mysql(cls, usr, pwd, host: str = None, db: str = None):
         """
         Create a MySQL database engine object via SqlAlchemy.
 
@@ -245,9 +245,11 @@ class MySQL:
         :param pwd: MySQL password.
         :return: MySQL database engine object.
         """
-        engine = create_engine(
-            f'mysql+pymysql://{usr}:' + \
-            f"{pwd}" + \
-            f'@localhost', echo=False)
+        conn_str = f'mysql+pymysql://{usr}:' + \
+                   f"{pwd}" + \
+                   f'@{host if host else "localhost"}' + \
+                   f"{'/' + db if db else ''}"
+
+        engine = create_engine(conn_str, echo=False)
 
         return engine
