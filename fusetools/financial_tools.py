@@ -427,6 +427,15 @@ class YahooFinance:
                 data['datetime2'].dt.year.astype(str) + \
                 data['datetime2'].dt.week.astype(str).str.zfill(2)
 
+            data['week_number'] = \
+                np.where(
+                    (data['week_number'].str[-2:].astype(int) == 1)
+                    &
+                    (pd.to_datetime(data['datetime2']).dt.month == 12),
+                    pd.to_datetime(data['datetime2']).dt.year.astype(str) + "52",
+                    data['week_number']
+                )
+
             data = (data
                 .groupby("week_number")
                 .agg(

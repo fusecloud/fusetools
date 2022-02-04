@@ -661,9 +661,9 @@ class AWS:
         )
 
         s3 = session.resource('s3')
-        s3.Bucket(bucket).download_file(object_name, folder_file)
-
+        response = s3.Bucket(bucket).download_file(object_name, folder_file)
         print(f'''loaded data to {folder_file} from: {object_name}''')
+        return response
 
     @classmethod
     def file_to_s3(cls, folder_file, bucket, object_name, pub, sec,
@@ -701,16 +701,18 @@ class AWS:
         if public_file:
             extra_args_d.update({"ACL": 'public-read'})
 
-        (
-            s3.Bucket(bucket)
-                .upload_file(
-                folder_file,
-                object_name,
-                ExtraArgs=extra_args_d
+        response = \
+            (
+                s3.Bucket(bucket)
+                    .upload_file(
+                    folder_file,
+                    object_name,
+                    ExtraArgs=extra_args_d
+                )
             )
-        )
 
         print(f'''loaded data to {object_name} from: {folder_file}''')
+        return response
 
     @classmethod
     def bytes_to_s3(cls, binary_data, bucket, object_name, pub, sec,
@@ -749,11 +751,12 @@ class AWS:
         if public_file:
             extra_args_d.update({"ACL": 'public-read'})
 
-        s3.Bucket(bucket).upload_fileobj(
+        response = s3.Bucket(bucket).upload_fileobj(
             io.BytesIO(binary_data), object_name,
             ExtraArgs=extra_args_d)
 
         print(f'''loaded data to {object_name} from bytes in memory''')
+        return response
 
     @classmethod
     def s3_list_files(cls, bucket, pub, sec, search_str=False):

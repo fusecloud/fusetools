@@ -242,7 +242,8 @@ class Asana:
         url = "https://app.asana.com/api/1.0/projects/" + project + "/tasks?opt_fields=name"
         try:
             r = requests.get(url, headers=header)
-        except:
+        except Exception as e:
+            print(str(e))
             time.sleep(3)
             r = requests.get(url, headers=header)
             pass
@@ -284,7 +285,8 @@ class Asana:
 
         try:
             r = requests.get(url, headers=header, json=options)
-        except:
+        except Exception as e:
+            print(str(e))
             r = requests.get(url, headers=header, json=options)
             pass
 
@@ -322,12 +324,24 @@ class Asana:
         url = 'https://app.asana.com/api/1.0/tasks'
         try:
             r = requests.post(url, headers=header, json=options)
-        except:
+        except Exception as e:
+            print(str(e))
             r = requests.post(url, headers=header, json=options)
             pass
 
         return r
 
     @classmethod
-    def move_task(cls):
-        pass
+    def delete_task(cls, asana_token, task_id):
+        bearerToken = 'Bearer ' + asana_token
+        header = {'Authorization': bearerToken}
+
+        url = f'https://app.asana.com/api/1.0/tasks/{task_id}'
+        try:
+            r = requests.delete(url, headers=header)
+        except Exception as e:
+            print(str(e))
+            r = requests.delete(url, headers=header)
+            pass
+
+        return r
