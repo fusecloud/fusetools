@@ -13,6 +13,7 @@ import json
 import io
 import os
 import sys
+from datetime import datetime
 from typing import List, Optional
 from botocore.config import Config
 import aiobotocore
@@ -29,6 +30,13 @@ from botocore.exceptions import ClientError
 from firebase_admin import credentials, firestore, db, storage
 from gcloud import storage as storage_gcp
 from oauth2client.service_account import ServiceAccountCredentials
+
+# rsa signer deps
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+from botocore.signers import CloudFrontSigner
 
 
 class Firebase:
@@ -2147,6 +2155,33 @@ class AWS:
             )
 
         return response
+
+    @classmethod
+    def create_cloudfront_s3_link(cls, public_sign_key: str, s3_object_name: str,
+                                  cf_distribution_addr: str, expiration_date: datetime,
+                                  pem_path: str, protocol_schema="http"
+                                  ):
+
+        def rsa_signer(message):
+            with open(pem_path, 'rb') as key_file:
+                private_key = serialization.load_pem_private_key(
+                    key_file.read(),
+                    password=None,
+                    backend=default_backend()
+                )
+            return private_key.sign(message, padding.PKCS1v15(), hashes.SHA1())
+
+        url = f'{protocol_schema}://{cf_distribution_addr}/{s3_object_name}'
+
+        cloudfront_signer = CloudFrontSigner(public_sign_key, rsa_signer)
+
+        signed_url = \
+            cloudfront_signer.generate_presigned_url(
+                url=url,
+                date_less_than=expiration_date
+            )
+
+        return signed_url
 
 
 class GCP:

@@ -92,7 +92,7 @@ class Postgres:
     """
 
     @classmethod
-    def eng_postgres(cls, usr, pwd, port, host=None):
+    def eng_postgres(cls, usr, pwd, port, db, ssl_str="", host=None):
         """
         Create a Postgres database engine object.
 
@@ -106,12 +106,12 @@ class Postgres:
         engine = create_engine(
             f'postgresql://{usr}:' + \
             f"{pwd}" + \
-            f'@{host_name}:{port}/{usr}')
+            f'@{host_name}:{port}/{db}{ssl_str}')
 
         return engine
 
     @classmethod
-    def con_postgres(cls, host, db, usr, pwd):
+    def con_postgres(cls, host, db, usr, pwd, port=None):
         """
         Create a Postgres database connection object.
 
@@ -125,7 +125,9 @@ class Postgres:
             host=host,
             database=db,
             user=usr,
-            password=pwd)
+            password=pwd,
+            port=port
+        )
 
         cursor = conn.cursor()
 
