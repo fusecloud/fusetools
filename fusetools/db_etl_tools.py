@@ -118,17 +118,17 @@ class Generic:
         df_ret = df
         df_ret = df_ret.replace(r'^\s*$', np.nan, regex=True)
         df_ret = df_ret.replace('', np.nan, regex=True)
-        df_ret = df_ret.replace({pd.np.nan: None})
+        df_ret = df_ret.replace({np.nan: None})
 
         for idx, row in schema_df.iterrows():
             if row['dtype_final'] == "Int64":
-                df_ret[row['col']] = df_ret[row['col']].replace({pd.np.nan: None})
+                df_ret[row['col']] = df_ret[row['col']].replace({np.nan: None})
                 df_ret[row['col']] = df_ret[row['col']].astype(float).astype("Int64")
 
             elif row['dtype_final'] == "datetime64[ns]":
                 df_ret[row['col']] = pd.to_datetime(df_ret[row['col']], errors="coerce")
             else:
-                df_ret[row['col']] = df_ret[row['col']].replace({pd.np.nan: None})
+                df_ret[row['col']] = df_ret[row['col']].replace({np.nan: None})
                 df_ret[row['col']] = df_ret[row['col']].astype(row['dtype_final'])
 
         return df_ret
@@ -787,7 +787,7 @@ class Postgres:
         :param tbl_name: Postgres table name.
         :return: Elapsed time to execute query.
         """
-        df_load = df.replace({pd.np.nan: None})
+        df_load = df.replace({np.nan: None})
         df_load = df_load.round(3)
         df_columns = list(df_load)
         # create (col1,col2,...)
@@ -1568,7 +1568,7 @@ class Redshift:
         :param tbl_name: Redshift table name.
         :return: Elapsed time to execute query.
         """
-        df_load = df.replace({pd.np.nan: None})
+        df_load = df.replace({np.nan: None})
         df_load = df_load.round(3)
         df_columns = list(df_load)
         # create (col1,col2,...)

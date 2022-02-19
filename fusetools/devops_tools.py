@@ -93,6 +93,21 @@ class Local:
 
         # copy modules
         for module in module_list:
+
+            if "/" in module:
+                try:
+                    os.mkdir(tgt_pkg_dir + tgt_pkg_name + "/" + module.split("/")[0])
+                    fp = open(tgt_pkg_dir + tgt_pkg_name + "/" + module.split("/")[0] + "/" + "__init__.py", 'w')
+                    fp.close()
+
+                except Exception as e:
+                    print(str(e))
+
+                file_util.copy_file(
+                    src_pkg_dir + src_pkg_name + "/" + module,
+                    tgt_pkg_dir + tgt_pkg_name + "/" + module
+                )
+
             file_util.copy_file(
                 src_pkg_dir + src_pkg_name + "/" + module,
                 tgt_pkg_dir + tgt_pkg_name + "/" + module
@@ -360,7 +375,7 @@ class Sphinx:
 
     .. image:: ../images_source/devops_tools/sphinx.png
     """
-    
+
     import nbsphinx
 
     @classmethod
