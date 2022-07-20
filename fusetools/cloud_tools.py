@@ -767,6 +767,54 @@ class AWS:
         return response
 
     @classmethod
+    def bytes_to_s3_2(cls, binary_data, bucket, object_name, pub, sec,
+                    metadata_d=None,
+                    public_file=None,
+                    content_type=None):
+        """
+        Uploads a local file to an S3 bucket.
+
+        :param binary_data:
+        :param content_type:
+        :param folder_file: Filepath of local file.
+        :param bucket: Name of S3 bucket.
+        :param object_name: Bucket path of S3 object to upload to.
+        :param pub: AWS account public key.
+        :param sec: AWS account secret key.
+        :param metadata_d: Dictionary of metadata to add to uploaded S3 bucket object.
+        :param public_file: Switch to make S3 bucket object open to public access.
+        :return: Log of data object transfer (from filepath to bucket object).
+        """
+        session = boto3.Session(
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec
+        )
+
+        s3 = session.resource('s3')
+
+        extra_args_d = {}
+
+        if metadata_d:
+            extra_args_d.update({"Metadata": metadata_d})
+
+        if content_type:
+            extra_args_d.update({"ContentType": content_type})
+
+        if public_file:
+            extra_args_d.update({"ACL": 'public-read'})
+
+        boto_test_bucket = s3.Bucket(bucket)
+        import io
+        buf = io.BytesIO()
+        buf.write(binary_data)
+        buf.seek(0)
+
+        response = boto_test_bucket.upload_fileobj(buf, object_name, ExtraArgs=extra_args_d)
+
+        print(f'''loaded data to {object_name} from bytes in memory''')
+        return response
+
+    @classmethod
     def s3_list_files(cls, bucket, pub, sec, search_str=False):
         """
         Returns a list of objects in an S3 bucket.
