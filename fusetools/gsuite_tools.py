@@ -52,6 +52,7 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
           "https://www.googleapis.com/auth/drive",
           'https://www.googleapis.com/auth/gmail.send',
           'https://www.googleapis.com/auth/gmail.readonly',
+          'https://www.googleapis.com/auth/gmail.modify',
           # 'https://www.googleapis.com/auth/documents.readonly'
           ]
 
@@ -80,7 +81,7 @@ class GSheets:
 
         credentials = (
             credentials
-                .create_delegated(member_acct_email)
+            .create_delegated(member_acct_email)
         )
 
         service = build('sheets', 'v4', credentials=credentials)
@@ -426,9 +427,9 @@ class GSheets:
             try:
                 res = (
                     service
-                        .spreadsheets()
-                        .batchUpdate(spreadsheetId=spreadsheet_id,
-                                     body=data)
+                    .spreadsheets()
+                    .batchUpdate(spreadsheetId=spreadsheet_id,
+                                 body=data)
                 ).execute()
                 return res
             except:
@@ -468,9 +469,9 @@ class GSheets:
             try:
                 res = (
                     service
-                        .spreadsheets()
-                        .batchUpdate(spreadsheetId=spreadsheet_id,
-                                     body=data)
+                    .spreadsheets()
+                    .batchUpdate(spreadsheetId=spreadsheet_id,
+                                 body=data)
                 ).execute()
                 return res
             except:
@@ -536,9 +537,9 @@ class GSheets:
             try:
                 res = (
                     service
-                        .spreadsheets()
-                        .batchUpdate(spreadsheetId=spreadsheet_id,
-                                     body=data)
+                    .spreadsheets()
+                    .batchUpdate(spreadsheetId=spreadsheet_id,
+                                 body=data)
                 ).execute()
                 return res
             except:
@@ -588,9 +589,9 @@ class GSheets:
             try:
                 res = (
                     service
-                        .spreadsheets()
-                        .batchUpdate(spreadsheetId=spreadsheet_id,
-                                     body=data)
+                    .spreadsheets()
+                    .batchUpdate(spreadsheetId=spreadsheet_id,
+                                 body=data)
                 ).execute()
                 return res
             except:
@@ -649,14 +650,14 @@ class GSheets:
             try:
                 res = (
                     service
-                        .spreadsheets()
-                        .values()
-                        .clear(
+                    .spreadsheets()
+                    .values()
+                    .clear(
                         spreadsheetId=spreadsheet_id,
                         range=range,
                         body=body
                     )
-                        .execute()
+                    .execute()
                 )
                 return res
             except:
@@ -697,8 +698,8 @@ class GSheets:
             try:
                 res = (
                     service
-                        .spreadsheets()
-                        .batchUpdate(
+                    .spreadsheets()
+                    .batchUpdate(
                         spreadsheetId=spreadsheet_id,
                         body=request
                     ).execute()
@@ -726,8 +727,8 @@ class GSheets:
             try:
                 request = (
                     service
-                        .spreadsheets()
-                        .get(spreadsheetId=spreadsheet_id, includeGridData=include_grid_data, ranges=ranges)
+                    .spreadsheets()
+                    .get(spreadsheetId=spreadsheet_id, includeGridData=include_grid_data, ranges=ranges)
                 )
 
                 response = request.execute()
@@ -799,9 +800,9 @@ class GSheets:
             try:
                 res = (
                     service
-                        .spreadsheets()
-                        .batchUpdate(spreadsheetId=spreadsheet_id,
-                                     body=data)
+                    .spreadsheets()
+                    .batchUpdate(spreadsheetId=spreadsheet_id,
+                                 body=data)
                 ).execute()
                 return res
             except:
@@ -863,7 +864,7 @@ class GDrive:
 
         credentials = (
             credentials
-                .create_delegated(member_acct_email)
+            .create_delegated(member_acct_email)
         )
 
         service = build('drive', 'v3', credentials=credentials)
@@ -984,12 +985,12 @@ class GDrive:
 
         response = (
             drive_service
-                .files()
-                .list(
+            .files()
+            .list(
                 q="mimeType = 'application/vnd.google-apps.folder'",
                 fields='nextPageToken, files(id, name)'
             )
-                .execute()
+            .execute()
         )
 
         if overwrite_folder:
@@ -1121,12 +1122,12 @@ class GDrive:
 
                     file_ = (
                         drive_service
-                            .files()
-                            .create(
+                        .files()
+                        .create(
                             body=file_metadata,
                             media_body=media,
                             fields='id')
-                            .execute()
+                        .execute()
                     )
 
                     print(f'''file upload success for: {file}''')
@@ -1143,12 +1144,12 @@ class GDrive:
 
                     file_ = (
                         drive_service
-                            .files()
-                            .create(
+                        .files()
+                        .create(
                             body=file_metadata,
                             media_body=media,
                             fields='id')
-                            .execute()
+                        .execute()
                     )
 
                     print(f'''file upload success for: {file}''')
@@ -1175,13 +1176,13 @@ class GDrive:
         r = \
             (
                 drive_service
-                    .revisions()
-                    .list(
+                .revisions()
+                .list(
                     pageSize=1000,
                     fileId=file_id,
                     fields='*'
                 )
-                    .execute()
+                .execute()
             )
 
         r_list = []
@@ -1191,14 +1192,14 @@ class GDrive:
             r = \
                 (
                     drive_service
-                        .revisions()
-                        .list(
+                    .revisions()
+                    .list(
                         pageSize=1000,
                         fileId=file_id,
                         fields='*',
                         pageToken=r.get('nextPageToken')
                     )
-                        .execute()
+                    .execute()
                 )
             r_list += r.get("revisions")
 
@@ -1229,7 +1230,7 @@ class GMail:
 
         credentials = (
             credentials
-                .create_delegated(member_acct_email)
+            .create_delegated(member_acct_email)
         )
 
         service = build('gmail', 'v1', credentials=credentials)
@@ -1292,6 +1293,7 @@ class GMail:
         message['to'] = ", ".join(to) if len(to) > 1 else to[0]
         message['from'] = sender
         message['subject'] = subject
+        message.attach(MIMEText(message_text, 'plain'))
 
         if attachments:
             msg = MIMEText(
@@ -1369,23 +1371,51 @@ class GMail:
             'raw': (
                 base64.urlsafe_b64encode(
                     message.as_string()
-                        .encode())
-                    .decode())}
+                    .encode())
+                .decode())}
 
         req_count = 0
         while req_count < req_limit:
             try:
                 message = (
                     service
-                        .users()
-                        .messages()
-                        .send(userId="me", body=msg)
-                        .execute()
+                    .users()
+                    .messages()
+                    .send(userId="me", body=msg)
+                    .execute()
                 )
                 return message
             except:
                 time.sleep(3)
                 req_count += 1
+
+    @classmethod
+    def delete_emails(cls, service, label_ids=False, user_id="me"):
+        """
+        Deletes emails from a GMAIL inbox
+        :param service: Authenticated service object for GMail.
+        :param label_ids: GMail label IDs to pull messages for, default="INBOX"
+        :param user_id: User ID to pull emails for, default="me"
+        :return:
+        """
+        result = \
+            (
+                service
+                .users()
+                .messages()
+                .list(
+                    userId=user_id,
+                    labelIds=['INBOX'] if not label_ids else label_ids
+                )
+                .execute()
+            )
+        messages = result.get('messages', [])
+        if not messages:
+            print('No messages found.')
+        else:
+            print(f'Deleting {len(messages)} messages...')
+            for message in messages:
+                service.users().messages().delete(userId='me', id=message['id']).execute()
 
     @classmethod
     def get_emails(cls, service, label_ids=False, custom_tree_branch_list=False, user_id="me", req_limit=1):
@@ -1404,10 +1434,11 @@ class GMail:
             try:
                 results = (
                     service
-                        .users()
-                        .messages()
-                        .list(userId=user_id,
-                              labelIds=['INBOX'] if not label_ids else label_ids).execute()
+                    .users()
+                    .messages()
+                    .list(userId=user_id,
+                          labelIds=['INBOX'] if not label_ids else label_ids)
+                    .execute()
                 )
                 break
             except:
@@ -1423,12 +1454,12 @@ class GMail:
                 try:
                     results = (
                         service
-                            .users()
-                            .messages()
-                            .list(userId=user_id,
-                                  labelIds=['INBOX'] if not label_ids else label_ids,
-                                  pageToken=results.get("nextPageToken")
-                                  ).execute()
+                        .users()
+                        .messages()
+                        .list(userId=user_id,
+                              labelIds=['INBOX'] if not label_ids else label_ids,
+                              pageToken=results.get("nextPageToken")
+                              ).execute()
                     )
                     break
                 except:
@@ -1500,7 +1531,7 @@ class GMail:
                     text = (
                         base64.urlsafe_b64decode(
                             text.encode("ASCII"))
-                            .decode("utf-8"))
+                        .decode("utf-8"))
                 try:
                     mime_types_all.append(
                         [x['mimeType']
@@ -1518,7 +1549,7 @@ class GMail:
                     text = (
                         base64.urlsafe_b64decode(
                             text.encode("ASCII"))
-                            .decode("utf-8"))
+                        .decode("utf-8"))
 
             # get desired data element keys
             data_keys = \
@@ -1570,10 +1601,10 @@ class GMail:
                 results = \
                     (
                         service
-                            .users()
-                            .labels()
-                            .list(userId=user_id)
-                            .execute()
+                        .users()
+                        .labels()
+                        .list(userId=user_id)
+                        .execute()
                     )
                 return results
             except:
