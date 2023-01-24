@@ -52,7 +52,7 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
           "https://www.googleapis.com/auth/drive",
           'https://www.googleapis.com/auth/gmail.send',
           'https://www.googleapis.com/auth/gmail.readonly',
-          'https://www.googleapis.com/auth/gmail.modify',
+          # 'https://www.googleapis.com/auth/gmail.modify',
           # 'https://www.googleapis.com/auth/documents.readonly'
           ]
 
@@ -1293,7 +1293,12 @@ class GMail:
         message['to'] = ", ".join(to) if len(to) > 1 else to[0]
         message['from'] = sender
         message['subject'] = subject
-        message.attach(MIMEText(message_text, 'plain'))
+        if message_text and attachments:
+            message.attach(
+                MIMEText(
+                    message_text,
+                    "html" if message_is_html else "plain")
+            )
 
         if attachments:
             msg = MIMEText(
