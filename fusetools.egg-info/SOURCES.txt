@@ -1,3 +1,4 @@
+LICENSE
 setup.py
 fusetools/accounting_tools.py
 fusetools/analytics_tools.py

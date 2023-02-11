@@ -47,12 +47,14 @@ from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload, MediaIoBa
 from oauth2client import file, client, tools
 from oauth2client.service_account import ServiceAccountCredentials
 
+# https://developers.google.com/gmail/api/auth/scopes
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
           "https://www.googleapis.com/auth/drive.file",
           "https://www.googleapis.com/auth/drive",
           'https://www.googleapis.com/auth/gmail.send',
           'https://www.googleapis.com/auth/gmail.readonly',
-          # 'https://www.googleapis.com/auth/gmail.modify',
+          'https://www.googleapis.com/auth/gmail.modify',
+          'https://mail.google.com/'
           # 'https://www.googleapis.com/auth/documents.readonly'
           ]
 
@@ -1681,6 +1683,19 @@ class GMail:
                         f.write(file_data)
 
         return file_data_list
+
+    @classmethod
+    def update_message_label(cls, message_id, service, data, user_id="me"):
+        result = \
+            (
+                service
+                .users()
+                .messages()
+                .modify(id=message_id, userId=user_id, body=data)
+                .execute()
+            )
+
+        return result
 
 
 class GDocs:
