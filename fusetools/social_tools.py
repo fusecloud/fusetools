@@ -74,6 +74,8 @@ class Twitter:
                 "tweet_source": [x._json.get('source') for x in alltweets],
                 "symbols": [x._json.get('entities').get('symbols')
                             for x in alltweets],
+                "polls": [x._json.get('entities').get('polls')
+                            for x in alltweets],
                 "media": [x._json.get('entities').get('media')
                           for x in alltweets],
                 "rt_count": [x._json.get('retweet_count') for x in alltweets],
