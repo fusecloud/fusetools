@@ -31,7 +31,7 @@ def get_last_dow(dow, ref_date=False):
         d = datetime.strptime(ref_date, "%Y-%m-%d")
 
     # backtrack to last sunday
-    offset = (d.weekday() - dd.get("sunday")) % 7
+    offset = (d.weekday() - dd.get(dow)) % 7
     last_sunday = d - timedelta(days=offset)
 
     offset = (last_sunday.weekday() - dd.get(dow)) % 7
