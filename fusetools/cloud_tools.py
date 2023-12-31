@@ -293,6 +293,29 @@ class AWS:
         :width: 45%
 
     """
+    @classmethod
+    def get_secret_manager(cls, secret_name: str, pub: str, sec: str, region_name: str) -> str:
+        # Create a Secrets Manager client
+        session = boto3.session.Session(
+            aws_access_key_id=pub,
+            aws_secret_access_key=sec
+        )
+        client = session.client(
+            service_name='secretsmanager',
+            region_name=region_name,
+        )
+
+        try:
+            get_secret_value_response = client.get_secret_value(
+                SecretId=secret_name
+            )
+        except ClientError as e:
+            # For a list of exceptions thrown, see
+            # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+            raise e
+
+        return get_secret_value_response['SecretString']
+
 
     @classmethod
     def list_cloudwatch_rules(cls, pub, sec, region_name):

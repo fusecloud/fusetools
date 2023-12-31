@@ -90,6 +90,28 @@ class GSheets:
         return service, credentials
 
     @classmethod
+    def create_service_serv_acct_dict(cls, member_acct_email, dict_creds):
+        """
+        Creates a GDrive authenticated credentials object.
+
+        :param member_acct_email: GDrive service acct email address.
+        :param token_path: Path to GDrive authentication token.
+        :return: Return GDrive authenticated credentials object.
+        """
+
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(
+            keyfile_dict=dict_creds,
+            scopes=SCOPES)
+
+        credentials = (
+            credentials
+            .create_delegated(member_acct_email)
+        )
+
+        service = build('drive', 'v3', credentials=credentials)
+        return service, credentials
+
+    @classmethod
     def make_google_sheet(cls, ss_name, credentials, req_limit=1):
         """
         Creates a Google Sheet in one's GSuite account.
@@ -873,6 +895,28 @@ class GDrive:
         return service, credentials
 
     @classmethod
+    def create_service_serv_acct_dict(cls, member_acct_email, dict_creds):
+        """
+        Creates a GDrive authenticated credentials object.
+
+        :param member_acct_email: GDrive service acct email address.
+        :param token_path: Path to GDrive authentication token.
+        :return: Return GDrive authenticated credentials object.
+        """
+
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(
+            keyfile_dict=dict_creds,
+            scopes=SCOPES)
+
+        credentials = (
+            credentials
+            .create_delegated(member_acct_email)
+        )
+
+        service = build('drive', 'v3', credentials=credentials)
+        return service, credentials
+
+    @classmethod
     def authorize_credentials(cls, cred_path, token_path):
         """
         Creates an authorized credentials object for Google Drive.
@@ -1236,6 +1280,28 @@ class GMail:
         )
 
         service = build('gmail', 'v1', credentials=credentials)
+        return service, credentials
+
+    @classmethod
+    def create_service_serv_acct_dict(cls, member_acct_email, dict_creds):
+        """
+        Creates a GDrive authenticated credentials object.
+
+        :param member_acct_email: GDrive service acct email address.
+        :param token_path: Path to GDrive authentication token.
+        :return: Return GDrive authenticated credentials object.
+        """
+
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(
+            keyfile_dict=dict_creds,
+            scopes=SCOPES)
+
+        credentials = (
+            credentials
+            .create_delegated(member_acct_email)
+        )
+
+        service = build('drive', 'v3', credentials=credentials)
         return service, credentials
 
     @classmethod
