@@ -108,7 +108,7 @@ class GSheets:
             .create_delegated(member_acct_email)
         )
 
-        service = build('drive', 'v3', credentials=credentials)
+        service = build('sheets', 'v4', credentials=credentials)
         return service, credentials
 
     @classmethod
@@ -1301,7 +1301,7 @@ class GMail:
             .create_delegated(member_acct_email)
         )
 
-        service = build('drive', 'v3', credentials=credentials)
+        service = build('gmail', 'v1', credentials=credentials)
         return service, credentials
 
     @classmethod
