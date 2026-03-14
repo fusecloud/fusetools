@@ -15,6 +15,7 @@ Database connections and engines.
 
 """
 
+import time
 import teradata
 import cx_Oracle
 import psycopg2
@@ -111,7 +112,7 @@ class Postgres:
         return engine
 
     @classmethod
-    def con_postgres(cls, host, db, usr, pwd, port=None):
+    def con_postgres(cls, host, db, usr, pwd, port=None, retries=3, retry_delay=5):
         """
         Create a Postgres database connection object.
 
@@ -119,19 +120,36 @@ class Postgres:
         :param db: Name of Postgres database.
         :param usr: Postgres username.
         :param pwd: Postgres password.
+        :param retries: Number of connection retry attempts.
+        :param retry_delay: Base delay in seconds between retries (doubles each attempt).
         :return: A Postgres database connection object.
         """
-        conn = psycopg2.connect(
-            host=host,
-            database=db,
-            user=usr,
-            password=pwd,
-            port=port
-        )
+        last_exc = None
+        for attempt in range(retries + 1):
+            try:
+                conn = psycopg2.connect(
+                    host=host,
+                    database=db,
+                    user=usr,
+                    password=pwd,
+                    port=port,
+                    connect_timeout=10,
+                    keepalives=1,
+                    keepalives_idle=60,
+                    keepalives_interval=15,
+                    keepalives_count=5,
+                )
 
-        cursor = conn.cursor()
+                cursor = conn.cursor()
 
-        return cursor, conn
+                return cursor, conn
+            except psycopg2.OperationalError as e:
+                last_exc = e
+                if attempt < retries:
+                    wait = retry_delay * (2 ** attempt)
+                    print(f"Postgres connection attempt {attempt + 1} failed: {e}. Retrying in {wait}s...")
+                    time.sleep(wait)
+        raise last_exc
 
 
 class TeraData:
