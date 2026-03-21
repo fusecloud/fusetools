@@ -25,18 +25,11 @@ import pandas as pd
 from io import StringIO
 import time
 
-import firebase_admin
 from botocore.exceptions import ClientError
-from firebase_admin import credentials, firestore, db, storage
-from gcloud import storage as storage_gcp
-from oauth2client.service_account import ServiceAccountCredentials
 
-# rsa signer deps
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import padding
-from botocore.signers import CloudFrontSigner
+# Firebase, GCP, and CloudFront signing deps are loaded lazily
+# inside the classes that use them to avoid import errors when
+# only AWS functionality is needed.
 
 
 class Firebase:
@@ -58,6 +51,9 @@ class Firebase:
         :param token_path: Local path of your Firebase credentials token.
         :return: Authenticated application instance for your Firebase project.
         """
+        import firebase_admin
+        from firebase_admin import credentials
+
         cred = credentials.Certificate(token_path)
         default_app = firebase_admin.initialize_app(
             cred,
@@ -99,7 +95,9 @@ class Firebase:
         :return: JSON response for API call.
         """
 
-        database = firestore.client()
+        from firebase_admin import firestore as _firestore
+
+        database = _firestore.client()
 
         # build object reference
         obj = database
@@ -163,7 +161,7 @@ class Firebase:
 
                 print(f"deleting document field: {constraint_key}...")
 
-                ret = obj.update({constraint_key: firestore.DELETE_FIELD})
+                ret = obj.update({constraint_key: _firestore.DELETE_FIELD})
                 return ret
 
             elif delete_object_type in ['collection', 'sub_collection']:
@@ -235,6 +233,8 @@ class Firebase:
         # https://stackoverflow.com/questions/52883534/firebase-storage-upload-file-python
         # https://stackoverflow.com/questions/60080133/firebase-storage-error-with-uploading-png-image-via-python-google-cloud-storag
 
+        from firebase_admin import storage
+
         # Create new dictionary with the metadata
         metadata = metadata_d
 
@@ -258,6 +258,8 @@ class Firebase:
         :param bucket_name: Name of bucket.
         :return: List of bucket objects.
         """
+        from firebase_admin import storage
+
         if bucket_name:
             bucket = storage.bucket(bucket_name)
         else:
@@ -275,6 +277,8 @@ class Firebase:
         :param bucket_name: Name of bucket.
         :return: Confirmation of bucket object that was deleted.
         """
+        from firebase_admin import storage
+
         if bucket_name:
             bucket = storage.bucket(bucket_name)
         else:
@@ -1052,6 +1056,7 @@ class AWS:
 
         elif isinstance(d, pd.DataFrame):
 
+            request_items = False
             request_items = False
             if load_type == "bulk":
                 response = dynamodb.batch_write_item(
@@ -2233,6 +2238,11 @@ class AWS:
                                   pem_path: str, protocol_schema="http"
                                   ):
 
+        from cryptography.hazmat.backends import default_backend
+        from cryptography.hazmat.primitives import hashes, serialization
+        from cryptography.hazmat.primitives.asymmetric import padding
+        from botocore.signers import CloudFrontSigner
+
         def rsa_signer(message):
             with open(pem_path, 'rb') as key_file:
                 private_key = serialization.load_pem_private_key(
@@ -2276,6 +2286,9 @@ class GCP:
         :param gcloud_token_path: Name of JSON GCP token if on disk.
         :return: Authenticated GCP client.
         """
+        from gcloud import storage as storage_gcp
+        from oauth2client.service_account import ServiceAccountCredentials
+
         if cred_method == "file":
             credentials = (
                 ServiceAccountCredentials
