@@ -1,0 +1,104 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fusetools"
+version = "1.0.0"
+description = "Cloud infrastructure, database ETL, and GSuite utilities"
+readme = "readme.md"
+license = "MIT"
+requires-python = ">=3.12"
+dependencies = ["pandas>=2.0.0"]
+
+[project.optional-dependencies]
+aws = ["boto3>=1.28.0", "botocore>=1.31.0", "aiobotocore>=2.7.0"]
+firebase = ["firebase-admin>=6.0.0"]
+gcp = ["gcloud>=0.18.0", "google-cloud-scheduler>=2.0.0", "oauth2client>=4.0.0"]
+gsuite = [
+    "google-api-python-client>=2.0.0",
+    "google-auth-oauthlib>=1.0.0",
+    "google-auth>=2.0.0",
+    "httplib2>=0.20.0",
+    "oauth2client>=4.0.0",
+]
+db = ["sqlalchemy>=2.0.0", "psycopg2-binary>=2.9.0", "numpy>=1.24.0"]
+transfer = ["requests>=2.28.0", "pexpect>=4.8.0"]
+all = [
+    "fusetools[aws]",
+    "fusetools[firebase]",
+    "fusetools[gcp]",
+    "fusetools[gsuite]",
+    "fusetools[db]",
+    "fusetools[transfer]",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8.4",
+    "mypy>=1.15.0",
+    "pre-commit>=3.0.0",
+    "types-requests>=2.31.0",
+]
+test = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-socket>=0.7.0",
+    "python-dotenv>=1.0.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["fusetools"]
+
+[tool.ruff]
+exclude = ["docs/", "examples/"]
+line-length = 150
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E722", "E501", "E711", "E721"]
+
+[tool.mypy]
+disallow_untyped_defs = true
+exclude = ["^tests/"]
+warn_return_any = false
+
+[[tool.mypy.overrides]]
+module = [
+    "firebase_admin.*",
+    "gcloud.*",
+    "oauth2client.*",
+    "apiclient.*",
+    "psycopg2.*",
+    "cx_Oracle.*",
+    "aiobotocore.*",
+    "googleapiclient.*",
+    "google_auth_oauthlib.*",
+    "google.auth.*",
+    "google.cloud.*",
+    "google.oauth2.*",
+    "pexpect.*",
+    "boto3.*",
+    "botocore.*",
+    "pandas.*",
+    "numpy.*",
+    "httplib2.*",
+    "teradata.*",
+    "pyodbc.*",
+    "cryptography.*",
+    "sqlalchemy",
+    "sqlalchemy.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "fusetools.cloud_tools",
+    "fusetools.db_tools",
+    "fusetools.gsuite_tools",
+    "fusetools.transfer_tools",
+]
+disable_error_code = ["return", "assignment", "union-attr", "attr-defined", "call-arg", "misc", "arg-type", "dict-item", "var-annotated", "import-not-found", "operator"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers --strict-config --durations=5"
