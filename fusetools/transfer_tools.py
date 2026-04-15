@@ -1,213 +1,176 @@
-"""
-Transfer applications.
+"""Transfer applications for local files, SSH, and SFTP."""
 
-|pic1|
-    .. |pic1| image:: ../images_source/transfer_tools/transfer.png
-        :width: 30%
-
-"""
+from __future__ import annotations
 
 import os
 import sys
-from subprocess import Popen, PIPE
 from pathlib import Path
+from subprocess import PIPE, Popen
+from typing import Any, Optional
+
 import pandas as pd
-import pexpect
-import requests
-import zipfile
-from selenium.webdriver.chrome import webdriver
-import urllib3
-import pdfplumber
-import io
 
 
+# MARK: - Access
 class Access:
-    """
-    Functions for accessing file systems and protocols.
-
-    """
+    """Functions for accessing file systems and protocols."""
 
     @classmethod
-    def proxies(cls, domain):
-        """
-        A function to create an http/https proxy address.
+    def proxies(cls, domain: str) -> dict[str, str]:
+        """Create an http/https proxy address.
 
         :param domain: domain address.
         :return: Http/https proxy address.
         """
         res = {
-            'http': 'http://' + \
-                    os.environ['usr'] + \
-                    ':' + os.environ['pwd'] + \
-                    f'@proxyfarm.{domain}.com:8080'
-            ,
-            'https': 'https://' + \
-                     os.environ['usr'] + \
-                     ':' + os.environ['pwd'] + \
-                     f'@proxyfarm.{domain}.com:8080'
+            "http": "http://" + os.environ["usr"] + ":" + os.environ["pwd"] + f"@proxyfarm.{domain}.com:8080",
+            "https": "https://" + os.environ["usr"] + ":" + os.environ["pwd"] + f"@proxyfarm.{domain}.com:8080",
         }
 
         return res
 
 
+# MARK: - Local
 class Local:
-    """
-    Functions for accessing local files.
-
-    """
+    """Functions for accessing local files."""
 
     @classmethod
-    def zip_dir(cls, directory_list, zipname):
-        """
-        Compress a directory into a single ZIP file.
+    def zip_dir(cls, directory_list: list[str], zipname: str) -> None:
+        """Compress a directory into a single ZIP file.
 
         :param directory_list: List of files to compress into zip file.
         :param zipname: Name of zip file to compress files into.
         :return: Zip file containing files.
         """
-        outZipFile = zipfile.ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
+        import zipfile
 
-        for idx, dir in enumerate(directory_list):
-            # if idx == 0: break
-            if not os.path.exists(dir):
-                print(f"Error, directory {dir} does not exist")
+        out_zip = zipfile.ZipFile(zipname, "w", zipfile.ZIP_DEFLATED)
+
+        for dir_ in directory_list:
+            if not os.path.exists(dir_):
+                print(f"Error, directory {dir_} does not exist")
                 continue
 
-            # The root directory within the ZIP file.
-            rootdir = os.path.basename(dir)
+            rootdir = os.path.basename(dir_)
 
             try:
-                os.listdir(dir)
-                for dirpath, dirnames, filenames in os.walk(dir):
+                os.listdir(dir_)
+                for dirpath, dirnames, filenames in os.walk(dir_):
                     for filename in filenames:
-                        # Write the file named filename to the archive,
-                        # giving it the archive name 'arcname'.
                         filepath = os.path.join(dirpath, filename)
-                        parentpath = os.path.relpath(filepath, dir)
+                        parentpath = os.path.relpath(filepath, dir_)
                         arcname = os.path.join(rootdir, parentpath)
+                        out_zip.write(filepath, arcname)
+            except NotADirectoryError:
+                out_zip.write(dir_, dir_.split("/")[-1])
 
-                        outZipFile.write(filepath, arcname)
-            except:
-                # exception means there are no files inside the directory
-                # so we write the normal file
-                outZipFile.write(dir, dir.split("/")[-1])
-
-        outZipFile.close()
+        out_zip.close()
 
     @classmethod
-    def clear_delete_directory(cls, directory, method="delete"):
-        """
-        Clears and/or deletes a directory and its contents.
+    def clear_delete_directory(cls, directory: str, method: str = "delete") -> None:
+        """Clear and/or delete a directory and its contents.
 
         :param directory: Filepath of directory.
         :param method: Optional delete for the directory folder.
-        :return: Nothing.
         """
-        directory = Path(directory)
-        for item in directory.iterdir():
+        directory_path = Path(directory)
+        for item in directory_path.iterdir():
             if item.is_dir():
-                Local.clear_delete_directory(item)
+                Local.clear_delete_directory(str(item))
             else:
                 item.unlink()
 
         if method == "delete":
-            directory.rmdir()
+            directory_path.rmdir()
 
     @classmethod
-    def fix_user_path(cls, dir):
-        """
-        Fixes a local filepath.
+    def fix_user_path(cls, dir_: str) -> str:
+        """Fix a local filepath.
 
-        :param dir: Directory to patch.
+        :param dir_: Directory to patch.
         :return: Patched directory.
         """
-
-        dir_components = dir.split("/")
+        dir_components = dir_.split("/")
         search = "Users"
+        idx = 0
         for idx, elem in enumerate(dir_components):
             if elem == search:
                 break
 
-        dir_components[idx + 1] = os.environ['os_name']
+        dir_components[idx + 1] = os.environ["os_name"]
         r = "/".join(dir_components)
 
         return r
 
     @classmethod
-    def get_all_filetimes(cls, dir, exclude=False):
-        """
-        Creates a Pandas DataFrame of filenames and file times in a given directory.
+    def get_all_filetimes(cls, dir_: str, exclude: Optional[str] = None) -> pd.DataFrame:
+        """Create a DataFrame of filenames and file times in a given directory.
 
-        :param dir: Directory of files.
+        :param dir_: Directory of files.
         :param exclude: A string to search for files to exclude.
-        :return: Pandas DataFrame of filenames and file times to a directory.
+        :return: DataFrame of filenames and file times.
         """
-
-        files = os.listdir(dir)
+        files = os.listdir(dir_)
 
         if exclude:
             files = [f for f in files if exclude not in f]
 
-        times = [os.path.getmtime(dir + f) for f in files]
+        times = [os.path.getmtime(dir_ + f) for f in files]
         file_times = pd.DataFrame({"files": files, "times": times})
         return file_times
 
     @classmethod
-    def get_latest_file(cls, name, dir, exclude=False):
-        """
-        Get the latest file in a directory.
+    def get_latest_file(cls, name: str, dir_: str, exclude: Optional[str] = None) -> str:
+        """Get the latest file in a directory.
 
         :param name: String match name of file(s).
-        :param dir: Directory for the file search.
+        :param dir_: Directory for the file search.
         :param exclude: A string to search for files to exclude.
         :return: Name of most recent file.
         """
-
-        # file name str to lowercase
         name = name.lower()
-
-        # get list of files
-        files = os.listdir(dir)
+        files = os.listdir(dir_)
 
         if exclude:
             files = [f for f in files if exclude not in f]
 
-        times = [os.path.getmtime(dir + f) for f in files]
+        times = [os.path.getmtime(dir_ + f) for f in files]
         file_times = pd.DataFrame({"files": files, "times": times})
-        file_times['files_lower'] = file_times['files'].str.lower()
-        file_times = file_times[file_times['files_lower'].str.contains(name)]
-        read_file = file_times[file_times['times'] == max(file_times['times'])]['files']
+        file_times["files_lower"] = file_times["files"].str.lower()
+        file_times = file_times[file_times["files_lower"].str.contains(name)]
+        read_file = file_times[file_times["times"] == max(file_times["times"])]["files"]
         read_file = read_file.values[0]
 
         return read_file
 
     @classmethod
-    def read_files_like(cls, name, dir, ext_typ, sheet_name=False):
-        """
-        Reads and concatenates files in a directory that match a string. Returns a Pandas DataFrame.
+    def read_files_like(
+        cls,
+        name: str,
+        dir_: str,
+        ext_typ: str,
+        sheet_name: Any = False,
+    ) -> pd.DataFrame:
+        """Read and concatenate files in a directory that match a string.
 
         :param name: A string search to match.
-        :param dir: Directory to search for files in.
-        :param ext_typ: Extension type to search for (.XLSX OR .CSV)
-        :param sheet_name: If extension type is not ".CSV", specifies the sheet number or sheet name to read.
-        :return: Concatenated Pandas DataFrames that match a string.
+        :param dir_: Directory to search for files in.
+        :param ext_typ: Extension type to search for (.XLSX OR .CSV).
+        :param sheet_name: Sheet number or name to read (for non-CSV).
+        :return: Concatenated DataFrames that match a string.
         """
+        files = os.listdir(dir_)
+        files_df = pd.DataFrame({"files": files})
+        files_df["files"] = files_df["files"].str.lower()
+        files_df = files_df[(files_df["files"].str.contains(name)) & (files_df["files"].str.contains(ext_typ))]
+        files_df.reset_index(inplace=True)
 
-        files = os.listdir(dir)
-        files = pd.DataFrame({"files": files})
-        files['files'] = files['files'].str.lower()
-        files = files[(
-                files['files'].str.contains(name)
-                &
-                files['files'].str.contains(ext_typ)
-        )]
-        files.reset_index(inplace=True)
-
-        for idx, f in files.iterrows():
+        dat_all = pd.DataFrame()
+        for idx, f in files_df.iterrows():
             if ext_typ == "csv":
-                dat = pd.read_csv(dir + f['files'])
+                dat = pd.read_csv(dir_ + f["files"])
             else:
-                dat = pd.read_excel(dir + f['files'], sheet_name=sheet_name)
+                dat = pd.read_excel(dir_ + f["files"], sheet_name=sheet_name)
             if idx == 0:
                 dat_all = dat
             else:
@@ -216,162 +179,106 @@ class Local:
         return dat_all
 
 
+# MARK: - SSH
 class SSH:
-    """
-    Functions for transferring data with SSH.
-
-    """
+    """Functions for transferring data with SSH."""
 
     @classmethod
-    def ssh_transfer_files(cls, local_file_path,
-                           target_file_path,
-                           target_user,
-                           target_ip,
-                           target_pwd,
-                           direction="send"
-                           ):
-        """
-        Transfers a file via SSH.
+    def ssh_transfer_files(
+        cls,
+        local_file_path: str,
+        target_file_path: str,
+        target_user: str,
+        target_ip: str,
+        target_pwd: str,
+        direction: str = "send",
+    ) -> None:
+        """Transfer a file via SSH.
 
         :param local_file_path: Filepath for the object to transfer on local machine.
-        :param target_file_path: Filepath for the object to transferred to on target machine.
-        :param target_user: Usename of target machine.
+        :param target_file_path: Filepath for the object on target machine.
+        :param target_user: Username of target machine.
         :param target_ip: IP of target machine.
         :param target_pwd: Password of target machine.
-        :param direction: Whether to receive object from target machine or send object to it (send or other).
-        :return:
+        :param direction: Whether to send or receive (send or other).
         """
+        import pexpect
 
         if direction == "send":
             cmd = f"scp -rp {local_file_path} {target_user}@{target_ip}:{target_file_path}"
-            child = pexpect.spawn(cmd, encoding='utf-8')
-            child.logfile = sys.stdout
-            child.expect(".*password:", timeout=None)
-            child.sendline(target_pwd)
-            child.expect(pexpect.EOF, timeout=None)
         else:
             cmd = f"scp -r {target_user}@{target_ip}:{target_file_path} {local_file_path}"
-            child = pexpect.spawn(cmd, encoding='utf-8')
-            child.logfile = sys.stdout
-            child.expect(".*password:", timeout=None)
-            child.sendline(target_pwd)
-            child.expect(pexpect.EOF, timeout=None)
+
+        child = pexpect.spawn(cmd, encoding="utf-8")
+        child.logfile = sys.stdout
+        child.expect(".*password:", timeout=None)
+        child.sendline(target_pwd)
+        child.expect(pexpect.EOF, timeout=None)
 
 
+# MARK: - SFTP
 class SFTP:
-    """
-    Functions for using SFTP/FTP protocols.
-
-    """
+    """Functions for using SFTP/FTP protocols."""
 
     @classmethod
-    def winscp_sftp_connect(cls,
-                            action,
-                            exe_path,
-                            conn_str,
-                            hostkey,
-                            src_path,
-                            dest_path,
-                            file_name,
-                            new_file_name=None,
-                            match_all=False):
-        """
-        Connects to an SFTP server.
+    def winscp_sftp_connect(
+        cls,
+        action: str,
+        exe_path: str,
+        conn_str: str,
+        hostkey: str,
+        src_path: str,
+        dest_path: str,
+        file_name: str,
+        new_file_name: Optional[str] = None,
+        match_all: bool = False,
+    ) -> None:
+        """Connect to an SFTP server.
 
         :param action: Actions allowed are "put" or "get".
-        :param exe_path: Path where WinSCP executable is installed on machine.
+        :param exe_path: Path where WinSCP executable is installed.
         :param conn_str: Connection string to connect to ftp site.
         :param hostkey: HostKey credential required to match.
-        :param src_path: To get file from scp site use "/", to get file from machine use "\\".
-        :param dest_path: To put file on scp site use "/", to put file on machine use "\\".
-        :param file_name: Use complete file name with file format (".csv") to get specific file, exclude format to get multiple matches.
-        :param new_file_name: Include file format.
-        :param match_all: Whether or not to match on.
-        :return: If 'get' then a downloaded file.
+        :param src_path: Source path for file transfer.
+        :param dest_path: Destination path for file transfer.
+        :param file_name: File name with format extension.
+        :param new_file_name: New file name (optional).
+        :param match_all: Whether to match on wildcard.
         """
-
-        # launch winscp
         winscp_exe = exe_path
 
-        # options and credentials
-        cmds = ['option batch abort', 'option confirm off']
-        connection = 'open ' + conn_str + '/ -hostkey="' + hostkey + '" -rawsettings ProxyMethod=2 ProxyHost="proxyfarm.xxxxx.com" ProxyPort=xxxxx'
+        cmds = ["option batch abort", "option confirm off"]
+        connection = "open " + conn_str + '/ -hostkey="' + hostkey + '" -rawsettings ProxyMethod=2 ProxyHost="proxyfarm.xxxxx.com" ProxyPort=xxxxx'
         cmds.append(connection)
 
-        if action.lower() == 'get':
+        if action.lower() == "get":
             if match_all:
-                cmds.append('cd ' + src_path)
-                cmds.append('get ' + file_name + '*' + ' ' + dest_path + '\\')
+                cmds.append("cd " + src_path)
+                cmds.append("get " + file_name + "*" + " " + dest_path + "\\")
             else:
-                getpath = 'get ' + src_path + '\\' + file_name + ' ' + dest_path + '\\' + file_name
+                getpath = "get " + src_path + "\\" + file_name + " " + dest_path + "\\" + file_name
                 cmds.append(getpath)
 
-        elif action.lower() == 'put':
+        elif action.lower() == "put":
             if new_file_name:
-                # create get path
-                putpath = 'put ' + src_path + '\\' + file_name + ' ' + dest_path + '\\' + new_file_name
+                putpath = "put " + src_path + "\\" + file_name + " " + dest_path + "\\" + new_file_name
                 cmds.append(putpath)
             else:
-                putpath = 'put ' + src_path + '\\' + file_name + ' ' + dest_path + '\\' + file_name
+                putpath = "put " + src_path + "\\" + file_name + " " + dest_path + "\\" + file_name
                 cmds.append(putpath)
 
-        # create subprocess object
-        winscp = Popen(winscp_exe, stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-        stdout, stderr = winscp.communicate('\n'.join(cmds))
+        winscp = Popen(
+            winscp_exe,
+            stdin=PIPE,
+            stdout=PIPE,
+            stderr=PIPE,
+            universal_newlines=True,
+        )
+        stdout, stderr = winscp.communicate("\n".join(cmds))
 
-        # check output
         if winscp.returncode:
             print("Upload Failed")
         else:
             out = stdout.splitlines()
             for i in out[15:]:
                 print(i)
-
-
-class Web:
-    """
-    Functions for interacting with files on the Web.
-
-    """
-
-    @classmethod
-    def dl_google_sheet(cls, gid, gs, chromedriver):
-        """
-        Downloads a Google sheet as a .CSV file.
-
-        :param gid: Id of Google Sheet to download.
-        :param gs: Id of Google Sheet Tab to download.
-        :param chromedriver: Chromedriver path to load Selenium from.
-        :return: Downloaded Google Sheet tab.
-        """
-
-        browser = webdriver.Chrome(chromedriver)
-        download_url = 'https://docs.google.com/spreadsheets/d/'
-        download_url = download_url + gid
-        download_url = download_url + '/gviz/tq?tqx=out:csv&sheet='
-        download_url = download_url + gs
-
-        browser.get(download_url)
-
-    @classmethod
-    def download_file(cls, sav_dir, url, headers=False):
-        """
-        Downloads a file from a given Url endpoint.
-
-        :param sav_dir: Filepath to save downloaded file to.
-        :param url: URL to download file from.
-        :return: Downloaded file in directory.
-        """
-
-        print(f"Downloading file at: {url}")
-        response = requests.get(url, headers)
-        with open(f"{sav_dir}", 'wb') as f:
-            f.write(response.content)
-
-    @classmethod
-    def get_onine_pdf_memory(cls, url, headers):
-        http = urllib3.PoolManager()
-        temp = io.BytesIO()
-        temp.write(http.request("GET", url, headers).data)
-        with pdfplumber.load(temp) as pdf:
-            return pdf.pages

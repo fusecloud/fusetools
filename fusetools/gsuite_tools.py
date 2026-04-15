@@ -5,60 +5,40 @@ Google Suite Tools.
     .. |pic1| image:: ../images_source/gsuite_tools/gsuitelogo1.png
         :width: 45%
 """
-import json
-import shutil
-from email.mime.application import MIMEApplication
-from email.mime.text import MIMEText
+
+from __future__ import annotations
+
 import base64
-import logging
+import io
 import mimetypes
 import os
 import pickle
-import smtplib
+import shutil
 import time
-import urllib
-import html
-# import pyOpenSSL
 from email import encoders
-from email.headerregistry import Address
-from email.message import EmailMessage
+from email.mime.application import MIMEApplication
 from email.mime.audio import MIMEAudio
 from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import make_msgid
 from os.path import splitext
-from pathlib import Path
-import email
-from email.policy import default
-from typing import List, Optional
-from httplib2 import Http
-
-import httplib2
-import pandas as pd
-from apiclient import discovery
-from apiclient.discovery import build
-import io
-from google.auth.transport.requests import Request
-from google.oauth2.service_account import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload, MediaIoBaseUpload
-from oauth2client import file, client, tools
-from oauth2client.service_account import ServiceAccountCredentials
+from typing import Any, Dict, List, Optional, Tuple
 
 # https://developers.google.com/gmail/api/auth/scopes
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
-          "https://www.googleapis.com/auth/drive.file",
-          "https://www.googleapis.com/auth/drive",
-          'https://www.googleapis.com/auth/gmail.send',
-          'https://www.googleapis.com/auth/gmail.readonly',
-          'https://www.googleapis.com/auth/gmail.modify',
-          'https://mail.google.com/'
-          # 'https://www.googleapis.com/auth/documents.readonly'
-          ]
+SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/gmail.send",
+    "https://www.googleapis.com/auth/gmail.readonly",
+    "https://www.googleapis.com/auth/gmail.modify",
+    "https://mail.google.com/",
+    # 'https://www.googleapis.com/auth/documents.readonly'
+]
 
 
+# MARK: - GSheets
 class GSheets:
     """
     Functions for interacting with Google Sheets.
@@ -67,52 +47,60 @@ class GSheets:
 
     """
 
+    # MARK: - create_service_serv_acct
     @classmethod
-    def create_service_serv_acct(cls, member_acct_email, token_path):
+    def create_service_serv_acct(
+        cls, member_acct_email: str, token_path: Optional[str] = None, scopes: Optional[List[str]] = None
+    ) -> Tuple[Any, Any]:
         """
         Creates a GSheets authenticated credentials object.
 
         :param member_acct_email: GSuite service acct email address.
         :param token_path: Path to GSuite authentication token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Return GSheets authenticated credentials object.
         """
+        import os
 
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(
-            filename=token_path,
-            scopes=SCOPES)
+        from apiclient.discovery import build
+        from oauth2client.service_account import ServiceAccountCredentials
 
-        credentials = (
-            credentials
-            .create_delegated(member_acct_email)
-        )
+        token_path = token_path or os.environ.get("GSUITE_TOKEN_PATH")
+        _scopes = scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(filename=token_path, scopes=_scopes)
 
-        service = build('sheets', 'v4', credentials=credentials)
+        credentials = credentials.create_delegated(member_acct_email)
+
+        service = build("sheets", "v4", credentials=credentials)
         return service, credentials
 
+    # MARK: - create_service_serv_acct_dict
     @classmethod
-    def create_service_serv_acct_dict(cls, member_acct_email, dict_creds):
+    def create_service_serv_acct_dict(cls, member_acct_email: str, dict_creds: Dict[str, Any], scopes: Optional[List[str]] = None) -> Tuple[Any, Any]:
         """
         Creates a GDrive authenticated credentials object.
 
         :param member_acct_email: GDrive service acct email address.
         :param token_path: Path to GDrive authentication token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Return GDrive authenticated credentials object.
         """
+        import os
 
-        credentials = ServiceAccountCredentials.from_json_keyfile_dict(
-            keyfile_dict=dict_creds,
-            scopes=SCOPES)
+        from apiclient.discovery import build
+        from oauth2client.service_account import ServiceAccountCredentials
 
-        credentials = (
-            credentials
-            .create_delegated(member_acct_email)
-        )
+        _scopes = scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(keyfile_dict=dict_creds, scopes=_scopes)
 
-        service = build('sheets', 'v4', credentials=credentials)
+        credentials = credentials.create_delegated(member_acct_email)
+
+        service = build("sheets", "v4", credentials=credentials)
         return service, credentials
 
+    # MARK: - make_google_sheet
     @classmethod
-    def make_google_sheet(cls, ss_name, credentials, req_limit=1):
+    def make_google_sheet(cls, ss_name: str, credentials: Any, req_limit: int = 1) -> Optional[str]:
         """
         Creates a Google Sheet in one's GSuite account.
 
@@ -120,10 +108,10 @@ class GSheets:
         :param credentials: GSuite credentials object.
         :return: Id of newly created Google Sheet.
         """
+        from apiclient import discovery
+
         SHEETS = discovery.build("sheets", "v4", credentials=credentials)
-        data = {
-            "properties": {"title": ss_name}
-        }
+        data = {"properties": {"title": ss_name}}
 
         req_count = 0
         while req_count < req_limit:
@@ -137,8 +125,9 @@ class GSheets:
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - add_google_sheet_tab
     @classmethod
-    def add_google_sheet_tab(cls, spreadsheet_id, tab_name, credentials, req_limit=1):
+    def add_google_sheet_tab(cls, spreadsheet_id: str, tab_name: str, credentials: Any, req_limit: int = 1) -> Optional[Any]:
         """
         Adds a tab to a Google Sheet.
 
@@ -147,16 +136,22 @@ class GSheets:
         :param credentials: GSuite credentials object.
         :return: Result object for API call.
         """
-        data = {'requests': [{'addSheet': {'properties': {'title': tab_name}}}]}
-        service = build('sheets', 'v4', credentials=credentials)
+        from apiclient.discovery import build
+
+        data = {"requests": [{"addSheet": {"properties": {"title": tab_name}}}]}
+        service = build("sheets", "v4", credentials=credentials)
 
         req_count = 0
         while req_count < req_limit:
             try:
-                res = service.spreadsheets().batchUpdate(
-                    spreadsheetId=spreadsheet_id,
-                    body=data,
-                ).execute()
+                res = (
+                    service.spreadsheets()
+                    .batchUpdate(
+                        spreadsheetId=spreadsheet_id,
+                        body=data,
+                    )
+                    .execute()
+                )
                 print(f"Added sheet: {tab_name}")
                 return res
 
@@ -165,8 +160,16 @@ class GSheets:
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - get_google_sheet
     @classmethod
-    def get_google_sheet(cls, spreadsheet_id, range_name, credentials, tab_name=False, req_limit=1):
+    def get_google_sheet(
+        cls,
+        spreadsheet_id: str,
+        range_name: str,
+        credentials: Any,
+        tab_name: Any = False,
+        req_limit: int = 1,
+    ) -> Any:
         """
         Gets data from a Google Sheet.
 
@@ -176,8 +179,10 @@ class GSheets:
         :param credentials: GSuite credentials object.
         :return: Pandas DataFrame of retrieved data.
         """
+        import pandas as pd
+        from apiclient.discovery import build
 
-        service = build('sheets', 'v4', credentials=credentials)
+        service = build("sheets", "v4", credentials=credentials)
 
         req_count = 0
         while req_count < req_limit:
@@ -185,12 +190,17 @@ class GSheets:
                 # Call the Sheets API
                 sheet = service.spreadsheets()
                 if tab_name:
-                    gsheet = sheet.values().get(spreadsheetId=spreadsheet_id,
-                                                range=tab_name + "!" + range_name).execute()
+                    gsheet = (
+                        sheet.values()
+                        .get(
+                            spreadsheetId=spreadsheet_id,
+                            range=tab_name + "!" + range_name,
+                        )
+                        .execute()
+                    )
 
                 else:
-                    gsheet = sheet.values().get(spreadsheetId=spreadsheet_id,
-                                                range=range_name).execute()
+                    gsheet = sheet.values().get(spreadsheetId=spreadsheet_id, range=range_name).execute()
                 break
             except:
                 print("Exception...sleeping")
@@ -198,23 +208,30 @@ class GSheets:
                 req_count += 1
 
         header = gsheet.get("values")[0]
-        values = gsheet.get('values')[1:]
+        values = gsheet.get("values")[1:]
 
         if len(header) > len(values[0]):
             values_new = []
             for idx, v in enumerate(values):
-                values_new.append(v + ['' for x in header[len(v):]])
+                values_new.append(v + ["" for x in header[len(v) :]])
         else:
             values_new = values
 
         df = pd.DataFrame(values_new)
-        df = df[df.columns[:len(header)]]
+        df = df[df.columns[: len(header)]]
         df.columns = header
 
         return df
 
+    # MARK: - bulk_add_google_sheet_comment
     @classmethod
-    def bulk_add_google_sheet_comment(cls, spreadsheet_id, request_list, credentials, req_limit=1):
+    def bulk_add_google_sheet_comment(
+        cls,
+        spreadsheet_id: str,
+        request_list: List[Any],
+        credentials: Any,
+        req_limit: int = 1,
+    ) -> Optional[Any]:
         """
 
         :param spreadsheet_id:
@@ -222,27 +239,42 @@ class GSheets:
         :param credentials:
         :return:
         """
-        service = build('sheets', 'v4', credentials=credentials)
-        data = {
-            "requests": request_list
-        }
+        from apiclient.discovery import build
+
+        service = build("sheets", "v4", credentials=credentials)
+        data = {"requests": request_list}
 
         req_count = 0
         while req_count < req_limit:
             try:
-                res = service.spreadsheets().batchUpdate(
-                    spreadsheetId=spreadsheet_id,
-                    body=data,
-                ).execute()
+                res = (
+                    service.spreadsheets()
+                    .batchUpdate(
+                        spreadsheetId=spreadsheet_id,
+                        body=data,
+                    )
+                    .execute()
+                )
                 return res
             except:
                 print("Exception....sleeping")
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - add_google_sheet_comment
     @classmethod
-    def add_google_sheet_comment(cls, spreadsheet_id, tab_id, note_contents, start_row_idx, end_row_idx, start_col_idx,
-                                 end_col_idx, credentials, req_limit=1):
+    def add_google_sheet_comment(
+        cls,
+        spreadsheet_id: str,
+        tab_id: int,
+        note_contents: str,
+        start_row_idx: int,
+        end_row_idx: int,
+        start_col_idx: int,
+        end_col_idx: int,
+        credentials: Any,
+        req_limit: int = 1,
+    ) -> Optional[Any]:
         """
 
         :param spreadsheet_id:
@@ -250,7 +282,9 @@ class GSheets:
         :param credentials:
         :return:
         """
-        service = build('sheets', 'v4', credentials=credentials)
+        from apiclient.discovery import build
+
+        service = build("sheets", "v4", credentials=credentials)
         data = {
             "requests": [
                 {
@@ -260,18 +294,10 @@ class GSheets:
                             "startRowIndex": start_row_idx,
                             "endRowIndex": end_row_idx,
                             "startColumnIndex": start_col_idx,
-                            "endColumnIndex": end_col_idx
+                            "endColumnIndex": end_col_idx,
                         },
-                        "rows": [
-                            {
-                                "values": [
-                                    {
-                                        "note": note_contents
-                                    }
-                                ]
-                            }
-                        ],
-                        "fields": "note"
+                        "rows": [{"values": [{"note": note_contents}]}],
+                        "fields": "note",
                     }
                 }
             ]
@@ -279,18 +305,31 @@ class GSheets:
         req_count = 0
         while req_count < req_limit:
             try:
-                res = service.spreadsheets().batchUpdate(
-                    spreadsheetId=spreadsheet_id,
-                    body=data,
-                ).execute()
+                res = (
+                    service.spreadsheets()
+                    .batchUpdate(
+                        spreadsheetId=spreadsheet_id,
+                        body=data,
+                    )
+                    .execute()
+                )
                 return res
             except:
                 print("Exception....sleeping")
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - freeze_rows_cols
     @classmethod
-    def freeze_rows_cols(cls, spreadsheet_id, tab_id, freeze_idx, credentials, rows=True, req_limit=1):
+    def freeze_rows_cols(
+        cls,
+        spreadsheet_id: str,
+        tab_id: int,
+        freeze_idx: int,
+        credentials: Any,
+        rows: bool = True,
+        req_limit: int = 1,
+    ) -> Optional[Any]:
         """
         Freezes the rows of a given Google Sheet.
 
@@ -302,7 +341,9 @@ class GSheets:
         :param credentials: GSuite credentials object.
         :return: Result object for API call.
         """
-        service = build('sheets', 'v4', credentials=credentials)
+        from apiclient.discovery import build
+
+        service = build("sheets", "v4", credentials=credentials)
 
         data = {
             "requests": [
@@ -310,11 +351,9 @@ class GSheets:
                     "updateSheetProperties": {
                         "properties": {
                             "sheetId": tab_id,
-                            "gridProperties": {
-                                "frozenRowCount" if rows else "frozenColumnCount": freeze_idx
-                            }
+                            "gridProperties": {"frozenRowCount" if rows else "frozenColumnCount": freeze_idx},
                         },
-                        "fields": "gridProperties.frozenRowCount" if rows else "gridProperties.frozenColumnCount"
+                        "fields": "gridProperties.frozenRowCount" if rows else "gridProperties.frozenColumnCount",
                     }
                 }
             ]
@@ -323,19 +362,32 @@ class GSheets:
         req_count = 0
         while req_count < req_limit:
             try:
-                res = service.spreadsheets().batchUpdate(
-                    spreadsheetId=spreadsheet_id,
-                    body=data,
-                ).execute()
+                res = (
+                    service.spreadsheets()
+                    .batchUpdate(
+                        spreadsheetId=spreadsheet_id,
+                        body=data,
+                    )
+                    .execute()
+                )
                 return res
             except:
                 print("Exception....sleeping")
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - group_sheet_cols_rows
     @classmethod
-    def group_sheet_cols_rows(cls, spreadsheet_id, tab_id, start_idx, end_idx, credentials, rows_columns="ROWS",
-                              req_limit=1):
+    def group_sheet_cols_rows(
+        cls,
+        spreadsheet_id: str,
+        tab_id: int,
+        start_idx: int,
+        end_idx: int,
+        credentials: Any,
+        rows_columns: str = "ROWS",
+        req_limit: int = 1,
+    ) -> Optional[Any]:
         """
 
         :param spreadsheet_id:
@@ -346,7 +398,9 @@ class GSheets:
         :param rows_columns:
         :return:
         """
-        service = build('sheets', 'v4', credentials=credentials)
+        from apiclient.discovery import build
+
+        service = build("sheets", "v4", credentials=credentials)
         data = {
             "requests": [
                 {
@@ -355,7 +409,7 @@ class GSheets:
                             "dimension": rows_columns,
                             "sheetId": tab_id,
                             "startIndex": start_idx,
-                            "endIndex": end_idx
+                            "endIndex": end_idx,
                         }
                     }
                 }
@@ -365,19 +419,35 @@ class GSheets:
         req_count = 0
         while req_count < req_limit:
             try:
-                res = service.spreadsheets().batchUpdate(
-                    spreadsheetId=spreadsheet_id,
-                    body=data,
-                ).execute()
+                res = (
+                    service.spreadsheets()
+                    .batchUpdate(
+                        spreadsheetId=spreadsheet_id,
+                        body=data,
+                    )
+                    .execute()
+                )
                 return res
             except:
                 print("Exception....sleeping")
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - update_cell_background_color
     @classmethod
-    def update_cell_background_color(cls, spreadsheet_id, sheet_id, row_idx_start, row_idx_end, col_idx_start,
-                                     credentials, color_dict, cell_or_row="CELL", col_idx_end=False, req_limit=1):
+    def update_cell_background_color(
+        cls,
+        spreadsheet_id: str,
+        sheet_id: int,
+        row_idx_start: int,
+        row_idx_end: int,
+        col_idx_start: int,
+        credentials: Any,
+        color_dict: Dict[str, Any],
+        cell_or_row: str = "CELL",
+        col_idx_end: Any = False,
+        req_limit: int = 1,
+    ) -> Optional[Any]:
         """
 
         :param spreadsheet_id:
@@ -390,11 +460,11 @@ class GSheets:
         :param dimension:
         :return:
         """
+        from apiclient.discovery import build
 
-        service = build('sheets', 'v4', credentials=credentials)
+        service = build("sheets", "v4", credentials=credentials)
 
-        if cell_or_row == 'CELL':
-
+        if cell_or_row == "CELL":
             data = {
                 "requests": [
                     {
@@ -404,27 +474,16 @@ class GSheets:
                                 "startRowIndex": row_idx_start,
                                 "endRowIndex": row_idx_end,
                                 "startColumnIndex": col_idx_start,
-                                "endColumnIndex": col_idx_end
+                                "endColumnIndex": col_idx_end,
                             },
-                            "rows": [
-                                {
-                                    "values": [
-                                        {
-                                            "userEnteredFormat": {
-                                                "backgroundColor": color_dict
-                                            }
-                                        }
-                                    ]
-                                }
-                            ],
-                            "fields": "userEnteredFormat.backgroundColor"
+                            "rows": [{"values": [{"userEnteredFormat": {"backgroundColor": color_dict}}]}],
+                            "fields": "userEnteredFormat.backgroundColor",
                         }
                     }
                 ]
             }
 
         else:
-
             data = {
                 "requests": [
                     {
@@ -435,12 +494,8 @@ class GSheets:
                                 "endRowIndex": row_idx_end,
                                 "startColumnIndex": col_idx_start,
                             },
-                            "cell": {
-                                "userEnteredFormat": {
-                                    "backgroundColor": color_dict
-                                }
-                            },
-                            "fields": "userEnteredFormat.backgroundColor"
+                            "cell": {"userEnteredFormat": {"backgroundColor": color_dict}},
+                            "fields": "userEnteredFormat.backgroundColor",
                         }
                     }
                 ]
@@ -449,26 +504,22 @@ class GSheets:
         req_count = 0
         while req_count < req_limit:
             try:
-                res = (
-                    service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-                ).execute()
+                res = (service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body=data)).execute()
                 return res
             except:
                 print("Exception....sleeping")
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - bulk_update_cell_background_color
     @classmethod
     def bulk_update_cell_background_color(
-            cls,
-            spreadsheet_id,
-            credentials,
-            request_list,
-            req_limit=1
-    ):
+        cls,
+        spreadsheet_id: str,
+        credentials: Any,
+        request_list: List[Any],
+        req_limit: int = 1,
+    ) -> Optional[Any]:
         """
 
         :param spreadsheet_id:
@@ -481,36 +532,38 @@ class GSheets:
         :param dimension:
         :return:
         """
+        from apiclient.discovery import build
 
-        service = build('sheets', 'v4', credentials=credentials)
+        service = build("sheets", "v4", credentials=credentials)
 
-        data = {
-            "requests": request_list
-        }
+        data = {"requests": request_list}
 
         req_count = 0
         while req_count < req_limit:
             try:
-                res = (
-                    service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-                ).execute()
+                res = (service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body=data)).execute()
                 return res
             except:
                 print("Exception....sleeping")
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - drop_duplicates
     @classmethod
-    def drop_duplicates(cls, spreadsheet_id, sheet_id, credentials,
-                        dup_idx_start, dup_idx_end,
-                        row_idx_start, row_idx_end,
-                        col_idx_start, col_idx_end,
-                        rows_columns="COLUMNS",
-                        req_limit=1
-                        ):
+    def drop_duplicates(
+        cls,
+        spreadsheet_id: str,
+        sheet_id: int,
+        credentials: Any,
+        dup_idx_start: int,
+        dup_idx_end: int,
+        row_idx_start: int,
+        row_idx_end: int,
+        col_idx_start: int,
+        col_idx_end: int,
+        rows_columns: str = "COLUMNS",
+        req_limit: int = 1,
+    ) -> Optional[Any]:
         """
 
         :param spreadsheet_id:
@@ -525,7 +578,9 @@ class GSheets:
         :param rows_columns:
         :return:
         """
-        service = build('sheets', 'v4', credentials=credentials)
+        from apiclient.discovery import build
+
+        service = build("sheets", "v4", credentials=credentials)
 
         data = {
             "requests": {
@@ -559,21 +614,25 @@ class GSheets:
         req_count = 0
         while req_count < req_limit:
             try:
-                res = (
-                    service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-                ).execute()
+                res = (service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body=data)).execute()
                 return res
             except:
                 print("Exception....sleeping")
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - update_google_sheet_val
     @classmethod
-    def update_google_sheet_val(cls, spreadsheet_id, tab_id, val, row, col, credentials,
-                                req_limit=1):
+    def update_google_sheet_val(
+        cls,
+        spreadsheet_id: str,
+        tab_id: int,
+        val: str,
+        row: int,
+        col: int,
+        credentials: Any,
+        req_limit: int = 1,
+    ) -> Optional[Any]:
         """
         Updates a google spreadsheet cell with a value.
 
@@ -585,47 +644,41 @@ class GSheets:
         :param credentials: GSuite credentials object.
         :return: API response.
         """
-        service = build('sheets', 'v4', credentials=credentials)
+        from apiclient.discovery import build
 
-        data = {"requests": {
-            "updateCells": {
-                "rows": [
-                    {
-                        "values": [{
-                            "userEnteredValue": {
-                                "formulaValue": val
-                            }
-                        }]
-                    }
-                ],
-                "fields": "userEnteredValue",
-                "start": {
-                    "sheetId": tab_id,
-                    "rowIndex": row,
-                    "columnIndex": col
+        service = build("sheets", "v4", credentials=credentials)
+
+        data = {
+            "requests": {
+                "updateCells": {
+                    "rows": [{"values": [{"userEnteredValue": {"formulaValue": val}}]}],
+                    "fields": "userEnteredValue",
+                    "start": {"sheetId": tab_id, "rowIndex": row, "columnIndex": col},
                 }
             }
-        }
         }
 
         req_count = 0
         while req_count < req_limit:
             try:
-                res = (
-                    service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-                ).execute()
+                res = (service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body=data)).execute()
                 return res
             except:
                 print("Exception....sleeping")
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - update_google_sheet_df
     @classmethod
-    def update_google_sheet_df(cls, spreadsheet_id, df, data_range, credentials, header=False,
-                               req_limit=1):
+    def update_google_sheet_df(
+        cls,
+        spreadsheet_id: str,
+        df: Any,
+        data_range: str,
+        credentials: Any,
+        header: bool = False,
+        req_limit: int = 1,
+    ) -> Optional[Any]:
         """
         Uploads a Pandas DataFrame to a Google Sheet.
 
@@ -635,9 +688,10 @@ class GSheets:
         :param credentials: GSuite credentials object.
         :return: API response.
         """
-        service = build('sheets', 'v4', credentials=credentials)
-        value_input_option = 'USER_ENTERED'
-        insert_data_option = 'INSERT_ROWS'
+        from apiclient.discovery import build
+
+        service = build("sheets", "v4", credentials=credentials)
+        value_input_option = "USER_ENTERED"
 
         write_df = []
 
@@ -652,34 +706,15 @@ class GSheets:
         req_count = 0
         while req_count < req_limit:
             try:
-                res = service.spreadsheets().values().append(
-                    spreadsheetId=spreadsheet_id, range=data_range,
-                    valueInputOption=value_input_option,
-                    # insertDataOption=insert_data_option,
-                    body=body).execute()
-                return res
-            except:
-                print("Exception...sleeping")
-                time.sleep(3)
-                req_count += 1
-
-    @classmethod
-    def clear_google_sheet_data(cls, spreadsheet_id, range, credentials,
-                                req_limit=1):
-        service = build('sheets', 'v4', credentials=credentials)
-
-        body = {}
-        req_count = 0
-        while req_count < req_limit:
-            try:
                 res = (
-                    service
-                    .spreadsheets()
+                    service.spreadsheets()
                     .values()
-                    .clear(
+                    .append(
                         spreadsheetId=spreadsheet_id,
-                        range=range,
-                        body=body
+                        range=data_range,
+                        valueInputOption=value_input_option,
+                        # insertDataOption=insert_data_option,
+                        body=body,
                     )
                     .execute()
                 )
@@ -689,9 +724,36 @@ class GSheets:
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - clear_google_sheet_data
     @classmethod
-    def delete_google_sheet_data(cls, spreadsheet_id, sheet_id, idx_start, idx_end, credentials, dimension="ROWS",
-                                 req_limit=1):
+    def clear_google_sheet_data(cls, spreadsheet_id: str, range: str, credentials: Any, req_limit: int = 1) -> Optional[Any]:
+        from apiclient.discovery import build
+
+        service = build("sheets", "v4", credentials=credentials)
+
+        body = {}
+        req_count = 0
+        while req_count < req_limit:
+            try:
+                res = service.spreadsheets().values().clear(spreadsheetId=spreadsheet_id, range=range, body=body).execute()
+                return res
+            except:
+                print("Exception...sleeping")
+                time.sleep(3)
+                req_count += 1
+
+    # MARK: - delete_google_sheet_data
+    @classmethod
+    def delete_google_sheet_data(
+        cls,
+        spreadsheet_id: str,
+        sheet_id: int,
+        idx_start: int,
+        idx_end: int,
+        credentials: Any,
+        dimension: str = "ROWS",
+        req_limit: int = 1,
+    ) -> Optional[Any]:
         """
         Deletes data from a Google Sheet.
 
@@ -702,7 +764,9 @@ class GSheets:
         :param dimension:
         :return:
         """
-        service = build('sheets', 'v4', credentials=credentials)
+        from apiclient.discovery import build
+
+        service = build("sheets", "v4", credentials=credentials)
         spreadsheet_data = [
             {
                 "deleteDimension": {
@@ -710,7 +774,7 @@ class GSheets:
                         "sheetId": sheet_id,
                         "dimension": dimension,
                         "startIndex": idx_start,
-                        "endIndex": idx_end
+                        "endIndex": idx_end,
                     }
                 }
             }
@@ -720,23 +784,23 @@ class GSheets:
         req_count = 0
         while req_count < req_limit:
             try:
-                res = (
-                    service
-                    .spreadsheets()
-                    .batchUpdate(
-                        spreadsheetId=spreadsheet_id,
-                        body=request
-                    ).execute()
-                )
+                res = service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body=request).execute()
                 return res
             except:
                 print("Exception...sleeping")
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - get_google_sheet_metadata
     @classmethod
-    def get_google_sheet_metadata(cls, spreadsheet_id, credentials, include_grid_data=False, ranges=False,
-                                  req_limit=1):
+    def get_google_sheet_metadata(
+        cls,
+        spreadsheet_id: str,
+        credentials: Any,
+        include_grid_data: bool = False,
+        ranges: Any = False,
+        req_limit: int = 1,
+    ) -> Optional[Any]:
         """
 
         :param include_grid_data:
@@ -745,14 +809,16 @@ class GSheets:
         :param ranges:
         :return:
         """
-        service = build('sheets', 'v4', credentials=credentials)
+        from apiclient.discovery import build
+
+        service = build("sheets", "v4", credentials=credentials)
         req_count = 0
         while req_count < req_limit:
             try:
-                request = (
-                    service
-                    .spreadsheets()
-                    .get(spreadsheetId=spreadsheet_id, includeGridData=include_grid_data, ranges=ranges)
+                request = service.spreadsheets().get(
+                    spreadsheetId=spreadsheet_id,
+                    includeGridData=include_grid_data,
+                    ranges=ranges,
                 )
 
                 response = request.execute()
@@ -762,8 +828,9 @@ class GSheets:
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - get_google_sheet_tabs
     @classmethod
-    def get_google_sheet_tabs(cls, spreadsheet_id, credentials, req_limit=1):
+    def get_google_sheet_tabs(cls, spreadsheet_id: str, credentials: Any, req_limit: int = 1) -> Tuple[List[str], List[int]]:
         """
         Get the names and IDs of tabs for a given Google Sheet.
 
@@ -771,7 +838,9 @@ class GSheets:
         :param credentials: GSuite credentials object.
         :return: Names and IDs of tabs for a given Google Sheet.
         """
-        service = build('sheets', 'v4', credentials=credentials)
+        from apiclient.discovery import build
+
+        service = build("sheets", "v4", credentials=credentials)
         req_count = 0
         while req_count < req_limit:
             try:
@@ -790,17 +859,26 @@ class GSheets:
 
         return tab_names, tab_ids
 
+    # MARK: - sort_google_sheet
     @classmethod
-    def sort_google_sheet(cls, spreadsheet_id, credentials, tab_id, start_row_idx, end_row_idx, start_col_idx,
-                          end_col_idx, sort_idx_list: List, sort_order_list: List, req_limit=1):
+    def sort_google_sheet(
+        cls,
+        spreadsheet_id: str,
+        credentials: Any,
+        tab_id: int,
+        start_row_idx: int,
+        end_row_idx: int,
+        start_col_idx: int,
+        end_col_idx: int,
+        sort_idx_list: List[int],
+        sort_order_list: List[str],
+        req_limit: int = 1,
+    ) -> Optional[Any]:
+        from apiclient.discovery import build
 
-        service = build('sheets', 'v4', credentials=credentials)
+        service = build("sheets", "v4", credentials=credentials)
 
-        sort_spec_list = \
-            [{
-                "dimensionIndex": x,
-                "sortOrder": y
-            } for x, y in zip(sort_idx_list, sort_order_list)]
+        sort_spec_list = [{"dimensionIndex": x, "sortOrder": y} for x, y in zip(sort_idx_list, sort_order_list)]
 
         data = {
             "requests": [
@@ -811,9 +889,9 @@ class GSheets:
                             "startRowIndex": start_row_idx,
                             "endRowIndex": end_row_idx,
                             "startColumnIndex": start_col_idx,
-                            "endColumnIndex": end_col_idx
+                            "endColumnIndex": end_col_idx,
                         },
-                        "sortSpecs": sort_spec_list
+                        "sortSpecs": sort_spec_list,
                     }
                 }
             ]
@@ -822,21 +900,17 @@ class GSheets:
         req_count = 0
         while req_count < req_limit:
             try:
-                res = (
-                    service
-                    .spreadsheets()
-                    .batchUpdate(spreadsheetId=spreadsheet_id,
-                                 body=data)
-                ).execute()
+                res = (service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body=data)).execute()
                 return res
             except:
                 print("Exception....sleeping")
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - delete_google_sheet_tab
     #     todo: delete google sheet
     @classmethod
-    def delete_google_sheet_tab(cls, spreadsheet_id, tab_id, credentials, req_limit=1):
+    def delete_google_sheet_tab(cls, spreadsheet_id: str, tab_id: int, credentials: Any, req_limit: int = 1) -> Optional[Any]:
         """
         Adds a tab to a Google Sheet.
 
@@ -845,16 +919,22 @@ class GSheets:
         :param credentials: GSuite credentials object.
         :return: Result object for API call.
         """
-        data = {'requests': {'deleteSheet': {'sheetId': tab_id}}}
-        service = build('sheets', 'v4', credentials=credentials)
+        from apiclient.discovery import build
+
+        data = {"requests": {"deleteSheet": {"sheetId": tab_id}}}
+        service = build("sheets", "v4", credentials=credentials)
 
         req_count = 0
         while req_count < req_limit:
             try:
-                res = service.spreadsheets().batchUpdate(
-                    spreadsheetId=spreadsheet_id,
-                    body=data,
-                ).execute()
+                res = (
+                    service.spreadsheets()
+                    .batchUpdate(
+                        spreadsheetId=spreadsheet_id,
+                        body=data,
+                    )
+                    .execute()
+                )
                 return res
             except:
                 print("Exception...sleeping")
@@ -864,6 +944,7 @@ class GSheets:
             print(f"Deleted sheet: {tab_id}")
 
 
+# MARK: - GDrive
 class GDrive:
     """
     Functions for interacting with Google Drive.
@@ -872,63 +953,80 @@ class GDrive:
 
     """
 
+    # MARK: - create_service_serv_acct
     @classmethod
-    def create_service_serv_acct(cls, member_acct_email, token_path):
+    def create_service_serv_acct(
+        cls, member_acct_email: str, token_path: Optional[str] = None, scopes: Optional[List[str]] = None
+    ) -> Tuple[Any, Any]:
         """
         Creates a GDrive authenticated credentials object.
 
         :param member_acct_email: GDrive service acct email address.
         :param token_path: Path to GDrive authentication token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Return GDrive authenticated credentials object.
         """
+        import os
 
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(
-            filename=token_path,
-            scopes=SCOPES)
+        from apiclient.discovery import build
+        from oauth2client.service_account import ServiceAccountCredentials
 
-        credentials = (
-            credentials
-            .create_delegated(member_acct_email)
-        )
+        token_path = token_path or os.environ.get("GSUITE_TOKEN_PATH")
+        _scopes = scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(filename=token_path, scopes=_scopes)
 
-        service = build('drive', 'v3', credentials=credentials)
+        credentials = credentials.create_delegated(member_acct_email)
+
+        service = build("drive", "v3", credentials=credentials)
         return service, credentials
 
+    # MARK: - create_service_serv_acct_dict
     @classmethod
-    def create_service_serv_acct_dict(cls, member_acct_email, dict_creds):
+    def create_service_serv_acct_dict(cls, member_acct_email: str, dict_creds: Dict[str, Any], scopes: Optional[List[str]] = None) -> Tuple[Any, Any]:
         """
         Creates a GDrive authenticated credentials object.
 
         :param member_acct_email: GDrive service acct email address.
         :param token_path: Path to GDrive authentication token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Return GDrive authenticated credentials object.
         """
+        import os
 
-        credentials = ServiceAccountCredentials.from_json_keyfile_dict(
-            keyfile_dict=dict_creds,
-            scopes=SCOPES)
+        from apiclient.discovery import build
+        from oauth2client.service_account import ServiceAccountCredentials
 
-        credentials = (
-            credentials
-            .create_delegated(member_acct_email)
-        )
+        _scopes = scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(keyfile_dict=dict_creds, scopes=_scopes)
 
-        service = build('drive', 'v3', credentials=credentials)
+        credentials = credentials.create_delegated(member_acct_email)
+
+        service = build("drive", "v3", credentials=credentials)
         return service, credentials
 
+    # MARK: - authorize_credentials
     @classmethod
-    def authorize_credentials(cls, cred_path, token_path):
+    def authorize_credentials(cls, cred_path: Optional[str] = None, token_path: Optional[str] = None, scopes: Optional[List[str]] = None) -> Any:
         """
         Creates an authorized credentials object for Google Drive.
 
         :param cred_path: Local path to GSuite credentials object.
         :param token_path: Local path to GSuite authorization token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Authorized credentials object for GSuite.
         """
+        import os
+
+        from google.auth.transport.requests import Request
+        from google_auth_oauthlib.flow import InstalledAppFlow
+
+        cred_path = cred_path or os.environ.get("GSUITE_TOKEN_PATH")
+
+        cred_path = cred_path or os.environ.get("GSUITE_TOKEN_PATH")
 
         creds = None
         if os.path.exists(token_path):
-            with open(token_path, 'rb') as token:
+            with open(token_path, "rb") as token:
                 creds = pickle.load(token)
             # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
@@ -936,15 +1034,17 @@ class GDrive:
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    cred_path, SCOPES)
+                    cred_path, scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+                )
                 creds = flow.run_local_server(port=0)
                 # Save the credentials for the next run
-            with open(token_path, 'wb') as token:
+            with open(token_path, "wb") as token:
                 pickle.dump(creds, token)
         return creds
 
+    # MARK: - download_file
     @classmethod
-    def download_file(cls, file_id, file_name, credentials, save_local=False):
+    def download_file(cls, file_id: str, file_name: str, credentials: Any, save_local: bool = False) -> bytes:
         """
         Downloads a file from a Google Drive account.
 
@@ -954,7 +1054,10 @@ class GDrive:
         :param credentials: GSuite credentials object.
         :return: Downloaded file from Google Drive.
         """
-        drive_service = build('drive', 'v3', credentials=credentials)
+        from apiclient.discovery import build
+        from googleapiclient.http import MediaIoBaseDownload
+
+        drive_service = build("drive", "v3", credentials=credentials)
         request = drive_service.files().get_media(
             fileId=file_id,
             # mimeType=content_type
@@ -973,12 +1076,18 @@ class GDrive:
         # The file has been downloaded into RAM, now save it in a file
         if save_local:
             fh.seek(0)
-            with open(file_name, 'wb') as f:
+            with open(file_name, "wb") as f:
                 shutil.copyfileobj(fh, f, length=131072)
         return file_bytes
 
+    # MARK: - get_all_google_items
     @classmethod
-    def get_all_google_items(cls, credentials, page_size=None, folder_id=None):
+    def get_all_google_items(
+        cls,
+        credentials: Any,
+        page_size: Optional[int] = None,
+        folder_id: Optional[str] = None,
+    ) -> Any:
         """
         Get all files in a Google Drive (or folder if specified).
 
@@ -988,26 +1097,36 @@ class GDrive:
         :param folder_id: GDrive folder to search in (optional)
         :return: Pandas DataFrame of files in a Google Drive.
         """
+        import pandas as pd
+        from apiclient import discovery
 
-        DRIVE = discovery.build('drive', 'v3', credentials=credentials)
+        DRIVE = discovery.build("drive", "v3", credentials=credentials)
 
         res_all = []
 
-        res = DRIVE.files().list(
-            q="'" + folder_id + "' in parents" if folder_id else None,
-            pageSize=page_size,
-            fields="nextPageToken, files(id, name)"
-        ).execute()
-
-        res_all += res.get("files")
-
-        while res.get('nextPageToken'):
-            res = DRIVE.files().list(
+        res = (
+            DRIVE.files()
+            .list(
                 q="'" + folder_id + "' in parents" if folder_id else None,
                 pageSize=page_size,
                 fields="nextPageToken, files(id, name)",
-                pageToken=res['nextPageToken']
-            ).execute()
+            )
+            .execute()
+        )
+
+        res_all += res.get("files")
+
+        while res.get("nextPageToken"):
+            res = (
+                DRIVE.files()
+                .list(
+                    q="'" + folder_id + "' in parents" if folder_id else None,
+                    pageSize=page_size,
+                    fields="nextPageToken, files(id, name)",
+                    pageToken=res["nextPageToken"],
+                )
+                .execute()
+            )
 
             res_all += res.get("files")
 
@@ -1015,8 +1134,15 @@ class GDrive:
 
         return df
 
+    # MARK: - create_upload_folder
     @classmethod
-    def create_upload_folder(cls, folder_name, credentials, overwrite_folder=False, parent_id=None):
+    def create_upload_folder(
+        cls,
+        folder_name: str,
+        credentials: Any,
+        overwrite_folder: bool = False,
+        parent_id: Optional[str] = None,
+    ) -> Any:
         """
         Creates a folder in Google Drive.
 
@@ -1026,47 +1152,49 @@ class GDrive:
         :param parent_id: Id of parent folder (optional).
         :return: Created folder information.
         """
+        from apiclient.discovery import build
+
         # Create a folder on Drive, returns the newly created folders ID
-        drive_service = build('drive', 'v3', credentials=credentials)
+        drive_service = build("drive", "v3", credentials=credentials)
 
         response = (
-            drive_service
-            .files()
+            drive_service.files()
             .list(
                 q="mimeType = 'application/vnd.google-apps.folder'",
-                fields='nextPageToken, files(id, name)'
+                fields="nextPageToken, files(id, name)",
             )
             .execute()
         )
 
         if overwrite_folder:
-            for file in response.get('files', []):
-
-                if folder_name == file.get('name'):
-                    print('Overwriting file: %s (%s)' % (file.get('name'), file.get('id')))
-                    drive_service.files().delete(fileId=file.get('id')).execute()
+            for file in response.get("files", []):
+                if folder_name == file.get("name"):
+                    print("Overwriting file: %s (%s)" % (file.get("name"), file.get("id")))
+                    drive_service.files().delete(fileId=file.get("id")).execute()
                     break
 
-                page_token = response.get('nextPageToken', None)
+                page_token = response.get("nextPageToken", None)
 
                 if page_token is None:
                     break
 
-        body = {
-            'name': folder_name,
-            'mimeType': "application/vnd.google-apps.folder"
-        }
+        body = {"name": folder_name, "mimeType": "application/vnd.google-apps.folder"}
         if parent_id:
-            body['parents'] = [parent_id]
+            body["parents"] = [parent_id]
         folder = drive_service.files().create(body=body).execute()
 
         return folder
 
+    # MARK: - upload_files
     @classmethod
-    def upload_files(cls, folder_id, upload_filepaths,
-                     credentials, upload_filenames=False,
-                     upload_from_memory=False,
-                     ):
+    def upload_files(
+        cls,
+        folder_id: str,
+        upload_filepaths: List[Any],
+        credentials: Any,
+        upload_filenames: Any = False,
+        upload_from_memory: bool = False,
+    ) -> List[Any]:
         """
         Uploads files to a folder on Google Drive.
 
@@ -1076,182 +1204,157 @@ class GDrive:
         :param upload_filenames: Filenames for files, must match length of filepaths (optional). Otherwise uses filepath names.
         :return: Confirmation of files being uploaded.
         """
-        drive_service = build('drive', 'v3', credentials=credentials)
+        from apiclient.discovery import build
+        from googleapiclient.http import MediaFileUpload, MediaIoBaseUpload
+
+        drive_service = build("drive", "v3", credentials=credentials)
 
         files = []
         for idx, file in enumerate(upload_filepaths):
             # name = os.fsdecode(file)
             # filename, file_extension = splitext(name, )
             # if upload_filenames:
-            filename, file_extension = splitext(upload_filenames[idx], )
+            filename, file_extension = splitext(
+                upload_filenames[idx],
+            )
 
             # setting mimeType for each file
             # more types available here:
             # https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 
-            if file_extension == '.pdf':
-                mimeType = 'application/pdf'
+            if file_extension == ".pdf":
+                mimeType = "application/pdf"
 
-            elif '.gz' in file_extension:
+            elif ".gz" in file_extension:
                 mimeType = "application/gzip"
 
-            elif '.zip' in file_extension:
+            elif ".zip" in file_extension:
                 mimeType = "application/zip"
 
-            elif file_extension == '.doc':
+            elif file_extension == ".doc":
                 mimeType = "application/msword"
 
-            elif file_extension == '.docx':
+            elif file_extension == ".docx":
                 mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 
-            elif file_extension == '.ppt':
+            elif file_extension == ".ppt":
                 mimeType = "application/vnd.ms-powerpoint"
 
-            elif file_extension == '.pptx':
+            elif file_extension == ".pptx":
                 mimeType = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
 
-            elif '.csv' in file_extension:
+            elif ".csv" in file_extension:
                 mimeType = "text/csv"
 
-            elif '.txt' in file_extension:
+            elif ".txt" in file_extension:
                 mimeType = "text/plain"
 
-            elif file_extension == '.xls':
+            elif file_extension == ".xls":
                 mimeType = "application/vnd.ms-excel"
 
-            elif file_extension == '.xlsx':
+            elif file_extension == ".xlsx":
                 mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
-            elif '.jpg' in file_extension or '.jpeg' in file_extension:
-                mimeType = 'image/jpeg'
+            elif ".jpg" in file_extension or ".jpeg" in file_extension:
+                mimeType = "image/jpeg"
 
-            elif '.png' in file_extension:
-                mimeType = 'image/png'
+            elif ".png" in file_extension:
+                mimeType = "image/png"
 
-            elif '.tif' in file_extension or '.tiff' in file_extension:
-                mimeType = 'image/tiff'
+            elif ".tif" in file_extension or ".tiff" in file_extension:
+                mimeType = "image/tiff"
 
-            elif '.gif' in file_extension:
-                mimeType = 'image/gif'
+            elif ".gif" in file_extension:
+                mimeType = "image/gif"
 
-            elif '.json' in file_extension:
-                mimeType = 'application/json'
+            elif ".json" in file_extension:
+                mimeType = "application/json"
 
-            elif '.mp3' in file_extension:
-                mimeType = 'audio/mpeg'
+            elif ".mp3" in file_extension:
+                mimeType = "audio/mpeg"
 
-            elif '.mpeg' in file_extension:
-                mimeType = 'video/mpeg'
+            elif ".mpeg" in file_extension:
+                mimeType = "video/mpeg"
 
-            elif '.wav' in file_extension:
-                mimeType = 'video/wav'
+            elif ".wav" in file_extension:
+                mimeType = "video/wav"
 
             else:
                 print(f"File type for {file} not mapped...")
                 continue
 
             file_metadata = {
-                'name': filename + file_extension,
-                'mimeType': mimeType,
-                'parents': [folder_id]
+                "name": filename + file_extension,
+                "mimeType": mimeType,
+                "parents": [folder_id],
             }
 
             if upload_from_memory:
-
                 try:
                     fh = io.BytesIO(file)
-                    media = MediaIoBaseUpload(
-                        fh,
-                        mimetype=mimeType,
-                        chunksize=1024 * 1024,
-                        resumable=True)
+                    media = MediaIoBaseUpload(fh, mimetype=mimeType, chunksize=1024 * 1024, resumable=True)
 
-                    file_ = (
-                        drive_service
-                        .files()
-                        .create(
-                            body=file_metadata,
-                            media_body=media,
-                            fields='id')
-                        .execute()
-                    )
+                    file_ = drive_service.files().create(body=file_metadata, media_body=media, fields="id").execute()
 
-                    print(f'''file upload success for: {file}''')
+                    print(f"""file upload success for: {file}""")
                     files.append(file_)
 
                 except Exception as e:
                     print(str(e))
-                    print(f'''file upload failed for: {file}, method: memory''')
+                    print(f"""file upload failed for: {file}, method: memory""")
                     continue
 
             else:
                 try:
                     media = MediaFileUpload(file, resumable=True)
 
-                    file_ = (
-                        drive_service
-                        .files()
-                        .create(
-                            body=file_metadata,
-                            media_body=media,
-                            fields='id')
-                        .execute()
-                    )
+                    file_ = drive_service.files().create(body=file_metadata, media_body=media, fields="id").execute()
 
-                    print(f'''file upload success for: {file}''')
+                    print(f"""file upload success for: {file}""")
                     files.append(file_)
                 except Exception as e:
                     print(str(e))
-                    print(f'''file upload failed for: {file}, method: disk''')
+                    print(f"""file upload failed for: {file}, method: disk""")
                     continue
 
         return files
 
+    # MARK: - get_file_revisions
     @classmethod
-    def get_file_revisions(cls, file_id, credentials):
+    def get_file_revisions(cls, file_id: str, credentials: Any) -> Any:
         """
 
         :param file_id:
         :param credentials:
         :return:
         """
+        from apiclient.discovery import build
 
         # https://developers.google.com/drive/api/v3/reference/revisions/list
-        drive_service = build('drive', 'v3', credentials=credentials)
+        drive_service = build("drive", "v3", credentials=credentials)
 
-        r = \
-            (
-                drive_service
-                .revisions()
-                .list(
-                    pageSize=1000,
-                    fileId=file_id,
-                    fields='*'
-                )
-                .execute()
-            )
+        r = drive_service.revisions().list(pageSize=1000, fileId=file_id, fields="*").execute()
 
         r_list = []
         r_list += r.get("revisions")
-        while r.get('nextPageToken'):
+        while r.get("nextPageToken"):
             print(f"{len(r_list)} total revisions so far...fetching next batch.")
-            r = \
-                (
-                    drive_service
-                    .revisions()
-                    .list(
-                        pageSize=1000,
-                        fileId=file_id,
-                        fields='*',
-                        pageToken=r.get('nextPageToken')
-                    )
-                    .execute()
+            r = (
+                drive_service.revisions()
+                .list(
+                    pageSize=1000,
+                    fileId=file_id,
+                    fields="*",
+                    pageToken=r.get("nextPageToken"),
                 )
+                .execute()
+            )
             r_list += r.get("revisions")
 
         return r
 
 
+# MARK: - GMail
 class GMail:
     """
     Functions for interacting with GMail.
@@ -1260,52 +1363,66 @@ class GMail:
 
     """
 
+    # MARK: - create_service_serv_acct
     @classmethod
-    def create_service_serv_acct(cls, member_acct_email, token_path):
+    def create_service_serv_acct(
+        cls, member_acct_email: str, token_path: Optional[str] = None, scopes: Optional[List[str]] = None
+    ) -> Tuple[Any, Any]:
         """
         Creates a GMail authenticated credentials object.
 
         :param member_acct_email: GSuite service acct email address.
         :param token_path: Path to GSuite authentication token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Return GMail authenticated credentials object.
         """
+        import os
 
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(
-            filename=token_path,
-            scopes=SCOPES)
+        from apiclient.discovery import build
+        from oauth2client.service_account import ServiceAccountCredentials
 
-        credentials = (
-            credentials
-            .create_delegated(member_acct_email)
-        )
+        token_path = token_path or os.environ.get("GSUITE_TOKEN_PATH")
+        _scopes = scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(filename=token_path, scopes=_scopes)
 
-        service = build('gmail', 'v1', credentials=credentials)
+        credentials = credentials.create_delegated(member_acct_email)
+
+        service = build("gmail", "v1", credentials=credentials)
         return service, credentials
 
+    # MARK: - create_service_serv_acct_dict
     @classmethod
-    def create_service_serv_acct_dict(cls, member_acct_email, dict_creds):
+    def create_service_serv_acct_dict(cls, member_acct_email: str, dict_creds: Dict[str, Any], scopes: Optional[List[str]] = None) -> Tuple[Any, Any]:
         """
         Creates a GDrive authenticated credentials object.
 
         :param member_acct_email: GDrive service acct email address.
         :param token_path: Path to GDrive authentication token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Return GDrive authenticated credentials object.
         """
+        import os
 
-        credentials = ServiceAccountCredentials.from_json_keyfile_dict(
-            keyfile_dict=dict_creds,
-            scopes=SCOPES)
+        from apiclient.discovery import build
+        from oauth2client.service_account import ServiceAccountCredentials
 
-        credentials = (
-            credentials
-            .create_delegated(member_acct_email)
-        )
+        _scopes = scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(keyfile_dict=dict_creds, scopes=_scopes)
 
-        service = build('gmail', 'v1', credentials=credentials)
+        credentials = credentials.create_delegated(member_acct_email)
+
+        service = build("gmail", "v1", credentials=credentials)
         return service, credentials
 
+    # MARK: - create_service
     @classmethod
-    def create_service(cls, cred_path, token_path=None, working_dir=None):
+    def create_service(
+        cls,
+        cred_path: str,
+        token_path: Optional[str] = None,
+        working_dir: Optional[str] = None,
+        scopes: Optional[List[str]] = None,
+    ) -> Any:
         """
         Creates an authenticated service object for GMail.
 
@@ -1314,10 +1431,17 @@ class GMail:
         :param working_dir: Path of working directory to store token if token path not specified.
         :return: Authenticated service object for GMail
         """
+        import os
+
+        from apiclient.discovery import build
+        from google.auth.transport.requests import Request
+        from google_auth_oauthlib.flow import InstalledAppFlow
+
+        cred_path = cred_path or os.environ.get("GSUITE_TOKEN_PATH")
 
         if token_path:
             if os.path.exists(token_path):
-                with open(token_path, 'rb') as token:
+                with open(token_path, "rb") as token:
                     creds = pickle.load(token)
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
@@ -1325,23 +1449,32 @@ class GMail:
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    cred_path, SCOPES)
+                    cred_path, scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+                )
                 creds = flow.run_local_server()
             # Save the credentials for the next run
-            with open(working_dir + 'token.pickle', 'wb') as token:
+            with open((working_dir or "") + "token.pickle", "wb") as token:
                 pickle.dump(creds, token)
 
-        service = build('gmail', 'v1', credentials=creds)
+        service = build("gmail", "v1", credentials=creds)
         return service
 
+    # MARK: - send_email
     @classmethod
-    def send_email(cls, service, to, sender, subject,
-                   message_text, attachments=False,
-                   attachments_bytes=False,
-                   attachment_types=False,
-                   attachment_names=False,
-                   message_is_html=False,
-                   req_limit=1):
+    def send_email(
+        cls,
+        service: Any,
+        to: List[str],
+        sender: str,
+        subject: str,
+        message_text: str,
+        attachments: Any = False,
+        attachments_bytes: Any = False,
+        attachment_types: Any = False,
+        attachment_names: Any = False,
+        message_is_html: bool = False,
+        req_limit: int = 1,
+    ) -> Optional[Any]:
         """
         Sends an email via GMail.
 
@@ -1355,27 +1488,18 @@ class GMail:
         :return: Sent message.
         """
 
-        message = MIMEText(
-            message_text, "html" if message_is_html else "plain"
-        ) if not attachments else MIMEMultipart()
-        message['to'] = ", ".join(to) if len(to) > 1 else to[0]
-        message['from'] = sender
-        message['subject'] = subject
+        message = MIMEText(message_text, "html" if message_is_html else "plain") if not attachments else MIMEMultipart()
+        message["to"] = ", ".join(to) if len(to) > 1 else to[0]
+        message["from"] = sender
+        message["subject"] = subject
         if message_text and attachments:
-            message.attach(
-                MIMEText(
-                    message_text,
-                    "html" if message_is_html else "plain")
-            )
+            message.attach(MIMEText(message_text, "html" if message_is_html else "plain"))
 
         if attachments:
-            msg = MIMEText(
-                message_text, "html" if message_is_html else "plain"
-            )
+            msg = MIMEText(message_text, "html" if message_is_html else "plain")
 
             # if the attachments are passed as bytes
             if attachments_bytes:
-
                 for idx, attch in enumerate(attachments):
                     print(f"Adding attachment from memory: {attch}")
 
@@ -1386,84 +1510,71 @@ class GMail:
                     msg.set_payload(attch)
                     encoders.encode_base64(msg)
 
-                    msg.add_header('Content-Disposition',
-                                   'attachment',
-                                   filename=attachment_names[idx])
+                    msg.add_header(
+                        "Content-Disposition",
+                        "attachment",
+                        filename=attachment_names[idx],
+                    )
 
                     message.attach(msg)
 
             else:
-
                 # loop through attachment list
                 for idx, attch in enumerate(attachments):
                     print(f"Adding attachment from disk: {attch}")
 
                     content_type, encoding = mimetypes.guess_type(attch)
                     if content_type is None or encoding is not None:
-                        content_type = 'application/octet-stream'
-                    main_type, sub_type = content_type.split('/', 1)
+                        content_type = "application/octet-stream"
+                    main_type, sub_type = content_type.split("/", 1)
 
-                    if main_type == 'text':
-                        fp = open(attch, 'rb')
+                    if main_type == "text":
+                        fp = open(attch, "rb")
                         msg = MIMEText(fp.read(), _subtype=sub_type)
                         fp.close()
 
-                    elif main_type == 'image':
-                        fp = open(attch, 'rb')
+                    elif main_type == "image":
+                        fp = open(attch, "rb")
                         msg = MIMEImage(fp.read(), _subtype=sub_type)
                         fp.close()
 
-                    elif main_type == 'audio':
-                        fp = open(attch, 'rb')
+                    elif main_type == "audio":
+                        fp = open(attch, "rb")
                         msg = MIMEAudio(fp.read(), _subtype=sub_type)
                         fp.close()
 
                     elif main_type == "application":
-                        fp = open(attch, 'rb')
+                        fp = open(attch, "rb")
                         msg = MIMEApplication(fp.read(), _subtype=sub_type)
                         fp.close()
 
                     else:
-                        fp = open(attch, 'rb')
+                        fp = open(attch, "rb")
                         msg = MIMEBase(main_type, sub_type)
                         msg.set_payload(fp.read())
                         encoders.encode_base64(msg)
                         fp.close()
 
-                    filename = os.path.basename(attch) \
-                        if not attachment_names \
-                        else attachment_names[idx]
+                    filename = os.path.basename(attch) if not attachment_names else attachment_names[idx]
 
-                    msg.add_header('Content-Disposition',
-                                   'attachment',
-                                   filename=filename)
+                    msg.add_header("Content-Disposition", "attachment", filename=filename)
 
                     message.attach(msg)
 
-        msg = {
-            'raw': (
-                base64.urlsafe_b64encode(
-                    message.as_string()
-                    .encode())
-                .decode())}
+        msg = {"raw": (base64.urlsafe_b64encode(message.as_string().encode()).decode())}
 
         req_count = 0
         while req_count < req_limit:
             try:
-                message = (
-                    service
-                    .users()
-                    .messages()
-                    .send(userId="me", body=msg)
-                    .execute()
-                )
+                message = service.users().messages().send(userId="me", body=msg).execute()
                 return message
             except:
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - delete_emails
     @classmethod
-    def delete_emails(cls, service, label_ids=False, user_id="me"):
+    def delete_emails(cls, service: Any, label_ids: Any = False, user_id: str = "me") -> None:
         """
         Deletes emails from a GMAIL inbox
         :param service: Authenticated service object for GMail.
@@ -1471,27 +1582,25 @@ class GMail:
         :param user_id: User ID to pull emails for, default="me"
         :return:
         """
-        result = \
-            (
-                service
-                .users()
-                .messages()
-                .list(
-                    userId=user_id,
-                    labelIds=['INBOX'] if not label_ids else label_ids
-                )
-                .execute()
-            )
-        messages = result.get('messages', [])
+        result = service.users().messages().list(userId=user_id, labelIds=["INBOX"] if not label_ids else label_ids).execute()
+        messages = result.get("messages", [])
         if not messages:
-            print('No messages found.')
+            print("No messages found.")
         else:
-            print(f'Deleting {len(messages)} messages...')
+            print(f"Deleting {len(messages)} messages...")
             for message in messages:
-                service.users().messages().delete(userId='me', id=message['id']).execute()
+                service.users().messages().delete(userId="me", id=message["id"]).execute()
 
+    # MARK: - get_emails
     @classmethod
-    def get_emails(cls, service, label_ids=False, custom_tree_branch_list=False, user_id="me", req_limit=1):
+    def get_emails(
+        cls,
+        service: Any,
+        label_ids: Any = False,
+        custom_tree_branch_list: Any = False,
+        user_id: str = "me",
+        req_limit: int = 1,
+    ) -> Any:
         """
         Returns a Pandas DataFrame of received email details.
 
@@ -1501,16 +1610,19 @@ class GMail:
         :param custom_tree_branch_list: List of branch elements to navigate HTML body data (ex: [0,1,0])
         :return: Pandas DataFrame of received email details.
         """
+        import pandas as pd
+
         # get mailbox items
         req_count = 0
         while req_count < req_limit:
             try:
                 results = (
-                    service
-                    .users()
+                    service.users()
                     .messages()
-                    .list(userId=user_id,
-                          labelIds=['INBOX'] if not label_ids else label_ids)
+                    .list(
+                        userId=user_id,
+                        labelIds=["INBOX"] if not label_ids else label_ids,
+                    )
                     .execute()
                 )
                 break
@@ -1526,13 +1638,14 @@ class GMail:
             while req_count < req_limit:
                 try:
                     results = (
-                        service
-                        .users()
+                        service.users()
                         .messages()
-                        .list(userId=user_id,
-                              labelIds=['INBOX'] if not label_ids else label_ids,
-                              pageToken=results.get("nextPageToken")
-                              ).execute()
+                        .list(
+                            userId=user_id,
+                            labelIds=["INBOX"] if not label_ids else label_ids,
+                            pageToken=results.get("nextPageToken"),
+                        )
+                        .execute()
                     )
                     break
                 except:
@@ -1545,7 +1658,7 @@ class GMail:
         # get messages
         messages_all = []
         for ix, row in enumerate(results_list):
-            messages_all += row.get('messages', [])
+            messages_all += row.get("messages", [])
 
         # messages = results.get('messages', [])
 
@@ -1564,15 +1677,7 @@ class GMail:
             req_count = 0
             while req_count < req_limit:
                 try:
-                    msg = (service
-                           .users()
-                           .messages()
-                           .get(userId=user_id,
-                                id=message['id'],
-                                format="full"
-                                )
-                           .execute()
-                           )
+                    msg = service.users().messages().get(userId=user_id, id=message["id"], format="full").execute()
                     break
                 except:
                     print("Exception...sleeping")
@@ -1588,66 +1693,46 @@ class GMail:
                         for idxx, branch in enumerate(custom_tree_branch_list):
                             print(branch)
                             tree_trunk = tree_trunk.get("parts")[branch]
-                        text = tree_trunk.get('body').get('data')
+                        text = tree_trunk.get("body").get("data")
                     except Exception as e:
                         print(str(e))
                         text = False
 
                 else:
                     # message text
-                    text = (msg
-                            .get("payload")
-                            .get("parts")[0]
-                            .get("body")
-                            .get("data"))
+                    text = msg.get("payload").get("parts")[0].get("body").get("data")
                 if text:
-                    text = (
-                        base64.urlsafe_b64decode(
-                            text.encode("ASCII"))
-                        .decode("utf-8"))
+                    text = base64.urlsafe_b64decode(text.encode("ASCII")).decode("utf-8")
                 try:
-                    mime_types_all.append(
-                        [x['mimeType']
-                         for x in msg['payload']['parts']])
+                    mime_types_all.append([x["mimeType"] for x in msg["payload"]["parts"]])
                 except:
                     mime_types_all.append("")
             else:
                 mime_types_all.append("")
-                text = (msg
-                        .get("payload")
-                        .get("body")
-                        .get("data")
-                        )
+                text = msg.get("payload").get("body").get("data")
                 if text:
-                    text = (
-                        base64.urlsafe_b64decode(
-                            text.encode("ASCII"))
-                        .decode("utf-8"))
+                    text = base64.urlsafe_b64decode(text.encode("ASCII")).decode("utf-8")
 
             # get desired data element keys
-            data_keys = \
-                [x['name'] for x in msg['payload']['headers']
-                 if x.get("name") in ['Date', 'Subject', 'To', 'From']]
+            data_keys = [x["name"] for x in msg["payload"]["headers"] if x.get("name") in ["Date", "Subject", "To", "From"]]
 
             # get desired data element values
-            data_vals = \
-                [x['value'] for x in msg['payload']['headers']
-                 if x.get("name") in ['Date', 'Subject', 'To', 'From']]
+            data_vals = [x["value"] for x in msg["payload"]["headers"] if x.get("name") in ["Date", "Subject", "To", "From"]]
 
             data_dict = dict(zip(data_keys, data_vals))
 
             # append to lists
             text_all.append(text)
-            ids_all.append(msg['id'])
+            ids_all.append(msg["id"])
             dates_all.append(data_dict.get("Date"))
             subject_all.append(data_dict.get("Subject"))
             from_all.append(data_dict.get("From"))
             to_all.append(data_dict.get("To"))
-            labels_all.append(msg['labelIds'])
+            labels_all.append(msg["labelIds"])
 
         # combine all messages to export
-        msg_df = \
-            pd.DataFrame({
+        msg_df = pd.DataFrame(
+            {
                 "mime_types": mime_types_all,
                 "ids": ids_all,
                 "text": text_all,
@@ -1655,13 +1740,15 @@ class GMail:
                 "from": from_all,
                 "dates": dates_all,
                 "subject": subject_all,
-                "labels": labels_all
-            })
+                "labels": labels_all,
+            }
+        )
 
         return msg_df
 
+    # MARK: - get_mailbox_labels
     @classmethod
-    def get_mailbox_labels(cls, service, user_id="me", req_limit=1):
+    def get_mailbox_labels(cls, service: Any, user_id: str = "me", req_limit: int = 1) -> Optional[Any]:
         """
 
         :param service:
@@ -1671,25 +1758,24 @@ class GMail:
         req_count = 0
         while req_count < req_limit:
             try:
-                results = \
-                    (
-                        service
-                        .users()
-                        .labels()
-                        .list(userId=user_id)
-                        .execute()
-                    )
+                results = service.users().labels().list(userId=user_id).execute()
                 return results
             except:
                 print("Exception...sleeping")
                 time.sleep(3)
                 req_count += 1
 
+    # MARK: - download_email_attachment
     @classmethod
-    def download_email_attachment(cls, service, msg_id,
-                                  sav_dir=False, user_id="me",
-                                  save_memory=False, req_limit=1
-                                  ):
+    def download_email_attachment(
+        cls,
+        service: Any,
+        msg_id: str,
+        sav_dir: Any = False,
+        user_id: str = "me",
+        save_memory: bool = False,
+        req_limit: int = 1,
+    ) -> List[Dict[str, bytes]]:
         """
         Downloads email attachments for a given emails.
 
@@ -1713,110 +1799,102 @@ class GMail:
 
         file_data_list = []
         # loop through payload sections
-        for part in message['payload']['parts']:
+        for part in message["payload"]["parts"]:
             # if there is a filename with an attachment id
-            if part['filename']:
-                if 'data' in part['body']:
-                    data = part['body']['data']
+            if part["filename"]:
+                if "data" in part["body"]:
+                    data = part["body"]["data"]
                 else:
-                    att_id = part['body']['attachmentId']
+                    att_id = part["body"]["attachmentId"]
                     req_count = 0
                     while req_count < req_limit:
                         try:
-                            att = (service
-                                   .users()
-                                   .messages()
-                                   .attachments()
-                                   .get(userId=user_id,
-                                        messageId=msg_id,
-                                        id=att_id
-                                        ).execute()
-                                   )
+                            att = service.users().messages().attachments().get(userId=user_id, messageId=msg_id, id=att_id).execute()
                             break
                         except:
                             print("Exception...sleeping")
                             time.sleep(3)
                             req_count += 1
 
-                    data = att['data']
-                file_data = (base64.urlsafe_b64decode(data.encode('UTF-8')))
-                path = part['filename']
+                    data = att["data"]
+                file_data = base64.urlsafe_b64decode(data.encode("UTF-8"))
+                path = part["filename"]
                 if save_memory:
                     file_data_list.append({path: file_data})
                 else:
                     # save attachment
-                    with open(sav_dir + path, 'wb') as f:
+                    with open(sav_dir + path, "wb") as f:
                         f.write(file_data)
 
         return file_data_list
 
+    # MARK: - update_message_label
     @classmethod
-    def update_message_label(cls, message_id, service, data, user_id="me"):
-        result = \
-            (
-                service
-                .users()
-                .messages()
-                .modify(id=message_id, userId=user_id, body=data)
-                .execute()
-            )
+    def update_message_label(cls, message_id: str, service: Any, data: Dict[str, Any], user_id: str = "me") -> Any:
+        result = service.users().messages().modify(id=message_id, userId=user_id, body=data).execute()
 
         return result
 
 
+# MARK: - GDocs
 class GDocs:
-
+    # MARK: - create_docs_service
     @classmethod
-    def create_docs_service(cls, credentials):
-        DISCOVERY_DOC = 'https://docs.googleapis.com/$discovery/rest?version=v1'
+    def create_docs_service(cls, credentials: Any) -> Any:
+        from apiclient import discovery
+        from httplib2 import Http
+
+        DISCOVERY_DOC = "https://docs.googleapis.com/$discovery/rest?version=v1"
 
         http = credentials.authorize(Http())
-        docs_service = discovery.build(
-            'docs', 'v1', http=http, discoveryServiceUrl=DISCOVERY_DOC)
+        docs_service = discovery.build("docs", "v1", http=http, discoveryServiceUrl=DISCOVERY_DOC)
 
         return docs_service
 
+    # MARK: - get_doc
     @classmethod
-    def get_doc(cls, doc_id, docs_service):
+    def get_doc(cls, doc_id: str, docs_service: Any) -> Any:
         doc = docs_service.documents().get(documentId=doc_id).execute()
         return doc
 
+    # MARK: - read_paragraph_element
     @classmethod
-    def read_paragraph_element(cls, element):
+    def read_paragraph_element(cls, element: Dict[str, Any]) -> str:
         """Returns the text in the given ParagraphElement.
 
-            Args:
-                element: a ParagraphElement from a Google Doc.
+        Args:
+            element: a ParagraphElement from a Google Doc.
         """
-        text_run = element.get('textRun')
+        text_run = element.get("textRun")
         if not text_run:
-            return ''
-        return text_run.get('content')
+            return ""
+        return text_run.get("content")
 
+    # MARK: - read_structural_elements
     @classmethod
-    def read_structural_elements(cls, elements):
+    def read_structural_elements(cls, elements: List[Dict[str, Any]]) -> str:
         """Recurses through a list of Structural Elements to read a document's text where text may be
-            in nested elements.
+        in nested elements.
 
-            Args:
-                elements: a list of Structural Elements.
+        Args:
+            elements: a list of Structural Elements.
         """
-        text = ''
+        text = ""
         for value in elements:
-            if 'paragraph' in value:
-                elements = value.get('paragraph').get('elements')
+            if "paragraph" in value:
+                elements = value.get("paragraph").get("elements")
                 for elem in elements:
                     text += GDocs.read_paragraph_element(elem)
-            elif 'table' in value:
+            elif "table" in value:
                 # The text in table cells are in nested Structural Elements and tables may be
                 # nested.
-                table = value.get('table')
-                for row in table.get('tableRows'):
-                    cells = row.get('tableCells')
+                table = value.get("table")
+                for row in table.get("tableRows"):
+                    cells = row.get("tableCells")
                     for cell in cells:
-                        text += GDocs.read_structural_elements(cell.get('content'))
-            elif 'tableOfContents' in value:
+                        text += GDocs.read_structural_elements(cell.get("content"))
+            elif "tableOfContents" in value:
                 # The text in the TOC is also in a Structural Element.
-                toc = value.get('tableOfContents')
-                text += GDocs.read_structural_elements(toc.get('content'))
+                toc = value.get("tableOfContents")
+                text += GDocs.read_structural_elements(toc.get("content"))
         return text

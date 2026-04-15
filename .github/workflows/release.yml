@@ -1,0 +1,105 @@
+name: release
+run-name: Release v${{ github.ref_name }} by @${{ github.actor }}
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    outputs:
+      pkg-name: ${{ steps.check-version.outputs.pkg-name }}
+      version: ${{ steps.check-version.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --group dev --group test
+
+      - name: Run lint
+        run: uv run ruff check . && uv run ruff format . --diff && uv run mypy fusetools
+
+      - name: Run tests
+        run: uv run pytest --disable-socket --allow-unix-socket tests/unit_tests/
+
+      - name: Build package
+        run: uv build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Check version
+        id: check-version
+        run: |
+          set -eu
+          PKG_NAME=$(grep -m1 '^name = ' pyproject.toml | cut -d'"' -f2)
+          VERSION=$(grep -m1 '^version = ' pyproject.toml | cut -d'"' -f2)
+          echo "pkg-name=${PKG_NAME}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+  publish:
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      # Trusted publishing — configure at https://pypi.org/manage/account/publishing/
+      id-token: write
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # release/v1
+        with:
+          verbose: true
+          print-hash: true
+          attestations: false
+
+  mark-release:
+    needs: [build, publish]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Create GitHub release
+        uses: ncipollo/release-action@440c8c1cb0ed28b9f43e4d1d670870f059653174 # v1
+        id: create-release
+        with:
+          artifacts: "dist/*"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          generateReleaseNotes: true
+          tag: ${{ github.ref_name }}
+
+      - name: Add release URL to summary
+        env:
+          RELEASE_URL: ${{ steps.create-release.outputs.html_url }}
+        run: echo "GitHub Release: ${RELEASE_URL}" >> $GITHUB_STEP_SUMMARY

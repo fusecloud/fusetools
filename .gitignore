@@ -128,3 +128,11 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .idea/
+
+.DS_Store
+.claude/*
+!.claude/todos/
+.ruff_cache/
+JOURNAL.md
+CHANGELOG.md
+dev/
