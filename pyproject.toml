@@ -13,7 +13,6 @@ dependencies = ["pandas>=2.0.0"]
 
 [project.optional-dependencies]
 aws = ["boto3>=1.28.0", "botocore>=1.31.0", "aiobotocore>=2.7.0"]
-firebase = ["firebase-admin>=6.0.0"]
 gcp = ["gcloud>=0.18.0", "google-cloud-scheduler>=2.0.0", "oauth2client>=4.0.0"]
 gsuite = [
     "google-api-python-client>=2.0.0",
@@ -26,7 +25,6 @@ db = ["sqlalchemy>=2.0.0", "psycopg2-binary>=2.9.0", "numpy>=1.24.0"]
 transfer = ["requests>=2.28.0", "pexpect>=4.8.0"]
 all = [
     "fusetools[aws]",
-    "fusetools[firebase]",
     "fusetools[gcp]",
     "fusetools[gsuite]",
     "fusetools[db]",
@@ -65,12 +63,10 @@ warn_return_any = false
 
 [[tool.mypy.overrides]]
 module = [
-    "firebase_admin.*",
     "gcloud.*",
     "oauth2client.*",
     "apiclient.*",
     "psycopg2.*",
-    "cx_Oracle.*",
     "aiobotocore.*",
     "googleapiclient.*",
     "google_auth_oauthlib.*",
@@ -83,7 +79,6 @@ module = [
     "pandas.*",
     "numpy.*",
     "httplib2.*",
-    "teradata.*",
     "pyodbc.*",
     "cryptography.*",
     "sqlalchemy",

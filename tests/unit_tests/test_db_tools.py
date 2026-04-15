@@ -7,7 +7,6 @@ def test_import_db_tools() -> None:
     """db_tools should be importable without any optional deps installed."""
     from fusetools import db_tools
 
-    assert hasattr(db_tools, "Oracle")
     assert hasattr(db_tools, "Postgres")
     assert hasattr(db_tools, "Generic")
 

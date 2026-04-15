@@ -49,18 +49,23 @@ class GSheets:
 
     # MARK: - create_service_serv_acct
     @classmethod
-    def create_service_serv_acct(cls, member_acct_email: str, token_path: str) -> Tuple[Any, Any]:
+    def create_service_serv_acct(cls, member_acct_email: str, token_path: Optional[str] = None, scopes: Optional[List[str]] = None) -> Tuple[Any, Any]:
         """
         Creates a GSheets authenticated credentials object.
 
         :param member_acct_email: GSuite service acct email address.
         :param token_path: Path to GSuite authentication token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Return GSheets authenticated credentials object.
         """
+        import os
+
         from apiclient.discovery import build
         from oauth2client.service_account import ServiceAccountCredentials
 
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(filename=token_path, scopes=SCOPES)
+        token_path = token_path or os.environ.get("GSUITE_TOKEN_PATH")
+        _scopes = scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(filename=token_path, scopes=_scopes)
 
         credentials = credentials.create_delegated(member_acct_email)
 
@@ -69,18 +74,22 @@ class GSheets:
 
     # MARK: - create_service_serv_acct_dict
     @classmethod
-    def create_service_serv_acct_dict(cls, member_acct_email: str, dict_creds: Dict[str, Any]) -> Tuple[Any, Any]:
+    def create_service_serv_acct_dict(cls, member_acct_email: str, dict_creds: Dict[str, Any], scopes: Optional[List[str]] = None) -> Tuple[Any, Any]:
         """
         Creates a GDrive authenticated credentials object.
 
         :param member_acct_email: GDrive service acct email address.
         :param token_path: Path to GDrive authentication token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Return GDrive authenticated credentials object.
         """
+        import os
+
         from apiclient.discovery import build
         from oauth2client.service_account import ServiceAccountCredentials
 
-        credentials = ServiceAccountCredentials.from_json_keyfile_dict(keyfile_dict=dict_creds, scopes=SCOPES)
+        _scopes = scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(keyfile_dict=dict_creds, scopes=_scopes)
 
         credentials = credentials.create_delegated(member_acct_email)
 
@@ -944,18 +953,23 @@ class GDrive:
 
     # MARK: - create_service_serv_acct
     @classmethod
-    def create_service_serv_acct(cls, member_acct_email: str, token_path: str) -> Tuple[Any, Any]:
+    def create_service_serv_acct(cls, member_acct_email: str, token_path: Optional[str] = None, scopes: Optional[List[str]] = None) -> Tuple[Any, Any]:
         """
         Creates a GDrive authenticated credentials object.
 
         :param member_acct_email: GDrive service acct email address.
         :param token_path: Path to GDrive authentication token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Return GDrive authenticated credentials object.
         """
+        import os
+
         from apiclient.discovery import build
         from oauth2client.service_account import ServiceAccountCredentials
 
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(filename=token_path, scopes=SCOPES)
+        token_path = token_path or os.environ.get("GSUITE_TOKEN_PATH")
+        _scopes = scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(filename=token_path, scopes=_scopes)
 
         credentials = credentials.create_delegated(member_acct_email)
 
@@ -964,18 +978,22 @@ class GDrive:
 
     # MARK: - create_service_serv_acct_dict
     @classmethod
-    def create_service_serv_acct_dict(cls, member_acct_email: str, dict_creds: Dict[str, Any]) -> Tuple[Any, Any]:
+    def create_service_serv_acct_dict(cls, member_acct_email: str, dict_creds: Dict[str, Any], scopes: Optional[List[str]] = None) -> Tuple[Any, Any]:
         """
         Creates a GDrive authenticated credentials object.
 
         :param member_acct_email: GDrive service acct email address.
         :param token_path: Path to GDrive authentication token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Return GDrive authenticated credentials object.
         """
+        import os
+
         from apiclient.discovery import build
         from oauth2client.service_account import ServiceAccountCredentials
 
-        credentials = ServiceAccountCredentials.from_json_keyfile_dict(keyfile_dict=dict_creds, scopes=SCOPES)
+        _scopes = scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(keyfile_dict=dict_creds, scopes=_scopes)
 
         credentials = credentials.create_delegated(member_acct_email)
 
@@ -984,16 +1002,25 @@ class GDrive:
 
     # MARK: - authorize_credentials
     @classmethod
-    def authorize_credentials(cls, cred_path: str, token_path: str) -> Any:
+    def authorize_credentials(cls, cred_path: Optional[str] = None, token_path: Optional[str] = None, scopes: Optional[List[str]] = None) -> Any:
         """
         Creates an authorized credentials object for Google Drive.
 
         :param cred_path: Local path to GSuite credentials object.
         :param token_path: Local path to GSuite authorization token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Authorized credentials object for GSuite.
         """
+        import os
+
+        import os
+
         from google.auth.transport.requests import Request
         from google_auth_oauthlib.flow import InstalledAppFlow
+
+        cred_path = cred_path or os.environ.get("GSUITE_TOKEN_PATH")
+
+        cred_path = cred_path or os.environ.get("GSUITE_TOKEN_PATH")
 
         creds = None
         if os.path.exists(token_path):
@@ -1004,7 +1031,7 @@ class GDrive:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file(cred_path, SCOPES)
+                flow = InstalledAppFlow.from_client_secrets_file(cred_path, scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES))
                 creds = flow.run_local_server(port=0)
                 # Save the credentials for the next run
             with open(token_path, "wb") as token:
@@ -1334,18 +1361,23 @@ class GMail:
 
     # MARK: - create_service_serv_acct
     @classmethod
-    def create_service_serv_acct(cls, member_acct_email: str, token_path: str) -> Tuple[Any, Any]:
+    def create_service_serv_acct(cls, member_acct_email: str, token_path: Optional[str] = None, scopes: Optional[List[str]] = None) -> Tuple[Any, Any]:
         """
         Creates a GMail authenticated credentials object.
 
         :param member_acct_email: GSuite service acct email address.
         :param token_path: Path to GSuite authentication token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Return GMail authenticated credentials object.
         """
+        import os
+
         from apiclient.discovery import build
         from oauth2client.service_account import ServiceAccountCredentials
 
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(filename=token_path, scopes=SCOPES)
+        token_path = token_path or os.environ.get("GSUITE_TOKEN_PATH")
+        _scopes = scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(filename=token_path, scopes=_scopes)
 
         credentials = credentials.create_delegated(member_acct_email)
 
@@ -1354,18 +1386,22 @@ class GMail:
 
     # MARK: - create_service_serv_acct_dict
     @classmethod
-    def create_service_serv_acct_dict(cls, member_acct_email: str, dict_creds: Dict[str, Any]) -> Tuple[Any, Any]:
+    def create_service_serv_acct_dict(cls, member_acct_email: str, dict_creds: Dict[str, Any], scopes: Optional[List[str]] = None) -> Tuple[Any, Any]:
         """
         Creates a GDrive authenticated credentials object.
 
         :param member_acct_email: GDrive service acct email address.
         :param token_path: Path to GDrive authentication token.
+        :param scopes: Optional list of OAuth scopes. Defaults to module-level SCOPES.
         :return: Return GDrive authenticated credentials object.
         """
+        import os
+
         from apiclient.discovery import build
         from oauth2client.service_account import ServiceAccountCredentials
 
-        credentials = ServiceAccountCredentials.from_json_keyfile_dict(keyfile_dict=dict_creds, scopes=SCOPES)
+        _scopes = scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(keyfile_dict=dict_creds, scopes=_scopes)
 
         credentials = credentials.create_delegated(member_acct_email)
 
@@ -1379,6 +1415,7 @@ class GMail:
         cred_path: str,
         token_path: Optional[str] = None,
         working_dir: Optional[str] = None,
+        scopes: Optional[List[str]] = None,
     ) -> Any:
         """
         Creates an authenticated service object for GMail.
@@ -1389,8 +1426,12 @@ class GMail:
         :return: Authenticated service object for GMail
         """
         from apiclient.discovery import build
+        import os
+
         from google.auth.transport.requests import Request
         from google_auth_oauthlib.flow import InstalledAppFlow
+
+        cred_path = cred_path or os.environ.get("GSUITE_TOKEN_PATH")
 
         if token_path:
             if os.path.exists(token_path):
@@ -1401,7 +1442,7 @@ class GMail:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file(cred_path, SCOPES)
+                flow = InstalledAppFlow.from_client_secrets_file(cred_path, scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES))
                 creds = flow.run_local_server()
             # Save the credentials for the next run
             with open((working_dir or "") + "token.pickle", "wb") as token:

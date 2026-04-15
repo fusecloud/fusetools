@@ -5,7 +5,6 @@ def test_import_cloud_tools() -> None:
     """cloud_tools should be importable without any optional deps installed."""
     from fusetools import cloud_tools
 
-    assert hasattr(cloud_tools, "Firebase")
     assert hasattr(cloud_tools, "AWS")
     assert hasattr(cloud_tools, "GCP")
 
