@@ -102,4 +102,5 @@ jobs:
       - name: Add release URL to summary
         env:
           RELEASE_URL: ${{ steps.create-release.outputs.html_url }}
-        run: echo "GitHub Release: ${RELEASE_URL}" >> $GITHUB_STEP_SUMMARY
+        run: |
+          echo "GitHub Release: ${RELEASE_URL}" >> "${GITHUB_STEP_SUMMARY}"
