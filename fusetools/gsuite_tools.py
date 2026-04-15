@@ -49,7 +49,9 @@ class GSheets:
 
     # MARK: - create_service_serv_acct
     @classmethod
-    def create_service_serv_acct(cls, member_acct_email: str, token_path: Optional[str] = None, scopes: Optional[List[str]] = None) -> Tuple[Any, Any]:
+    def create_service_serv_acct(
+        cls, member_acct_email: str, token_path: Optional[str] = None, scopes: Optional[List[str]] = None
+    ) -> Tuple[Any, Any]:
         """
         Creates a GSheets authenticated credentials object.
 
@@ -953,7 +955,9 @@ class GDrive:
 
     # MARK: - create_service_serv_acct
     @classmethod
-    def create_service_serv_acct(cls, member_acct_email: str, token_path: Optional[str] = None, scopes: Optional[List[str]] = None) -> Tuple[Any, Any]:
+    def create_service_serv_acct(
+        cls, member_acct_email: str, token_path: Optional[str] = None, scopes: Optional[List[str]] = None
+    ) -> Tuple[Any, Any]:
         """
         Creates a GDrive authenticated credentials object.
 
@@ -1013,8 +1017,6 @@ class GDrive:
         """
         import os
 
-        import os
-
         from google.auth.transport.requests import Request
         from google_auth_oauthlib.flow import InstalledAppFlow
 
@@ -1031,7 +1033,9 @@ class GDrive:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file(cred_path, scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES))
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    cred_path, scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+                )
                 creds = flow.run_local_server(port=0)
                 # Save the credentials for the next run
             with open(token_path, "wb") as token:
@@ -1361,7 +1365,9 @@ class GMail:
 
     # MARK: - create_service_serv_acct
     @classmethod
-    def create_service_serv_acct(cls, member_acct_email: str, token_path: Optional[str] = None, scopes: Optional[List[str]] = None) -> Tuple[Any, Any]:
+    def create_service_serv_acct(
+        cls, member_acct_email: str, token_path: Optional[str] = None, scopes: Optional[List[str]] = None
+    ) -> Tuple[Any, Any]:
         """
         Creates a GMail authenticated credentials object.
 
@@ -1425,9 +1431,9 @@ class GMail:
         :param working_dir: Path of working directory to store token if token path not specified.
         :return: Authenticated service object for GMail
         """
-        from apiclient.discovery import build
         import os
 
+        from apiclient.discovery import build
         from google.auth.transport.requests import Request
         from google_auth_oauthlib.flow import InstalledAppFlow
 
@@ -1442,7 +1448,9 @@ class GMail:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file(cred_path, scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES))
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    cred_path, scopes or ([s.strip() for s in os.environ["GSUITE_SCOPES"].split(",")] if os.environ.get("GSUITE_SCOPES") else SCOPES)
+                )
                 creds = flow.run_local_server()
             # Save the credentials for the next run
             with open((working_dir or "") + "token.pickle", "wb") as token:

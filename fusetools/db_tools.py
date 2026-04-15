@@ -1313,5 +1313,3 @@ class PostgresETL:
         """
         sql = f"ALTER TABLE {tbl_name} ALTER COLUMN {col_name} TYPE {col_type}"
         cls.run_query_pg(conn=conn, sql=sql)
-
-
