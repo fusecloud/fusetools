@@ -134,5 +134,4 @@ dmypy.json
 !.claude/todos/
 .ruff_cache/
 JOURNAL.md
-CHANGELOG.md
 dev/
