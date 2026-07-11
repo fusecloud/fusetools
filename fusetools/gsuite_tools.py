@@ -13,6 +13,7 @@ import io
 import mimetypes
 import os
 import pickle
+import re
 import shutil
 import time
 from email import encoders
@@ -46,6 +47,49 @@ class GSheets:
     .. image:: ../images_source/gsuite_tools/googlesheets1.png
 
     """
+
+    # MARK: - Request Helpers
+    @classmethod
+    def _redact_google_error(cls, message: Any) -> str:
+        text = str(message)
+        text = re.sub(r"eyJ[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+){2,}", "<redacted-jwt>", text)
+        text = re.sub(
+            r"-----BEGIN [A-Z ]+-----.*?-----END [A-Z ]+-----",
+            "<redacted-key>",
+            text,
+            flags=re.DOTALL,
+        )
+        return text[:1000]
+
+    @classmethod
+    def _execute_google_request(cls, request: Any, action_name: str, req_limit: int = 5, sleep_seconds: int = 3) -> Any:
+        last_exc: Exception | None = None
+        http_error_type: type[Exception] | None = None
+        try:
+            from googleapiclient.errors import HttpError
+
+            http_error_type = HttpError
+        except Exception:
+            http_error_type = None
+
+        for attempt in range(1, req_limit + 1):
+            try:
+                return request.execute()
+            except Exception as exc:
+                last_exc = exc
+                if http_error_type is not None and isinstance(exc, http_error_type):
+                    detail = cls._redact_google_error(exc.content.decode("utf-8", errors="replace"))
+                    print(f"Google Sheets {action_name} failed attempt {attempt}/{req_limit}: HTTP {exc.resp.status} {exc.reason}: {detail}")
+                else:
+                    detail = cls._redact_google_error(exc)
+                    print(f"Google Sheets {action_name} failed attempt {attempt}/{req_limit}: {type(exc).__name__}: {detail}")
+
+                if attempt < req_limit:
+                    time.sleep(sleep_seconds * attempt)
+
+        if last_exc is not None:
+            raise last_exc
+        raise RuntimeError(f"Google Sheets {action_name} did not execute; req_limit must be at least 1")
 
     # MARK: - create_service_serv_acct
     @classmethod
@@ -184,31 +228,31 @@ class GSheets:
 
         service = build("sheets", "v4", credentials=credentials)
 
-        req_count = 0
-        while req_count < req_limit:
-            try:
-                # Call the Sheets API
-                sheet = service.spreadsheets()
-                if tab_name:
-                    gsheet = (
-                        sheet.values()
-                        .get(
-                            spreadsheetId=spreadsheet_id,
-                            range=tab_name + "!" + range_name,
-                        )
-                        .execute()
-                    )
+        sheet = service.spreadsheets()
+        if tab_name:
+            request = sheet.values().get(
+                spreadsheetId=spreadsheet_id,
+                range=tab_name + "!" + range_name,
+            )
+            action_name = f"get {tab_name}!{range_name}"
+        else:
+            request = sheet.values().get(spreadsheetId=spreadsheet_id, range=range_name)
+            action_name = f"get {range_name}"
 
-                else:
-                    gsheet = sheet.values().get(spreadsheetId=spreadsheet_id, range=range_name).execute()
-                break
-            except:
-                print("Exception...sleeping")
-                time.sleep(3)
-                req_count += 1
+        gsheet = cls._execute_google_request(
+            request=request,
+            action_name=action_name,
+            req_limit=req_limit,
+        )
+
+        if not gsheet.get("values"):
+            return pd.DataFrame()
 
         header = gsheet.get("values")[0]
         values = gsheet.get("values")[1:]
+
+        if len(values) == 0:
+            return pd.DataFrame(columns=header)
 
         if len(header) > len(values[0]):
             values_new = []
@@ -677,7 +721,8 @@ class GSheets:
         data_range: str,
         credentials: Any,
         header: bool = False,
-        req_limit: int = 1,
+        req_limit: int = 5,
+        value_input_option: str = "RAW",
     ) -> Optional[Any]:
         """
         Uploads a Pandas DataFrame to a Google Sheet.
@@ -691,56 +736,49 @@ class GSheets:
         from apiclient.discovery import build
 
         service = build("sheets", "v4", credentials=credentials)
-        value_input_option = "USER_ENTERED"
+        insert_data_option = "INSERT_ROWS"
 
         write_df = []
 
-        for idx, row in df.iterrows():
-            write_df.append(df.iloc[idx].tolist())
+        for _, row in df.iterrows():
+            write_df.append(row.tolist())
 
         if header:
             write_df = [df.columns.tolist()] + write_df
 
         body = dict({"values": write_df})
 
-        req_count = 0
-        while req_count < req_limit:
-            try:
-                res = (
-                    service.spreadsheets()
-                    .values()
-                    .append(
-                        spreadsheetId=spreadsheet_id,
-                        range=data_range,
-                        valueInputOption=value_input_option,
-                        # insertDataOption=insert_data_option,
-                        body=body,
-                    )
-                    .execute()
-                )
-                return res
-            except:
-                print("Exception...sleeping")
-                time.sleep(3)
-                req_count += 1
+        request = (
+            service.spreadsheets()
+            .values()
+            .append(
+                spreadsheetId=spreadsheet_id,
+                range=data_range,
+                valueInputOption=value_input_option,
+                insertDataOption=insert_data_option,
+                body=body,
+            )
+        )
+        return cls._execute_google_request(
+            request=request,
+            action_name=f"append {data_range}",
+            req_limit=req_limit,
+        )
 
     # MARK: - clear_google_sheet_data
     @classmethod
-    def clear_google_sheet_data(cls, spreadsheet_id: str, range: str, credentials: Any, req_limit: int = 1) -> Optional[Any]:
+    def clear_google_sheet_data(cls, spreadsheet_id: str, range: str, credentials: Any, req_limit: int = 5) -> Optional[Any]:
         from apiclient.discovery import build
 
         service = build("sheets", "v4", credentials=credentials)
 
         body = {}
-        req_count = 0
-        while req_count < req_limit:
-            try:
-                res = service.spreadsheets().values().clear(spreadsheetId=spreadsheet_id, range=range, body=body).execute()
-                return res
-            except:
-                print("Exception...sleeping")
-                time.sleep(3)
-                req_count += 1
+        request = service.spreadsheets().values().clear(spreadsheetId=spreadsheet_id, range=range, body=body)
+        return cls._execute_google_request(
+            request=request,
+            action_name=f"clear {range}",
+            req_limit=req_limit,
+        )
 
     # MARK: - delete_google_sheet_data
     @classmethod
@@ -752,7 +790,7 @@ class GSheets:
         idx_end: int,
         credentials: Any,
         dimension: str = "ROWS",
-        req_limit: int = 1,
+        req_limit: int = 5,
     ) -> Optional[Any]:
         """
         Deletes data from a Google Sheet.
@@ -781,15 +819,12 @@ class GSheets:
         ]
 
         request = {"requests": spreadsheet_data}
-        req_count = 0
-        while req_count < req_limit:
-            try:
-                res = service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body=request).execute()
-                return res
-            except:
-                print("Exception...sleeping")
-                time.sleep(3)
-                req_count += 1
+        google_request = service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body=request)
+        return cls._execute_google_request(
+            request=google_request,
+            action_name=f"delete {dimension} {idx_start}:{idx_end}",
+            req_limit=req_limit,
+        )
 
     # MARK: - get_google_sheet_metadata
     @classmethod
@@ -799,7 +834,7 @@ class GSheets:
         credentials: Any,
         include_grid_data: bool = False,
         ranges: Any = False,
-        req_limit: int = 1,
+        req_limit: int = 5,
     ) -> Optional[Any]:
         """
 
@@ -812,25 +847,20 @@ class GSheets:
         from apiclient.discovery import build
 
         service = build("sheets", "v4", credentials=credentials)
-        req_count = 0
-        while req_count < req_limit:
-            try:
-                request = service.spreadsheets().get(
-                    spreadsheetId=spreadsheet_id,
-                    includeGridData=include_grid_data,
-                    ranges=ranges,
-                )
-
-                response = request.execute()
-                return response
-            except:
-                print("Exception...sleeping")
-                time.sleep(3)
-                req_count += 1
+        request = service.spreadsheets().get(
+            spreadsheetId=spreadsheet_id,
+            includeGridData=include_grid_data,
+            ranges=ranges,
+        )
+        return cls._execute_google_request(
+            request=request,
+            action_name="get metadata",
+            req_limit=req_limit,
+        )
 
     # MARK: - get_google_sheet_tabs
     @classmethod
-    def get_google_sheet_tabs(cls, spreadsheet_id: str, credentials: Any, req_limit: int = 1) -> Tuple[List[str], List[int]]:
+    def get_google_sheet_tabs(cls, spreadsheet_id: str, credentials: Any, req_limit: int = 5) -> Tuple[List[str], List[int]]:
         """
         Get the names and IDs of tabs for a given Google Sheet.
 
@@ -841,15 +871,12 @@ class GSheets:
         from apiclient.discovery import build
 
         service = build("sheets", "v4", credentials=credentials)
-        req_count = 0
-        while req_count < req_limit:
-            try:
-                sheet_metadata = service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
-                break
-            except:
-                print("Exception...sleeping")
-                time.sleep(3)
-                req_count += 1
+        request = service.spreadsheets().get(spreadsheetId=spreadsheet_id)
+        sheet_metadata = cls._execute_google_request(
+            request=request,
+            action_name="get tabs",
+            req_limit=req_limit,
+        )
 
         tab_names = []
         tab_ids = []

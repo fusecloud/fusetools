@@ -4,11 +4,11 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fusetools"
-version = "1.0.0"
+version = "1.0.1"
 description = "Cloud infrastructure, database ETL, and GSuite utilities"
 readme = "readme.md"
 license = "MIT"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 dependencies = ["pandas>=2.0.0"]
 
 [project.optional-dependencies]

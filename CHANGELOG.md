@@ -2,6 +2,16 @@
 
 All notable changes to fusetools are documented here.
 
+## [1.0.1] — 2026-07-11
+
+### Changed
+- Lowered package metadata to support Python 3.11+.
+- Hardened Google Sheets request handling for read/write/delete/metadata calls:
+  shared retries now log sanitized error detail and raise the final exception
+  after retry exhaustion instead of silently returning `None`.
+- Restored `GSheets.update_google_sheet_df` support for `value_input_option`
+  and `INSERT_ROWS` append behavior.
+
 ## [1.0.0] — 2026-03-21
 
 ### Changed
