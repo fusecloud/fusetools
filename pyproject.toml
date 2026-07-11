@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fusetools"
-version = "1.0.1"
+version = "1.0.2"
 description = "Cloud infrastructure, database ETL, and GSuite utilities"
 readme = "readme.md"
 license = "MIT"

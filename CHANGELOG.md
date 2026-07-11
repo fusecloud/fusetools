@@ -2,6 +2,12 @@
 
 All notable changes to fusetools are documented here.
 
+## [1.0.2] — 2026-07-11
+
+### Changed
+- Synced the import-time `fusetools.__version__` value with the published
+  package metadata.
+
 ## [1.0.1] — 2026-07-11
 
 ### Changed
